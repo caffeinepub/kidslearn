@@ -1,76 +1,161 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Enhance KidsLearn with multilingual alphabet, poems, and numbers sections",
+  "title": "Child-friendly colors and larger alphabet/number cards",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Enhance the Alphabet & Letters section to display big, colorful letters for all 4 languages (English, Telugu, Hindi, Tamil) with corresponding picture illustrations and words in all 4 languages, with text-to-speech support",
+      "summary": "Apply a bright, vibrant, child-friendly color scheme throughout the entire app with bold, saturated colors for backgrounds, buttons, cards, navigation, and interactive elements",
       "acceptanceCriteria": [
-        "Letters are displayed in a large, bold, colorful font suitable for young children",
-        "Each letter card shows the letter, a relevant emoji or picture, and the example word in English, Telugu, Hindi, and Tamil",
-        "A language selector allows switching the primary display language between English, Telugu, Hindi, and Tamil",
-        "Tapping/clicking a letter card triggers text-to-speech pronunciation in the selected language",
-        "Layout is responsive and works on mobile screen sizes for young users"
+        "All pages use bright, saturated, playful colors instead of muted tones",
+        "Buttons, cards, and interactive elements are visually distinct and colorful",
+        "Color contrast is sufficient for readability",
+        "The theme is consistent across all pages and components",
+        "Colors feel appropriate and engaging for children aged 2–8"
       ],
       "file_operations": [
         {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Enhance the existing custom color palettes (sunshine, grass, tangerine, cherry, sky, lavender) with brighter, more saturated OKLCH values. Increase saturation and ensure bold, vibrant primary colors for buttons, cards, and interactive elements. Maintain existing palette structure while making all colors more child-friendly and visually engaging."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Update CSS custom properties for light theme color tokens to use the new bright, saturated color values from Tailwind config. Ensure background, foreground, primary, accent, card, and interactive element colors are bold and child-friendly. Adjust dark theme tokens if present to maintain consistency. Update any global styles to reflect the vibrant color scheme."
+        },
+        {
+          "path": "frontend/src/pages/Home.tsx",
+          "operation": "modify",
+          "description": "Apply bright, saturated colors to the hero banner section and navigation grid cards. Use the enhanced Tailwind color classes (sunshine, tangerine, cherry, sky, lavender, grass) for card backgrounds, borders, and hover states. Ensure all interactive elements are visually distinct with bold colors."
+        },
+        {
           "path": "frontend/src/pages/AlphabetLesson.tsx",
           "operation": "modify",
-          "description": "Replace the current single-language alphabet implementation with a comprehensive multilingual version that displays all 26 English letters (A-Z) in a grid layout. Each letter card must show: the letter in large bold text, the generated illustration from frontend/public/assets/generated/alphabet-{letter}.dim_200x200.png (e.g., alphabet-a.dim_200x200.png for A), and the example word in all 4 languages (English, Telugu in Telugu script, Hindi in Devanagari, Tamil in Tamil script). Add a language selector dropdown at the top to switch the primary display language. Implement onClick handlers for each card that use the Web Speech API to pronounce the letter and word in the selected language. Ensure cards are large, colorful, and use kid-friendly styling with responsive grid layout (grid-cols-2 on mobile, grid-cols-4 on tablet, grid-cols-6 on desktop). Store all language data as hardcoded Unicode string literals in the component. Verify the component's usage instructions before implementing."
+          "description": "Update letter card styling to use bright, saturated background colors from the enhanced Tailwind palette. Apply vibrant colors to card containers, borders, and interactive states. Ensure language selector buttons use bold, child-friendly colors. Maintain text contrast for readability."
+        },
+        {
+          "path": "frontend/src/pages/NumbersLesson.tsx",
+          "operation": "modify",
+          "description": "Apply bright, saturated colors to number cards using the enhanced Tailwind palette. Update card backgrounds, borders, and hover states with bold, child-friendly colors. Ensure language selector uses vibrant colors. Maintain the existing language-themed color logic while making colors more saturated and playful."
+        },
+        {
+          "path": "frontend/src/pages/Numbers100Lesson.tsx",
+          "operation": "modify",
+          "description": "Update the number grid styling with bright, saturated colors for card backgrounds and borders. Apply vibrant language-themed colors that are bolder and more engaging than the current implementation. Ensure the language selector uses child-friendly button colors."
+        },
+        {
+          "path": "frontend/src/pages/VocabularyLesson.tsx",
+          "operation": "modify",
+          "description": "Apply bright, saturated colors to vocabulary cards, category selector buttons, and language tabs. Use the enhanced Tailwind color palette for card backgrounds, borders, and interactive states. Ensure all buttons and selectable elements are visually distinct with bold colors."
+        },
+        {
+          "path": "frontend/src/pages/PoemsLesson.tsx",
+          "operation": "modify",
+          "description": "Update poem display card and navigation controls with bright, saturated colors. Apply vibrant backgrounds and button colors using the enhanced Tailwind palette. Ensure language selector and navigation arrows use bold, child-friendly colors."
+        },
+        {
+          "path": "frontend/src/pages/Quiz.tsx",
+          "operation": "modify",
+          "description": "Apply bright, saturated colors to quiz cards, answer buttons, and navigation controls. Use the enhanced Tailwind color palette for option buttons, correct/incorrect feedback states, and progress indicators. Ensure all interactive elements are visually distinct with bold colors."
+        },
+        {
+          "path": "frontend/src/pages/MatchingGame.tsx",
+          "operation": "modify",
+          "description": "Update game card styling with bright, saturated colors for card backgrounds, borders, and matched states. Apply vibrant colors to the language selector and game controls using the enhanced Tailwind palette. Ensure flipped and matched card states use bold, engaging colors."
+        },
+        {
+          "path": "frontend/src/pages/MiniGame.tsx",
+          "operation": "modify",
+          "description": "Apply bright, saturated colors to game selection cards and interactive game elements. Use the enhanced Tailwind color palette for card backgrounds, borders, draggable items, and drop zones. Ensure all game components use bold, child-friendly colors."
+        },
+        {
+          "path": "frontend/src/pages/PuzzleGame.tsx",
+          "operation": "modify",
+          "description": "Update puzzle game styling with bright, saturated colors for letter tiles, input fields, and buttons. Apply vibrant colors from the enhanced Tailwind palette to interactive elements, success states, and language selector."
+        },
+        {
+          "path": "frontend/src/pages/TimedChallenge.tsx",
+          "operation": "modify",
+          "description": "Apply bright, saturated colors to quiz question cards, answer buttons, timer display, and score indicators. Use the enhanced Tailwind color palette for all interactive elements and feedback states."
+        },
+        {
+          "path": "frontend/src/pages/Flashcards.tsx",
+          "operation": "modify",
+          "description": "Update flashcard styling with bright, saturated colors for card backgrounds, flip animations, and navigation controls. Apply vibrant colors from the enhanced Tailwind palette to card fronts, backs, and interactive buttons."
+        },
+        {
+          "path": "frontend/src/pages/Lessons.tsx",
+          "operation": "modify",
+          "description": "Apply bright, saturated colors to lesson cards, subject selector buttons, and navigation controls. Use the enhanced Tailwind color palette for card backgrounds, borders, and interactive states."
+        },
+        {
+          "path": "frontend/src/pages/AgeGroupSelection.tsx",
+          "operation": "modify",
+          "description": "Update age group selection cards with bright, saturated colors using the enhanced Tailwind palette. Apply vibrant backgrounds, borders, and hover states to make cards visually engaging for children."
+        },
+        {
+          "path": "frontend/src/pages/SubjectSelection.tsx",
+          "operation": "modify",
+          "description": "Apply bright, saturated colors to subject selection cards using the enhanced Tailwind color palette. Ensure all subject cards use bold, child-friendly backgrounds and borders with distinct hover states."
+        },
+        {
+          "path": "frontend/src/pages/Progress.tsx",
+          "operation": "modify",
+          "description": "Update progress display elements with bright, saturated colors for badges, lesson completion indicators, and quiz result cards. Apply vibrant colors from the enhanced Tailwind palette to all visual elements."
+        },
+        {
+          "path": "frontend/src/pages/ParentDashboard.tsx",
+          "operation": "modify",
+          "description": "Apply bright, saturated colors to dashboard cards, statistics displays, and data visualization elements using the enhanced Tailwind color palette. Ensure all components use bold, child-friendly colors."
+        },
+        {
+          "path": "frontend/src/pages/TeacherDashboard.tsx",
+          "operation": "modify",
+          "description": "Update dashboard elements with bright, saturated colors for statistics cards, data displays, and navigation controls using the enhanced Tailwind palette."
+        },
+        {
+          "path": "frontend/src/components/layout/Header.tsx",
+          "operation": "modify",
+          "description": "Apply bright, saturated colors to the header background, navigation buttons, and login button using the enhanced Tailwind color palette. Ensure all interactive header elements use bold, child-friendly colors."
+        },
+        {
+          "path": "frontend/src/components/layout/Footer.tsx",
+          "operation": "modify",
+          "description": "Update footer styling with bright, saturated background colors and vibrant link colors using the enhanced Tailwind palette."
+        },
+        {
+          "path": "frontend/src/components/RoleSelectionModal.tsx",
+          "operation": "modify",
+          "description": "Apply bright, saturated colors to modal background, role selection buttons, and interactive elements using the enhanced Tailwind color palette. Ensure buttons use bold, child-friendly colors."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Enhance the Poems & Nursery Rhymes section to include pre-built classic rhymes for all 4 languages with native script display and text-to-speech read-aloud functionality",
+      "summary": "Increase the display size of alphabet letters and number digits across AlphabetLesson, NumbersLesson, and Numbers100Lesson pages with larger, more tappable cards",
       "acceptanceCriteria": [
-        "At least 3 pre-built poems/rhymes are available for each of the 4 languages",
-        "Poems are displayed in their native script (Latin for English, Telugu script, Devanagari for Hindi, Tamil script)",
-        "Each poem card has a read-aloud button that uses the Web Speech API to speak the poem in the correct language",
-        "Poems are organized by language with a clear language tab or filter selector",
-        "Cards are colorful, illustrated with a relevant emoji or icon, and visually engaging for children"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/PoemsLesson.tsx",
-          "operation": "modify",
-          "description": "Expand the existing poems page to include at least 3 pre-built classic poems/rhymes for each of the 4 languages: English (e.g., Twinkle Twinkle Little Star, Baa Baa Black Sheep, Humpty Dumpty), Telugu (e.g., Chanda Mama, Amma Andam, Chinni Chinni Aasa), Hindi (e.g., Chanda Mama Door Ke, Machli Jal Ki Rani Hai, Aloo Kachaloo), and Tamil (e.g., Aaduvome Pallu Paduvome, Chinna Chinna Aasai, Kannan Vanthan). Store all poem text as hardcoded Unicode string literals in their native scripts. Add a language tab/filter selector at the top to filter poems by language. Each poem card should display the poem title, a relevant emoji icon, the full poem text in native script, and a prominent read-aloud button that uses the Web Speech API with the correct language code (en-US, te-IN, hi-IN, ta-IN). Ensure cards are colorful with distinct background colors per language and use large, readable fonts suitable for children. Maintain the expandable card pattern if already present, or implement collapsible poem content for better mobile UX."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Enhance the Numbers section to display numbers 1–20 with digits, number words in all 4 languages in native scripts, illustrated emoji counts, and text-to-speech support",
-      "acceptanceCriteria": [
-        "Numbers 1 through 20 are each displayed on a separate colorful card",
-        "Each card shows the digit, the number word in English, Telugu (e.g., ఒకటి), Hindi (e.g., एक), and Tamil (e.g., ஒன்று)",
-        "Each card displays a visual count using emoji (e.g., 🍎🍎🍎 for 3)",
-        "A language selector allows choosing the primary spoken language for text-to-speech playback",
-        "Tapping/clicking a card speaks the number in the selected language",
-        "Cards are large, colorful, and easy to read for children aged 3–12"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/NumbersLesson.tsx",
-          "operation": "modify",
-          "description": "Enhance the existing numbers lesson page to display numbers 1–20 in a responsive grid layout (grid-cols-2 on mobile, grid-cols-4 on tablet, grid-cols-5 on desktop). Each number card must show: the digit in large bold text, the number word in all 4 languages (English, Telugu in Telugu script, Hindi in Devanagari, Tamil in Tamil script) stored as hardcoded Unicode string literals, and a visual count representation using emoji (e.g., 🍎 for 1, 🍎🍎 for 2, up to 🍎🍎🍎🍎🍎 for 5, then simplified patterns for 6-20). Add a language selector dropdown at the top to choose the primary spoken language for text-to-speech. Implement onClick handlers for each card that use the Web Speech API to speak the number in the selected language with appropriate language codes (en-US, te-IN, hi-IN, ta-IN). Use distinct, bright background colors for each card (cycling through sunshine, sky, lavender, tangerine, cherry, grass theme colors). Ensure large, kid-friendly fonts and touch-friendly card sizes with proper spacing."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Wire generated alphabet illustration images into the enhanced Alphabet & Letters section as static assets for each letter card",
-      "acceptanceCriteria": [
-        "One illustrated image is shown per English alphabet letter card (A–Z)",
-        "Images are bright, simple, and appropriate for children aged 3–12",
-        "Images load from frontend/public/assets/generated as static files"
+        "Alphabet letter characters on cards are noticeably larger than before (e.g., at least 4xl–6xl or equivalent)",
+        "Number digits on cards in NumbersLesson and Numbers100Lesson are noticeably larger than before",
+        "Cards are large enough to be easily tapped/clicked by young children",
+        "Text remains fully visible and not clipped within card boundaries",
+        "Changes apply consistently for all supported languages (English, Telugu, Hindi, Tamil)"
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/AlphabetLesson.tsx",
           "operation": "modify",
-          "description": "Ensure each alphabet letter card (A-Z) displays the corresponding generated illustration from frontend/public/assets/generated/ using the exact filenames: alphabet-a.dim_200x200.png, alphabet-b.dim_200x200.png, alphabet-c.dim_200x200.png, alphabet-d.dim_200x200.png, alphabet-e.dim_200x200.png, alphabet-f.dim_200x200.png, alphabet-g.dim_200x200.png, alphabet-h.dim_200x200.png, alphabet-i.dim_200x200.png, alphabet-j.dim_200x200.png, alphabet-k.dim_200x200.png, alphabet-l.dim_200x200.png, alphabet-m.dim_200x200.png, alphabet-n.dim_200x200.png, alphabet-o.dim_200x200.png, alphabet-p.dim_200x200.png, alphabet-q.dim_200x200.png, alphabet-r.dim_200x200.png, alphabet-s.dim_200x200.png, alphabet-t.dim_200x200.png, alphabet-u.dim_200x200.png, alphabet-v.dim_200x200.png, alphabet-w.dim_200x200.png, alphabet-x.dim_200x200.png, alphabet-y.dim_200x200.png, alphabet-z.dim_200x200.png. Use img elements with src='/assets/generated/alphabet-{letter}.dim_200x200.png' for each letter card. Add alt text describing each image (e.g., 'Illustration of an apple for letter A'). Ensure images are displayed prominently on each card with proper sizing (width and height constrained to maintain aspect ratio) and rounded corners for a kid-friendly appearance."
+          "description": "Significantly increase the font size of letter characters displayed on each alphabet card to at least text-6xl or text-7xl (or larger custom size). Increase card dimensions (min-w, min-h) to accommodate the larger text and make cards more tappable for young children. Ensure padding and spacing are adjusted so letters remain fully visible without clipping. Apply changes consistently across all language modes (English, Telugu, Hindi, Tamil)."
+        },
+        {
+          "path": "frontend/src/pages/NumbersLesson.tsx",
+          "operation": "modify",
+          "description": "Significantly increase the font size of number digits on each number card to at least text-6xl or text-7xl. Increase card dimensions to make them larger and more tappable for young children. Adjust padding and spacing to ensure numbers are fully visible and not clipped within card boundaries. Apply changes consistently for all supported languages (English, Telugu, Hindi, Tamil)."
+        },
+        {
+          "path": "frontend/src/pages/Numbers100Lesson.tsx",
+          "operation": "modify",
+          "description": "Increase the font size of number digits in the 1-100 grid to at least text-4xl or text-5xl. Increase individual card/cell dimensions to accommodate larger numbers and improve tappability. Adjust grid layout spacing and card padding to ensure all numbers remain fully visible across all languages (English, Telugu, Hindi, Tamil). Balance card size with grid layout to maintain a usable view of all 100 numbers."
         }
       ]
     }

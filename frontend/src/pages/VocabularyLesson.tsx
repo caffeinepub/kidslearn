@@ -1,168 +1,126 @@
-import { useState } from 'react';
-import { Volume2 } from 'lucide-react';
+import React, { useState } from "react";
+import { Volume2 } from "lucide-react";
+import { getVocabulary } from "../data/languageData";
 
-type Language = 'english' | 'telugu' | 'hindi' | 'tamil';
-type Category = 'bodyparts' | 'animals' | 'trees' | 'flowers';
+type Language = "english" | "telugu" | "hindi" | "tamil";
+type Category = "animals" | "fruits" | "colors" | "body" | "food" | "nature";
 
-const LANGUAGE_LABELS: Record<Language, string> = {
-  english: '🇬🇧 English',
-  telugu: '🌺 Telugu',
-  hindi: '🪔 Hindi',
-  tamil: '🌸 Tamil',
+const LANGUAGE_CONFIG: Record<Language, { label: string; voice: string; btnClass: string }> = {
+  english: { label: "English", voice: "en-US", btnClass: "bg-sky-400 hover:bg-sky-500 text-white border-sky-600" },
+  telugu: { label: "తెలుగు", voice: "te-IN", btnClass: "bg-grass-400 hover:bg-grass-500 text-white border-grass-600" },
+  hindi: { label: "हिंदी", voice: "hi-IN", btnClass: "bg-tangerine-400 hover:bg-tangerine-500 text-white border-tangerine-600" },
+  tamil: { label: "தமிழ்", voice: "ta-IN", btnClass: "bg-lavender-400 hover:bg-lavender-500 text-white border-lavender-600" },
 };
 
-const CATEGORY_LABELS: Record<Category, { label: string; emoji: string }> = {
-  bodyparts: { label: 'Body Parts', emoji: '🫀' },
-  animals: { label: 'Animals', emoji: '🐾' },
-  trees: { label: 'Trees', emoji: '🌳' },
-  flowers: { label: 'Flowers', emoji: '🌸' },
-};
-
-interface VocabItem {
-  id: string;
-  emoji: string;
-  names: Record<Language, string>;
-}
-
-const VOCAB_DATA: Record<Category, VocabItem[]> = {
-  bodyparts: [
-    { id: 'head', emoji: '🗣️', names: { english: 'Head', telugu: 'తల', hindi: 'सिर', tamil: 'தலை' } },
-    { id: 'eye', emoji: '👁️', names: { english: 'Eye', telugu: 'కన్ను', hindi: 'आँख', tamil: 'கண்' } },
-    { id: 'ear', emoji: '👂', names: { english: 'Ear', telugu: 'చెవి', hindi: 'कान', tamil: 'காது' } },
-    { id: 'nose', emoji: '👃', names: { english: 'Nose', telugu: 'ముక్కు', hindi: 'नाक', tamil: 'மூக்கு' } },
-    { id: 'mouth', emoji: '👄', names: { english: 'Mouth', telugu: 'నోరు', hindi: 'मुँह', tamil: 'வாய்' } },
-    { id: 'hand', emoji: '✋', names: { english: 'Hand', telugu: 'చేయి', hindi: 'हाथ', tamil: 'கை' } },
-    { id: 'foot', emoji: '🦶', names: { english: 'Foot', telugu: 'కాలు', hindi: 'पैर', tamil: 'கால்' } },
-    { id: 'heart', emoji: '❤️', names: { english: 'Heart', telugu: 'గుండె', hindi: 'दिल', tamil: 'இதயம்' } },
-    { id: 'tooth', emoji: '🦷', names: { english: 'Tooth', telugu: 'పన్ను', hindi: 'दाँत', tamil: 'பல்' } },
-    { id: 'hair', emoji: '💇', names: { english: 'Hair', telugu: 'జుట్టు', hindi: 'बाल', tamil: 'முடி' } },
-  ],
-  animals: [
-    { id: 'dog', emoji: '🐶', names: { english: 'Dog', telugu: 'కుక్క', hindi: 'कुत्ता', tamil: 'நாய்' } },
-    { id: 'cat', emoji: '🐱', names: { english: 'Cat', telugu: 'పిల్లి', hindi: 'बिल्ली', tamil: 'பூனை' } },
-    { id: 'cow', emoji: '🐄', names: { english: 'Cow', telugu: 'ఆవు', hindi: 'गाय', tamil: 'பசு' } },
-    { id: 'elephant', emoji: '🐘', names: { english: 'Elephant', telugu: 'ఏనుగు', hindi: 'हाथी', tamil: 'யானை' } },
-    { id: 'lion', emoji: '🦁', names: { english: 'Lion', telugu: 'సింహం', hindi: 'शेर', tamil: 'சிங்கம்' } },
-    { id: 'tiger', emoji: '🐯', names: { english: 'Tiger', telugu: 'పులి', hindi: 'बाघ', tamil: 'புலி' } },
-    { id: 'bird', emoji: '🐦', names: { english: 'Bird', telugu: 'పక్షి', hindi: 'पक्षी', tamil: 'பறவை' } },
-    { id: 'fish', emoji: '🐟', names: { english: 'Fish', telugu: 'చేప', hindi: 'मछली', tamil: 'மீன்' } },
-    { id: 'rabbit', emoji: '🐰', names: { english: 'Rabbit', telugu: 'కుందేలు', hindi: 'खरगोश', tamil: 'முயல்' } },
-    { id: 'monkey', emoji: '🐒', names: { english: 'Monkey', telugu: 'కోతి', hindi: 'बंदर', tamil: 'குரங்கு' } },
-  ],
-  trees: [
-    { id: 'mango', emoji: '🥭', names: { english: 'Mango Tree', telugu: 'మామిడి చెట్టు', hindi: 'आम का पेड़', tamil: 'மாமரம்' } },
-    { id: 'coconut', emoji: '🥥', names: { english: 'Coconut Tree', telugu: 'కొబ్బరి చెట్టు', hindi: 'नारियल का पेड़', tamil: 'தென்னை மரம்' } },
-    { id: 'banyan', emoji: '🌳', names: { english: 'Banyan Tree', telugu: 'మర్రి చెట్టు', hindi: 'बरगद का पेड़', tamil: 'ஆலமரம்' } },
-    { id: 'neem', emoji: '🌿', names: { english: 'Neem Tree', telugu: 'వేప చెట్టు', hindi: 'नीम का पेड़', tamil: 'வேப்பமரம்' } },
-    { id: 'banana', emoji: '🍌', names: { english: 'Banana Tree', telugu: 'అరటి చెట్టు', hindi: 'केले का पेड़', tamil: 'வாழை மரம்' } },
-    { id: 'tamarind', emoji: '🌱', names: { english: 'Tamarind Tree', telugu: 'చింత చెట్టు', hindi: 'इमली का पेड़', tamil: 'புளி மரம்' } },
-    { id: 'peepal', emoji: '🍃', names: { english: 'Peepal Tree', telugu: 'రావి చెట్టు', hindi: 'पीपल का पेड़', tamil: 'அரசமரம்' } },
-    { id: 'bamboo', emoji: '🎋', names: { english: 'Bamboo', telugu: 'వెదురు', hindi: 'बाँस', tamil: 'மூங்கில்' } },
-  ],
-  flowers: [
-    { id: 'rose', emoji: '🌹', names: { english: 'Rose', telugu: 'గులాబి', hindi: 'गुलाब', tamil: 'ரோஜா' } },
-    { id: 'lotus', emoji: '🪷', names: { english: 'Lotus', telugu: 'తామర', hindi: 'कमल', tamil: 'தாமரை' } },
-    { id: 'jasmine', emoji: '🌸', names: { english: 'Jasmine', telugu: 'మల్లె', hindi: 'चमेली', tamil: 'மல்லிகை' } },
-    { id: 'sunflower', emoji: '🌻', names: { english: 'Sunflower', telugu: 'సూర్యకాంతి', hindi: 'सूरजमुखी', tamil: 'சூரியகாந்தி' } },
-    { id: 'marigold', emoji: '🌼', names: { english: 'Marigold', telugu: 'బంతి పువ్వు', hindi: 'गेंदा', tamil: 'சாமந்தி' } },
-    { id: 'hibiscus', emoji: '🌺', names: { english: 'Hibiscus', telugu: 'మందారం', hindi: 'गुड़हल', tamil: 'செம்பருத்தி' } },
-    { id: 'tulip', emoji: '🌷', names: { english: 'Tulip', telugu: 'ట్యూలిప్', hindi: 'ट्यूलिप', tamil: 'டுலிப்' } },
-    { id: 'lily', emoji: '💐', names: { english: 'Lily', telugu: 'లిల్లీ', hindi: 'लिली', tamil: 'லில்லி' } },
-  ],
-};
-
-const CARD_COLORS = [
-  'bg-sunshine-400 border-sunshine-600',
-  'bg-grass-400 border-grass-600',
-  'bg-tangerine-400 border-tangerine-600',
-  'bg-cherry-400 border-cherry-600',
-  'bg-sky-400 border-sky-600',
-  'bg-lavender-400 border-lavender-600',
+const CATEGORIES: { key: Category; label: string; emoji: string; bgClass: string }[] = [
+  { key: "animals", label: "Animals", emoji: "🐾", bgClass: "bg-grass-200 border-grass-500" },
+  { key: "fruits", label: "Fruits", emoji: "🍎", bgClass: "bg-cherry-200 border-cherry-500" },
+  { key: "colors", label: "Colors", emoji: "🎨", bgClass: "bg-lavender-200 border-lavender-500" },
+  { key: "body", label: "Body Parts", emoji: "👁️", bgClass: "bg-sky-200 border-sky-500" },
+  { key: "food", label: "Food", emoji: "🍽️", bgClass: "bg-tangerine-200 border-tangerine-500" },
+  { key: "nature", label: "Nature", emoji: "🌿", bgClass: "bg-mint-200 border-mint-500" },
 ];
 
+const CARD_COLORS = [
+  "bg-sunshine-200 border-sunshine-500",
+  "bg-cherry-200 border-cherry-500",
+  "bg-sky-200 border-sky-500",
+  "bg-grass-200 border-grass-500",
+  "bg-tangerine-200 border-tangerine-500",
+  "bg-lavender-200 border-lavender-500",
+  "bg-mint-200 border-mint-500",
+  "bg-coral-200 border-coral-500",
+];
+
+function speak(text: string, lang: string) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang;
+  utterance.rate = 0.8;
+  window.speechSynthesis.speak(utterance);
+}
+
 export default function VocabularyLesson() {
-  const [language, setLanguage] = useState<Language>('english');
-  const [category, setCategory] = useState<Category>('animals');
+  const [language, setLanguage] = useState<Language>("english");
+  const [category, setCategory] = useState<Category>("animals");
 
-  const playSound = (itemId: string) => {
-    const audio = new Audio(`/assets/audio/${language}/vocabulary/${category}/${itemId}.mp3`);
-    audio.play().catch(() => {});
-  };
-
-  const items = VOCAB_DATA[category];
+  const vocab = getVocabulary(language, category);
+  const config = LANGUAGE_CONFIG[language];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-cherry-100 to-sunshine-50 px-4 py-8">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="font-fredoka text-4xl sm:text-5xl text-center text-cherry-700 mb-2">
-          Vocabulary 🌟
-        </h1>
-        <p className="font-nunito text-center text-muted-foreground text-lg mb-6">
-          Learn words with pictures in all languages!
-        </p>
-
-        {/* Category Selector */}
-        <div className="flex flex-wrap justify-center gap-3 mb-4">
-          {(Object.keys(CATEGORY_LABELS) as Category[]).map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={`font-nunito font-bold px-4 py-2 rounded-3xl border-4 transition-all hover:scale-105 active:scale-95 text-base ${
-                category === cat
-                  ? 'bg-cherry-500 border-cherry-700 text-white shadow-fun'
-                  : 'bg-white border-cherry-300 text-cherry-700 hover:bg-cherry-50'
-              }`}
-            >
-              {CATEGORY_LABELS[cat].emoji} {CATEGORY_LABELS[cat].label}
-            </button>
-          ))}
+    <div className="min-h-screen bg-gradient-to-br from-lavender-100 via-sky-100 to-mint-100 py-6 px-4">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="font-heading text-5xl md:text-6xl text-lavender-600 drop-shadow-md mb-2">
+            📚 Vocabulary
+          </h1>
+          <p className="font-body text-xl text-lavender-500 font-semibold">
+            Learn words with pictures!
+          </p>
         </div>
 
         {/* Language Selector */}
-        <div className="flex flex-wrap justify-center gap-3 mb-8">
-          {(Object.keys(LANGUAGE_LABELS) as Language[]).map((lang) => (
+        <div className="flex flex-wrap justify-center gap-3 mb-6">
+          {(Object.keys(LANGUAGE_CONFIG) as Language[]).map((lang) => (
             <button
               key={lang}
               onClick={() => setLanguage(lang)}
-              className={`font-nunito font-bold px-4 py-2 rounded-3xl border-4 transition-all hover:scale-105 active:scale-95 text-sm ${
+              className={`kid-btn px-6 py-3 text-lg font-heading border-4 ${
                 language === lang
-                  ? 'bg-sunshine-500 border-sunshine-700 text-white shadow-fun'
-                  : 'bg-white border-sunshine-300 text-sunshine-700 hover:bg-sunshine-50'
+                  ? LANGUAGE_CONFIG[lang].btnClass + " scale-110 shadow-fun-lg"
+                  : "bg-white border-gray-300 text-gray-600 hover:scale-105"
               }`}
             >
-              {LANGUAGE_LABELS[lang]}
+              {LANGUAGE_CONFIG[lang].label}
             </button>
           ))}
         </div>
 
-        {/* Vocabulary Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {items.map((item, i) => {
-            const colorClass = CARD_COLORS[i % CARD_COLORS.length];
+        {/* Category Selector */}
+        <div className="flex flex-wrap justify-center gap-3 mb-8">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.key}
+              onClick={() => setCategory(cat.key)}
+              className={`kid-btn px-5 py-2.5 text-base font-heading border-4 flex items-center gap-2 ${
+                category === cat.key
+                  ? cat.bgClass + " scale-110 shadow-fun-lg text-gray-800"
+                  : "bg-white border-gray-300 text-gray-600 hover:scale-105"
+              }`}
+            >
+              <span>{cat.emoji}</span> {cat.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Vocabulary Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {vocab.map((item, idx) => {
+            const colorClass = CARD_COLORS[idx % CARD_COLORS.length];
             return (
               <div
-                key={item.id}
-                className={`${colorClass} border-4 rounded-3xl p-4 flex flex-col items-center gap-2 shadow-fun-lg hover:scale-105 transition-all duration-200`}
+                key={`${language}-${category}-${idx}`}
+                className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 animate-card-entrance card-delay-${Math.min(idx + 1, 6)} flex flex-col overflow-hidden`}
+                style={{ height: "220px" }}
+                onClick={() => speak(item.word, config.voice)}
               >
-                <span className="text-5xl">{item.emoji}</span>
-                <span className="font-fredoka text-white text-xl text-center drop-shadow-sm">
-                  {item.names[language]}
-                </span>
-                {/* Show all language names */}
-                <div className="w-full space-y-1">
-                  {(Object.keys(item.names) as Language[]).filter(l => l !== language).map(l => (
-                    <div key={l} className="flex items-center justify-between bg-white/20 rounded-xl px-2 py-0.5">
-                      <span className="font-nunito text-white/80 text-xs">{item.names[l]}</span>
-                    </div>
-                  ))}
+                {/* Emoji area */}
+                <div className="flex-1 flex items-center justify-center bg-white/20">
+                  <span className="text-6xl">{item.emoji}</span>
                 </div>
-                <button
-                  onClick={() => playSound(item.id)}
-                  className="mt-1 bg-white/30 hover:bg-white/50 text-white rounded-2xl px-3 py-1 flex items-center gap-1 font-nunito font-bold text-sm transition-all hover:scale-105 active:scale-95"
-                >
-                  <Volume2 size={14} />
-                  Play
-                </button>
+                {/* Word area */}
+                <div className="flex items-center justify-between px-3 py-2 bg-white/30">
+                  <span className="font-heading text-lg text-gray-800 truncate flex-1">{item.word}</span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); speak(item.word, config.voice); }}
+                    className={`kid-btn p-1.5 rounded-xl border-2 border-white ${config.btnClass} shrink-0 ml-1`}
+                    aria-label="Speak"
+                  >
+                    <Volume2 size={16} />
+                  </button>
+                </div>
               </div>
             );
           })}

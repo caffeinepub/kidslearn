@@ -1,108 +1,149 @@
-import { useNavigate, useRouter } from '@tanstack/react-router';
-import { ArrowLeft, Trophy, Heart, LogIn, LogOut, User } from 'lucide-react';
+import React from 'react';
+import { useNavigate, useLocation } from '@tanstack/react-router';
+import { Trophy, ArrowLeft, LogIn, LogOut, GraduationCap, Users } from 'lucide-react';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
 import { useQueryClient } from '@tanstack/react-query';
+import { useGetCallerRole } from '../../hooks/useQueries';
+import { UserRole } from '../../backend';
 
-export default function Header() {
+const Header: React.FC = () => {
   const navigate = useNavigate();
-  const router = useRouter();
-  const { identity, clear, login, loginStatus } = useInternetIdentity();
+  const location = useLocation();
+  const { login, clear, loginStatus, identity } = useInternetIdentity();
   const queryClient = useQueryClient();
   const isAuthenticated = !!identity;
   const isLoggingIn = loginStatus === 'logging-in';
 
-  const handleBack = () => {
-    router.history.back();
-  };
+  const { data: role, isLoading: roleLoading } = useGetCallerRole();
 
-  const handleLogout = async () => {
-    await clear();
-    queryClient.clear();
+  const isHome = location.pathname === '/';
+
+  const handleBack = () => {
     navigate({ to: '/' });
   };
 
-  const handleLogin = async () => {
-    try {
-      await login();
-    } catch (e) {
-      console.error('Login error', e);
+  const handleAuth = async () => {
+    if (isAuthenticated) {
+      await clear();
+      queryClient.clear();
+      navigate({ to: '/' });
+    } else {
+      try {
+        await login();
+      } catch (error: unknown) {
+        const err = error as Error;
+        if (err?.message === 'User is already authenticated') {
+          await clear();
+          setTimeout(() => login(), 300);
+        }
+      }
     }
   };
 
-  return (
-    <header className="sticky top-0 z-50 bg-sunshine-400 shadow-fun border-b-4 border-sunshine-600">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Left: Back button */}
-        <button
-          onClick={handleBack}
-          className="flex items-center gap-1 bg-white/80 hover:bg-white text-sunshine-700 font-nunito font-bold px-3 py-2 rounded-2xl shadow-fun transition-all hover:scale-105 active:scale-95 text-sm"
-        >
-          <ArrowLeft size={18} />
-          <span className="hidden sm:inline">Back</span>
-        </button>
+  const handleDashboard = () => {
+    if (role === UserRole.teacher) {
+      navigate({ to: '/teacher-dashboard' });
+    } else if (role === UserRole.parent) {
+      navigate({ to: '/parent-dashboard' });
+    }
+  };
 
-        {/* Center: Logo */}
-        <button
-          onClick={() => navigate({ to: '/' })}
-          className="flex items-center gap-2 hover:scale-105 transition-transform"
-        >
-          <img
-            src="/assets/generated/kidslearn-logo.dim_256x256.png"
-            alt="KidsLearn"
-            className="w-10 h-10 rounded-2xl shadow-fun"
-          />
-          <span className="font-fredoka text-2xl text-white drop-shadow-md hidden sm:block">
-            KidsLearn
-          </span>
-        </button>
+  const handleProgress = () => {
+    navigate({ to: '/progress' });
+  };
+
+  return (
+    <header className="sticky top-0 z-50 bg-sunshine-400 shadow-fun">
+      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Left: Back or Logo */}
+        <div className="flex items-center gap-2">
+          {!isHome && (
+            <button
+              onClick={handleBack}
+              className="p-2 rounded-full bg-white/20 hover:bg-white/40 transition-colors text-white"
+              aria-label="Go back"
+            >
+              <ArrowLeft size={20} />
+            </button>
+          )}
+          <button
+            onClick={() => navigate({ to: '/' })}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+          >
+            <img
+              src="/assets/generated/kidslearn-logo.dim_256x256.png"
+              alt="KidsLearn"
+              className="w-9 h-9 rounded-xl object-cover"
+            />
+            <span className="text-white font-fredoka text-xl font-bold hidden sm:block">
+              KidsLearn
+            </span>
+          </button>
+        </div>
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => navigate({ to: '/donation' })}
-            className="flex items-center gap-1 bg-cherry-500 hover:bg-cherry-600 text-white font-nunito font-bold px-3 py-2 rounded-2xl shadow-fun transition-all hover:scale-105 active:scale-95 text-sm"
-          >
-            <Heart size={16} />
-            <span className="hidden sm:inline">Donate</span>
-          </button>
-
-          <button
-            onClick={() => navigate({ to: '/progress' })}
-            className="flex items-center gap-1 bg-grass-500 hover:bg-grass-600 text-white font-nunito font-bold px-3 py-2 rounded-2xl shadow-fun transition-all hover:scale-105 active:scale-95 text-sm"
-          >
-            <Trophy size={16} />
-            <span className="hidden sm:inline">Progress</span>
-          </button>
-
-          {isAuthenticated ? (
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => navigate({ to: '/parent-dashboard' })}
-                className="flex items-center gap-1 bg-lavender-500 hover:bg-lavender-600 text-white font-nunito font-bold px-3 py-2 rounded-2xl shadow-fun transition-all hover:scale-105 active:scale-95 text-sm"
-              >
-                <User size={16} />
-                <span className="hidden sm:inline">Dashboard</span>
-              </button>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-1 bg-white/80 hover:bg-white text-sunshine-700 font-nunito font-bold px-3 py-2 rounded-2xl shadow-fun transition-all hover:scale-105 active:scale-95 text-sm"
-              >
-                <LogOut size={16} />
-                <span className="hidden sm:inline">Logout</span>
-              </button>
-            </div>
-          ) : (
+          {/* Dashboard link for teacher/parent */}
+          {isAuthenticated && !roleLoading && role && role !== UserRole.student && (
             <button
-              onClick={handleLogin}
-              disabled={isLoggingIn}
-              className="flex items-center gap-1 bg-sky-500 hover:bg-sky-600 text-white font-nunito font-bold px-3 py-2 rounded-2xl shadow-fun transition-all hover:scale-105 active:scale-95 text-sm disabled:opacity-60"
+              onClick={handleDashboard}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-colors text-white text-sm font-nunito font-bold"
+              aria-label="Dashboard"
             >
-              <LogIn size={16} />
-              <span className="hidden sm:inline">{isLoggingIn ? 'Logging in...' : 'Parent Login'}</span>
+              {role === UserRole.teacher ? (
+                <>
+                  <GraduationCap size={16} />
+                  <span className="hidden sm:inline">Teacher</span>
+                </>
+              ) : (
+                <>
+                  <Users size={16} />
+                  <span className="hidden sm:inline">Parent</span>
+                </>
+              )}
             </button>
           )}
+
+          {/* Progress button */}
+          <button
+            onClick={handleProgress}
+            className="p-2 rounded-full bg-white/20 hover:bg-white/40 transition-colors text-white"
+            aria-label="View progress"
+          >
+            <Trophy size={20} />
+          </button>
+
+          {/* Login/Logout */}
+          <button
+            onClick={handleAuth}
+            disabled={isLoggingIn}
+            className={`
+              flex items-center gap-1.5 px-3 py-1.5 rounded-full font-nunito font-bold text-sm transition-all
+              ${isAuthenticated
+                ? 'bg-white/20 hover:bg-white/40 text-white'
+                : 'bg-white text-sunshine-600 hover:bg-sunshine-50'
+              }
+              disabled:opacity-60
+            `}
+          >
+            {isLoggingIn ? (
+              <span className="animate-pulse">Logging in...</span>
+            ) : isAuthenticated ? (
+              <>
+                <LogOut size={16} />
+                <span className="hidden sm:inline">Logout</span>
+              </>
+            ) : (
+              <>
+                <LogIn size={16} />
+                <span className="hidden sm:inline">Login</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     </header>
   );
-}
+};
+
+export default Header;

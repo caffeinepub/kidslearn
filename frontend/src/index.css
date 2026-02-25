@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,75 +6,102 @@
 
 @layer base {
   :root {
-    --background: oklch(0.99 0.005 90);
-    --foreground: oklch(0.2 0.02 260);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.2 0.02 260);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.2 0.02 260);
-    --primary: oklch(0.75 0.18 55);
-    --primary-foreground: oklch(0.15 0.02 55);
-    --secondary: oklch(0.88 0.12 145);
-    --secondary-foreground: oklch(0.2 0.05 145);
-    --muted: oklch(0.95 0.02 90);
-    --muted-foreground: oklch(0.55 0.03 260);
-    --accent: oklch(0.78 0.16 30);
-    --accent-foreground: oklch(0.15 0.02 30);
-    --destructive: oklch(0.62 0.22 25);
-    --destructive-foreground: oklch(0.98 0.01 25);
-    --border: oklch(0.88 0.03 90);
-    --input: oklch(0.88 0.03 90);
-    --ring: oklch(0.75 0.18 55);
-    --radius: 0.75rem;
-    --success: oklch(0.72 0.18 145);
-    --warning: oklch(0.82 0.18 75);
+    --background: 55 100% 97%;
+    --foreground: 25 30% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 25 30% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 25 30% 20%;
+    --primary: 35 100% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 200 90% 55%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 55 40% 92%;
+    --muted-foreground: 25 20% 45%;
+    --accent: 280 80% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 40 60% 85%;
+    --input: 40 60% 85%;
+    --ring: 35 100% 55%;
+    --radius: 1rem;
   }
 
   .dark {
-    --background: oklch(0.15 0.02 260);
-    --foreground: oklch(0.95 0.01 90);
-    --card: oklch(0.2 0.02 260);
-    --card-foreground: oklch(0.95 0.01 90);
-    --popover: oklch(0.2 0.02 260);
-    --popover-foreground: oklch(0.95 0.01 90);
-    --primary: oklch(0.75 0.18 55);
-    --primary-foreground: oklch(0.15 0.02 55);
-    --secondary: oklch(0.35 0.08 145);
-    --secondary-foreground: oklch(0.9 0.05 145);
-    --muted: oklch(0.25 0.02 260);
-    --muted-foreground: oklch(0.65 0.03 260);
-    --accent: oklch(0.65 0.16 30);
-    --accent-foreground: oklch(0.98 0.01 30);
-    --destructive: oklch(0.55 0.22 25);
-    --destructive-foreground: oklch(0.98 0.01 25);
-    --border: oklch(0.3 0.02 260);
-    --input: oklch(0.3 0.02 260);
-    --ring: oklch(0.75 0.18 55);
+    --background: 240 20% 12%;
+    --foreground: 55 80% 95%;
+    --card: 240 20% 18%;
+    --card-foreground: 55 80% 95%;
+    --popover: 240 20% 18%;
+    --popover-foreground: 55 80% 95%;
+    --primary: 35 100% 60%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 200 80% 55%;
+    --secondary-foreground: 0 0% 10%;
+    --muted: 240 15% 25%;
+    --muted-foreground: 240 10% 65%;
+    --accent: 280 70% 65%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 15% 28%;
+    --input: 240 15% 28%;
+    --ring: 35 100% 60%;
   }
+}
 
+@layer base {
   * {
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground font-nunito;
+  html {
+    font-size: 1.125rem;
   }
 
-  h1, h2, h3 {
-    @apply font-fredoka;
+  body {
+    @apply bg-background text-foreground font-body;
+    background-image: 
+      radial-gradient(circle at 20% 20%, oklch(95% 0.12 95) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, oklch(95% 0.12 230) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, oklch(97% 0.08 145) 0%, transparent 70%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
   }
 }
 
 @layer utilities {
-  .font-fredoka {
-    font-family: 'Fredoka One', cursive;
+  .kid-body {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    line-height: 1.6;
   }
-  .font-nunito {
-    font-family: 'Nunito', sans-serif;
+
+  .kid-heading {
+    font-size: clamp(1.5rem, 5vw, 3rem);
+    line-height: 1.2;
   }
+
+  .kid-card {
+    @apply rounded-3xl shadow-fun border-4 transition-all duration-200;
+  }
+
+  .kid-btn {
+    @apply rounded-2xl font-heading font-bold shadow-fun transition-all duration-150 active:translate-y-1 active:shadow-none;
+  }
+
+  .card-delay-1 { animation-delay: 0.05s; }
+  .card-delay-2 { animation-delay: 0.10s; }
+  .card-delay-3 { animation-delay: 0.15s; }
+  .card-delay-4 { animation-delay: 0.20s; }
+  .card-delay-5 { animation-delay: 0.25s; }
+  .card-delay-6 { animation-delay: 0.30s; }
 }
 
-/* Flip card animation */
+/* Flip card styles */
 .flip-card {
   perspective: 1000px;
 }
@@ -87,7 +114,7 @@
   transform-style: preserve-3d;
 }
 
-.flip-card-inner.flipped {
+.flip-card.flipped .flip-card-inner {
   transform: rotateY(180deg);
 }
 
@@ -106,59 +133,66 @@
 
 /* Confetti animation */
 @keyframes confetti-fall {
-  0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
   100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
 }
 
-@keyframes bounce-in {
-  0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(1); }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-
-@keyframes wiggle {
-  0%, 100% { transform: rotate(-3deg); }
-  50% { transform: rotate(3deg); }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
-  70% { box-shadow: 0 0 0 15px rgba(251, 191, 36, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
-}
-
-.animate-bounce-in {
-  animation: bounce-in 0.5s ease-out;
-}
-
-.animate-wiggle {
-  animation: wiggle 0.5s ease-in-out;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
-
-.animate-pulse-ring {
-  animation: pulse-ring 1.5s ease-out infinite;
+.confetti-piece {
+  animation: confetti-fall 3s ease-in forwards;
 }
 
 /* Staggered card entrance */
-.card-enter-1 { animation: bounce-in 0.4s ease-out 0.1s both; }
-.card-enter-2 { animation: bounce-in 0.4s ease-out 0.2s both; }
-.card-enter-3 { animation: bounce-in 0.4s ease-out 0.3s both; }
-.card-enter-4 { animation: bounce-in 0.4s ease-out 0.4s both; }
-.card-enter-5 { animation: bounce-in 0.4s ease-out 0.5s both; }
-.card-enter-6 { animation: bounce-in 0.4s ease-out 0.6s both; }
-.card-enter-7 { animation: bounce-in 0.4s ease-out 0.7s both; }
-.card-enter-8 { animation: bounce-in 0.4s ease-out 0.8s both; }
+@keyframes card-entrance {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-card-entrance {
+  opacity: 0;
+  animation: card-entrance 0.4s ease-out forwards;
+}
+
+/* Rainbow text */
+.rainbow-text {
+  background: linear-gradient(90deg, 
+    oklch(65% 0.28 15), 
+    oklch(70% 0.28 50), 
+    oklch(74% 0.28 82), 
+    oklch(65% 0.28 145), 
+    oklch(67% 0.28 230), 
+    oklch(66% 0.28 290)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Bouncy hover */
+.hover-bounce:hover {
+  animation: bounce2 0.5s ease-in-out;
+}
+
+@keyframes bounce2 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: oklch(95% 0.05 95);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(74% 0.28 82);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(65% 0.26 78);
+}

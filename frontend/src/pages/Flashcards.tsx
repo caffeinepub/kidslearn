@@ -1,190 +1,122 @@
-import { useState, useRef } from 'react';
-import { useSearch } from '@tanstack/react-router';
-import { Volume2, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
-import { useGetFlashcards } from '../hooks/useQueries';
-import { Skeleton } from '@/components/ui/skeleton';
+import React, { useState } from "react";
+import { ChevronLeft, ChevronRight, Volume2, RotateCcw } from "lucide-react";
+import { getFlashcards } from "../data/languageData";
 
-const FALLBACK_FLASHCARDS: Record<string, Array<{ id: bigint; front: string; back: string; image: string }>> = {
-  math: [
-    { id: 1n, front: '2 + 3 = ?', back: '5 🎉 Two plus three equals five!', image: '' },
-    { id: 2n, front: 'What shape has 3 sides?', back: 'Triangle 🔺 A triangle has exactly 3 sides and 3 corners!', image: '' },
-    { id: 3n, front: '10 - 4 = ?', back: '6 ✨ Ten minus four equals six!', image: '' },
-    { id: 4n, front: 'What is half of 8?', back: '4 🌟 Half of 8 is 4!', image: '' },
-  ],
-  alphabet: [
-    { id: 5n, front: 'A', back: 'A is for Apple 🍎 — "ah" sound', image: '' },
-    { id: 6n, front: 'B', back: 'B is for Ball 🏀 — "buh" sound', image: '' },
-    { id: 7n, front: 'C', back: 'C is for Cat 🐱 — "kuh" sound', image: '' },
-    { id: 8n, front: 'D', back: 'D is for Dog 🐶 — "duh" sound', image: '' },
-  ],
-  science: [
-    { id: 9n, front: 'What do plants need to grow?', back: 'Sunlight ☀️, Water 💧, and Air 🌬️!', image: '' },
-    { id: 10n, front: 'What is the largest planet?', back: 'Jupiter 🪐 — It\'s so big, 1,300 Earths could fit inside!', image: '' },
-    { id: 11n, front: 'What do we call baby frogs?', back: 'Tadpoles 🐸 — They start with tails and grow legs!', image: '' },
-    { id: 12n, front: 'What gas do we breathe?', back: 'Oxygen (O₂) 💨 — Plants make oxygen for us!', image: '' },
-  ],
-  telugu: [
-    { id: 13n, front: 'అ', back: '"a" sound — like in "apple" 🍎', image: '' },
-    { id: 14n, front: 'ఒకటి', back: 'One (1) — ఒకటి means the number 1 🌟', image: '' },
-    { id: 15n, front: 'ఎరుపు', back: 'Red color 🔴 — ఎరుపు means red!', image: '' },
-    { id: 16n, front: 'నమస్కారం', back: 'Hello / Greetings 🙏 — A respectful Telugu greeting!', image: '' },
-  ],
-  hindi: [
-    { id: 17n, front: 'अ', back: '"a" sound — first letter of Hindi alphabet 🌟', image: '' },
-    { id: 18n, front: 'एक', back: 'One (1) — एक means the number 1 ☝️', image: '' },
-    { id: 19n, front: 'लाल', back: 'Red color 🔴 — लाल means red!', image: '' },
-    { id: 20n, front: 'नमस्ते', back: 'Hello / Namaste 🙏 — A warm Hindi greeting!', image: '' },
-  ],
-  english: [
-    { id: 21n, front: 'Cat', back: 'A small furry animal that says "meow" 🐱', image: '' },
-    { id: 22n, front: 'Run', back: 'To move quickly on your feet 🏃 — Run is an action word (verb)!', image: '' },
-    { id: 23n, front: 'Happy', back: 'Feeling joyful and glad 😊 — Happy is a describing word (adjective)!', image: '' },
-    { id: 24n, front: 'Big', back: 'Large in size 🐘 — The elephant is big!', image: '' },
-  ],
+type Language = "english" | "telugu" | "hindi" | "tamil";
+
+const LANGUAGE_CONFIG: Record<Language, { label: string; voice: string; btnClass: string; frontBg: string; backBg: string }> = {
+  english: { label: "English", voice: "en-US", btnClass: "bg-sky-400 hover:bg-sky-500 text-white border-sky-600", frontBg: "bg-sky-200 border-sky-500", backBg: "bg-sky-400 border-sky-600" },
+  telugu: { label: "తెలుగు", voice: "te-IN", btnClass: "bg-grass-400 hover:bg-grass-500 text-white border-grass-600", frontBg: "bg-grass-200 border-grass-500", backBg: "bg-grass-400 border-grass-600" },
+  hindi: { label: "हिंदी", voice: "hi-IN", btnClass: "bg-tangerine-400 hover:bg-tangerine-500 text-white border-tangerine-600", frontBg: "bg-tangerine-200 border-tangerine-500", backBg: "bg-tangerine-400 border-tangerine-600" },
+  tamil: { label: "தமிழ்", voice: "ta-IN", btnClass: "bg-lavender-400 hover:bg-lavender-500 text-white border-lavender-600", frontBg: "bg-lavender-200 border-lavender-500", backBg: "bg-lavender-400 border-lavender-600" },
 };
 
+function speak(text: string, lang: string) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = lang;
+  utterance.rate = 0.8;
+  window.speechSynthesis.speak(utterance);
+}
+
 export default function Flashcards() {
-  const search = useSearch({ strict: false }) as { ageGroup?: string; subject?: string };
-  const subject = search.subject || 'math';
+  const [language, setLanguage] = useState<Language>("english");
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [flipped, setFlipped] = useState(false);
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const synthRef = useRef<SpeechSynthesis | null>(
-    typeof window !== 'undefined' ? window.speechSynthesis : null
-  );
+  const cards = getFlashcards(language);
+  const config = LANGUAGE_CONFIG[language];
+  const card = cards[currentIdx];
 
-  const { data: backendFlashcards, isLoading } = useGetFlashcards();
-
-  const flashcards = (backendFlashcards && backendFlashcards.length > 0)
-    ? backendFlashcards
-    : (FALLBACK_FLASHCARDS[subject] || FALLBACK_FLASHCARDS.math);
-
-  const currentCard = flashcards[currentIndex];
-
-  const handleFlip = () => setIsFlipped((f) => !f);
-
-  const handleSpeak = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!synthRef.current || !currentCard) return;
-    if (isSpeaking) {
-      synthRef.current.cancel();
-      setIsSpeaking(false);
-      return;
-    }
-    const text = isFlipped ? currentCard.back : currentCard.front;
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.9;
-    utterance.pitch = 1.1;
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-    synthRef.current.speak(utterance);
-    setIsSpeaking(true);
+  const handleNext = () => {
+    setCurrentIdx((i) => (i + 1) % cards.length);
+    setFlipped(false);
   };
 
   const handlePrev = () => {
-    synthRef.current?.cancel();
-    setIsSpeaking(false);
-    setIsFlipped(false);
-    setCurrentIndex((i) => Math.max(0, i - 1));
+    setCurrentIdx((i) => (i - 1 + cards.length) % cards.length);
+    setFlipped(false);
   };
-
-  const handleNext = () => {
-    synthRef.current?.cancel();
-    setIsSpeaking(false);
-    setIsFlipped(false);
-    setCurrentIndex((i) => Math.min(flashcards.length - 1, i + 1));
-  };
-
-  const subjectLabel = subject.charAt(0).toUpperCase() + subject.slice(1);
-  const subjectEmoji = subject === 'math' ? '🔢' : subject === 'alphabet' ? '🔤' : subject === 'science' ? '🔬' : subject === 'telugu' ? '🌺' : subject === 'hindi' ? '🪔' : '📖';
-
-  if (isLoading) {
-    return (
-      <div className="max-w-lg mx-auto px-4 py-8 space-y-4">
-        <Skeleton className="h-10 w-48 mx-auto rounded-2xl" />
-        <Skeleton className="h-72 w-full rounded-3xl" />
-      </div>
-    );
-  }
-
-  if (!currentCard) {
-    return (
-      <div className="max-w-lg mx-auto px-4 py-8 text-center">
-        <p className="font-fredoka text-2xl text-muted-foreground">No flashcards found!</p>
-      </div>
-    );
-  }
 
   return (
-    <div className="animate-fade-slide-in max-w-lg mx-auto px-4 py-8">
-      <div className="text-center mb-6">
-        <h1 className="font-fredoka text-3xl text-foreground">{subjectEmoji} {subjectLabel} Flashcards</h1>
-        <p className="font-nunito text-muted-foreground font-semibold">
-          Card {currentIndex + 1} of {flashcards.length} — Tap to flip!
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-lavender-100 to-mint-100 py-6 px-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="font-heading text-5xl text-sky-600 drop-shadow-md mb-2">🗂️ Flashcards</h1>
+          <p className="font-body text-xl text-sky-500 font-semibold">Tap the card to flip it!</p>
+        </div>
 
-      <div className="flex justify-center gap-2 mb-6">
-        {flashcards.map((_, i) => (
-          <div
-            key={i}
-            className={`w-3 h-3 rounded-full transition-all ${i === currentIndex ? 'bg-tangerine-500 scale-125' : 'bg-muted'}`}
-          />
-        ))}
-      </div>
+        {/* Language Selector */}
+        <div className="flex flex-wrap justify-center gap-3 mb-8">
+          {(Object.keys(LANGUAGE_CONFIG) as Language[]).map((lang) => (
+            <button
+              key={lang}
+              onClick={() => { setLanguage(lang); setCurrentIdx(0); setFlipped(false); }}
+              className={`kid-btn px-6 py-3 text-lg font-heading border-4 ${
+                language === lang
+                  ? LANGUAGE_CONFIG[lang].btnClass + " scale-110 shadow-fun-lg"
+                  : "bg-white border-gray-300 text-gray-600 hover:scale-105"
+              }`}
+            >
+              {LANGUAGE_CONFIG[lang].label}
+            </button>
+          ))}
+        </div>
 
-      <div
-        className="flip-card w-full h-72 cursor-pointer mb-6"
-        onClick={handleFlip}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && handleFlip()}
-        aria-label={isFlipped ? 'Card back - click to flip' : 'Card front - click to flip'}
-      >
-        <div className={`flip-card-inner ${isFlipped ? 'flipped' : ''}`}>
-          <div className="flip-card-front bg-sunshine-400 border-4 border-sunshine-600 rounded-3xl shadow-card flex flex-col items-center justify-center p-8 gap-4">
-            <div className="text-5xl">{subjectEmoji}</div>
-            <p className="font-fredoka text-3xl text-foreground text-center leading-tight">{currentCard.front}</p>
-            <p className="font-nunito text-sm text-foreground/60 font-semibold">Tap to see answer →</p>
-          </div>
-          <div className="flip-card-back bg-grass-500 border-4 border-grass-700 rounded-3xl shadow-card flex flex-col items-center justify-center p-8 gap-4">
-            <div className="text-5xl">💡</div>
-            <p className="font-nunito text-xl text-white text-center leading-relaxed font-bold">{currentCard.back}</p>
-            <p className="font-nunito text-sm text-white/70 font-semibold">Tap to flip back ←</p>
+        {/* Progress */}
+        <div className="text-center mb-4">
+          <span className="font-heading text-xl text-gray-600">{currentIdx + 1} / {cards.length}</span>
+        </div>
+
+        {/* Flashcard */}
+        <div
+          className="flip-card w-full h-72 cursor-pointer mb-8"
+          style={{ perspective: "1000px" }}
+          onClick={() => setFlipped((f) => !f)}
+        >
+          <div className={`flip-card-inner w-full h-full ${flipped ? "flipped" : ""}`}>
+            {/* Front */}
+            <div className={`flip-card-front kid-card border-4 ${config.frontBg} flex flex-col items-center justify-center p-8 gap-4`}>
+              <span className="text-7xl">{card?.emoji}</span>
+              <span className="font-heading text-3xl text-gray-800">{card?.front}</span>
+              <span className="font-body text-sm text-gray-500">Tap to flip!</span>
+            </div>
+            {/* Back */}
+            <div className={`flip-card-back kid-card border-4 ${config.backBg} flex flex-col items-center justify-center p-8 gap-4`}>
+              <span className="font-heading text-2xl text-white text-center leading-relaxed">{card?.back}</span>
+              <button
+                onClick={(e) => { e.stopPropagation(); speak(card?.back ?? "", config.voice); }}
+                className="kid-btn bg-white/30 hover:bg-white/50 text-white px-5 py-2 border-2 border-white flex items-center gap-2"
+              >
+                <Volume2 size={20} /> Listen
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="flex gap-3 mb-4">
-        <button
-          onClick={handlePrev}
-          disabled={currentIndex === 0}
-          className="touch-target flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-muted font-nunito font-bold hover:bg-muted/80 disabled:opacity-40 transition-all shadow-fun hover:scale-105 active:scale-95"
-        >
-          <ChevronLeft size={20} /> Prev
-        </button>
-        <button
-          onClick={handleSpeak}
-          className={`touch-target flex items-center justify-center gap-2 px-5 py-3 rounded-2xl font-nunito font-bold shadow-fun hover:scale-105 active:scale-95 transition-all ${
-            isSpeaking ? 'bg-cherry-500 text-white' : 'bg-tangerine-400 text-white hover:bg-tangerine-300'
-          }`}
-        >
-          <Volume2 size={20} />
-        </button>
-        <button
-          onClick={() => setIsFlipped(false)}
-          className="touch-target flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-muted font-nunito font-bold hover:bg-muted/80 transition-all shadow-fun hover:scale-105 active:scale-95"
-        >
-          <RotateCcw size={20} />
-        </button>
-        <button
-          onClick={handleNext}
-          disabled={currentIndex === flashcards.length - 1}
-          className="touch-target flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-sunshine-400 text-foreground font-nunito font-bold hover:bg-sunshine-300 disabled:opacity-40 transition-all shadow-fun hover:scale-105 active:scale-95"
-        >
-          Next <ChevronRight size={20} />
-        </button>
+        {/* Navigation */}
+        <div className="flex justify-center items-center gap-4">
+          <button
+            onClick={handlePrev}
+            className="kid-btn bg-lavender-400 hover:bg-lavender-500 text-white px-6 py-3 text-lg border-4 border-lavender-600 flex items-center gap-2"
+          >
+            <ChevronLeft size={22} /> Prev
+          </button>
+          <button
+            onClick={() => setFlipped(false)}
+            className="kid-btn bg-gray-200 hover:bg-gray-300 text-gray-700 px-5 py-3 border-4 border-gray-400 flex items-center gap-2"
+          >
+            <RotateCcw size={20} /> Reset
+          </button>
+          <button
+            onClick={handleNext}
+            className="kid-btn bg-lavender-400 hover:bg-lavender-500 text-white px-6 py-3 text-lg border-4 border-lavender-600 flex items-center gap-2"
+          >
+            Next <ChevronRight size={22} />
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,236 +1,189 @@
-import { useState, useEffect } from 'react';
-import CelebrationAnimation from '../components/CelebrationAnimation';
+import React, { useState, useEffect } from "react";
+import { RotateCcw, CheckCircle } from "lucide-react";
+import { getPuzzleWords } from "../data/languageData";
+import CelebrationAnimation from "../components/CelebrationAnimation";
 
-type Language = 'english' | 'telugu' | 'hindi' | 'tamil';
+type Language = "english" | "telugu" | "hindi" | "tamil";
 
-const LANGUAGE_LABELS: Record<Language, string> = {
-  english: '🇬🇧 English',
-  telugu: '🌺 Telugu',
-  hindi: '🪔 Hindi',
-  tamil: '🌸 Tamil',
+const LANGUAGE_CONFIG: Record<Language, { label: string; btnClass: string }> = {
+  english: { label: "English", btnClass: "bg-sky-400 hover:bg-sky-500 text-white border-sky-600" },
+  telugu: { label: "తెలుగు", btnClass: "bg-grass-400 hover:bg-grass-500 text-white border-grass-600" },
+  hindi: { label: "हिंदी", btnClass: "bg-tangerine-400 hover:bg-tangerine-500 text-white border-tangerine-600" },
+  tamil: { label: "தமிழ்", btnClass: "bg-lavender-400 hover:bg-lavender-500 text-white border-lavender-600" },
 };
 
-interface PuzzleWord {
-  id: string;
-  emoji: string;
-  words: Record<Language, string>;
-}
-
-const PUZZLE_WORDS: PuzzleWord[] = [
-  { id: 'sun', emoji: '☀️', words: { english: 'SUN', telugu: 'సూర్యుడు', hindi: 'सूरज', tamil: 'சூரியன்' } },
-  { id: 'cat', emoji: '🐱', words: { english: 'CAT', telugu: 'పిల్లి', hindi: 'बिल्ली', tamil: 'பூனை' } },
-  { id: 'dog', emoji: '🐶', words: { english: 'DOG', telugu: 'కుక్క', hindi: 'कुत्ता', tamil: 'நாய்' } },
-  { id: 'fish', emoji: '🐟', words: { english: 'FISH', telugu: 'చేప', hindi: 'मछली', tamil: 'மீன்' } },
-  { id: 'tree', emoji: '🌳', words: { english: 'TREE', telugu: 'చెట్టు', hindi: 'पेड़', tamil: 'மரம்' } },
-  { id: 'star', emoji: '⭐', words: { english: 'STAR', telugu: 'నక్షత్రం', hindi: 'तारा', tamil: 'நட்சத்திரம்' } },
+const TILE_COLORS = [
+  "bg-sunshine-300 border-sunshine-600 text-sunshine-900",
+  "bg-cherry-300 border-cherry-600 text-cherry-900",
+  "bg-sky-300 border-sky-600 text-sky-900",
+  "bg-grass-300 border-grass-600 text-grass-900",
+  "bg-tangerine-300 border-tangerine-600 text-tangerine-900",
+  "bg-lavender-300 border-lavender-600 text-lavender-900",
 ];
 
 function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
+  return [...arr].sort(() => Math.random() - 0.5);
 }
 
 export default function PuzzleGame() {
-  const [language, setLanguage] = useState<Language>('english');
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [scrambledLetters, setScrambledLetters] = useState<{ char: string; id: number; used: boolean }[]>([]);
-  const [answer, setAnswer] = useState<{ char: string; id: number }[]>([]);
-  const [isCorrect, setIsCorrect] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
+  const [language, setLanguage] = useState<Language>("english");
+  const [wordIdx, setWordIdx] = useState(0);
+  const [tiles, setTiles] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
+  const [solved, setSolved] = useState(false);
   const [score, setScore] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
-  const currentWord = PUZZLE_WORDS[currentWordIndex];
-
-  const initPuzzle = (wordIndex: number, lang: Language) => {
-    const word = PUZZLE_WORDS[wordIndex];
-    const target = word.words[lang];
-    const letters = target.split('').map((char, i) => ({ char, id: i, used: false }));
-    setScrambledLetters(shuffle(letters));
-    setAnswer([]);
-    setIsCorrect(false);
-  };
+  const words = getPuzzleWords(language);
+  const currentWord = words[wordIdx];
 
   useEffect(() => {
-    initPuzzle(currentWordIndex, language);
-  }, [currentWordIndex, language]);
+    if (currentWord) {
+      setTiles(shuffle(currentWord.letters));
+      setSelected([]);
+      setSolved(false);
+      setShowCelebration(false);
+    }
+  }, [wordIdx, language]);
 
-  const handleLetterClick = (letter: { char: string; id: number; used: boolean }) => {
-    if (letter.used || isCorrect) return;
-    const newAnswer = [...answer, { char: letter.char, id: letter.id }];
-    setAnswer(newAnswer);
-    setScrambledLetters(prev => prev.map(l => l.id === letter.id ? { ...l, used: true } : l));
+  const handleTileClick = (letter: string, tileIdx: number) => {
+    const newSelected = [...selected, letter];
+    setSelected(newSelected);
+    const newTiles = [...tiles];
+    newTiles.splice(tileIdx, 1);
+    setTiles(newTiles);
 
-    const target = currentWord.words[language];
-    const answerStr = newAnswer.map(l => l.char).join('');
-
-    if (answerStr.length === target.length) {
-      if (answerStr === target) {
-        setIsCorrect(true);
-        setScore(s => s + 1);
-        setShowCelebration(true);
-        setTimeout(() => {
-          setShowCelebration(false);
-          if (currentWordIndex < PUZZLE_WORDS.length - 1) {
-            setCurrentWordIndex(i => i + 1);
-          } else {
-            setGameOver(true);
-          }
-        }, 1500);
-      } else {
-        // Wrong — reset after delay
-        setTimeout(() => {
-          initPuzzle(currentWordIndex, language);
-        }, 600);
-      }
+    if (newSelected.join("") === currentWord.word) {
+      setSolved(true);
+      setScore((s) => s + 1);
+      setShowCelebration(true);
     }
   };
 
-  const handleRemoveLetter = (idx: number) => {
-    if (isCorrect) return;
-    const removed = answer[idx];
-    setAnswer(prev => prev.filter((_, i) => i !== idx));
-    setScrambledLetters(prev => prev.map(l => l.id === removed.id ? { ...l, used: false } : l));
+  const handleRemoveLast = () => {
+    if (selected.length === 0) return;
+    const last = selected[selected.length - 1];
+    setSelected(selected.slice(0, -1));
+    setTiles([...tiles, last]);
+  };
+
+  const handleNext = () => {
+    setWordIdx((i) => (i + 1) % words.length);
   };
 
   const handleReset = () => {
-    setCurrentWordIndex(0);
-    setScore(0);
-    setGameOver(false);
-    initPuzzle(0, language);
+    setTiles(shuffle(currentWord.letters));
+    setSelected([]);
+    setSolved(false);
+    setShowCelebration(false);
   };
 
-  const target = currentWord.words[language];
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-grass-100 to-sunshine-50 px-4 py-8">
-      <CelebrationAnimation active={showCelebration} onComplete={() => setShowCelebration(false)} />
+    <div className="min-h-screen bg-gradient-to-br from-coral-100 via-sunshine-100 to-tangerine-100 py-6 px-4">
+      <CelebrationAnimation active={showCelebration} />
       <div className="max-w-2xl mx-auto">
-        <h1 className="font-fredoka text-4xl sm:text-5xl text-center text-grass-700 mb-2">
-          Puzzle Game 🧩
-        </h1>
-        <p className="font-nunito text-center text-muted-foreground text-lg mb-6">
-          Arrange the letters to spell the word!
-        </p>
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h1 className="font-heading text-5xl text-coral-600 drop-shadow-md mb-2">🧩 Puzzle Game!</h1>
+          <p className="font-body text-xl text-coral-500 font-semibold">Tap letters to spell the word!</p>
+        </div>
 
         {/* Language Selector */}
         <div className="flex flex-wrap justify-center gap-3 mb-6">
-          {(Object.keys(LANGUAGE_LABELS) as Language[]).map((lang) => (
+          {(Object.keys(LANGUAGE_CONFIG) as Language[]).map((lang) => (
             <button
               key={lang}
-              onClick={() => setLanguage(lang)}
-              className={`font-nunito font-bold px-4 py-2 rounded-3xl border-4 transition-all hover:scale-105 active:scale-95 text-sm ${
+              onClick={() => { setLanguage(lang); setWordIdx(0); }}
+              className={`kid-btn px-5 py-2.5 text-base font-heading border-4 ${
                 language === lang
-                  ? 'bg-grass-500 border-grass-700 text-white shadow-fun'
-                  : 'bg-white border-grass-300 text-grass-700 hover:bg-grass-50'
+                  ? LANGUAGE_CONFIG[lang].btnClass + " scale-110 shadow-fun-lg"
+                  : "bg-white border-gray-300 text-gray-600 hover:scale-105"
               }`}
             >
-              {LANGUAGE_LABELS[lang]}
+              {LANGUAGE_CONFIG[lang].label}
             </button>
           ))}
         </div>
 
         {/* Score */}
-        <div className="flex justify-center gap-4 mb-6">
-          <div className="bg-white border-4 border-sunshine-400 rounded-3xl px-5 py-2 text-center shadow-fun">
-            <p className="font-fredoka text-2xl text-sunshine-600">{score}/{PUZZLE_WORDS.length}</p>
-            <p className="font-nunito text-xs text-muted-foreground">Score</p>
-          </div>
-          <div className="bg-white border-4 border-grass-400 rounded-3xl px-5 py-2 text-center shadow-fun">
-            <p className="font-fredoka text-2xl text-grass-600">{currentWordIndex + 1}/{PUZZLE_WORDS.length}</p>
-            <p className="font-nunito text-xs text-muted-foreground">Word</p>
+        <div className="flex justify-center mb-6">
+          <div className="kid-card border-4 bg-sunshine-200 border-sunshine-500 px-8 py-3">
+            <span className="font-heading text-2xl text-sunshine-700">⭐ Score: {score}</span>
           </div>
         </div>
 
-        {gameOver ? (
-          <div className="bg-sunshine-400 border-4 border-sunshine-600 rounded-4xl p-8 text-center shadow-fun-xl animate-bounce-in">
-            <div className="text-6xl mb-3">🎉</div>
-            <h2 className="font-fredoka text-3xl text-white mb-2">Puzzle Complete!</h2>
-            <p className="font-nunito text-white/90 font-bold text-lg mb-4">
-              You scored {score} out of {PUZZLE_WORDS.length}!
-            </p>
-            <button
-              onClick={handleReset}
-              className="bg-white text-sunshine-700 font-fredoka text-xl px-6 py-3 rounded-3xl shadow-fun hover:scale-105 active:scale-95 transition-all"
-            >
-              Play Again 🔄
-            </button>
-          </div>
-        ) : (
-          <>
-            {/* Word Card */}
-            <div className="bg-white border-4 border-grass-400 rounded-4xl p-6 text-center shadow-fun-xl mb-6">
-              <div className="text-7xl mb-3">{currentWord.emoji}</div>
-              <p className="font-nunito text-muted-foreground text-sm mb-2">Spell this word:</p>
-              {language !== 'english' && (
-                <p className="font-nunito text-muted-foreground text-xs mb-2">
-                  (English: {currentWord.words.english})
-                </p>
-              )}
+        {/* Hint */}
+        <div className="kid-card border-4 bg-white border-sky-300 p-6 mb-6 text-center">
+          <p className="font-heading text-2xl text-gray-700 mb-2">Spell this word:</p>
+          <span className="text-6xl">{currentWord?.emoji}</span>
+          <p className="font-heading text-xl text-sky-600 mt-2">{currentWord?.hint}</p>
+        </div>
 
-              {/* Answer slots */}
-              <div className="flex justify-center gap-2 flex-wrap mt-3">
-                {target.split('').map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => answer[i] && handleRemoveLetter(i)}
-                    className={`w-12 h-12 rounded-2xl border-4 flex items-center justify-center font-fredoka text-xl transition-all ${
-                      answer[i]
-                        ? isCorrect
-                          ? 'bg-grass-400 border-grass-600 text-white'
-                          : 'bg-sunshine-400 border-sunshine-600 text-white hover:scale-105'
-                        : 'bg-muted border-muted-foreground/30 text-transparent'
-                    }`}
-                  >
-                    {answer[i]?.char || '_'}
-                  </button>
-                ))}
-              </div>
-
-              {isCorrect && (
-                <p className="font-fredoka text-grass-600 text-2xl mt-3 animate-bounce-in">
-                  ✅ Correct! Well done!
-                </p>
-              )}
-            </div>
-
-            {/* Scrambled Letters */}
-            <div className="bg-white border-4 border-lavender-300 rounded-4xl p-4 shadow-fun">
-              <p className="font-nunito text-center text-muted-foreground text-sm mb-3">
-                Tap letters to spell the word:
-              </p>
-              <div className="flex justify-center gap-2 flex-wrap">
-                {scrambledLetters.map((letter) => (
-                  <button
-                    key={letter.id}
-                    onClick={() => handleLetterClick(letter)}
-                    disabled={letter.used || isCorrect}
-                    className={`w-12 h-12 rounded-2xl border-4 flex items-center justify-center font-fredoka text-xl transition-all ${
-                      letter.used
-                        ? 'bg-muted border-muted text-muted-foreground opacity-40'
-                        : 'bg-lavender-400 border-lavender-600 text-white hover:scale-110 active:scale-95 shadow-fun'
-                    }`}
-                  >
-                    {letter.char}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-4 text-center">
-              <button
-                onClick={() => initPuzzle(currentWordIndex, language)}
-                className="bg-tangerine-400 hover:bg-tangerine-500 border-4 border-tangerine-600 text-white font-fredoka text-lg px-5 py-2 rounded-3xl shadow-fun hover:scale-105 active:scale-95 transition-all"
+        {/* Selected Letters */}
+        <div className="kid-card border-4 bg-grass-100 border-grass-400 p-4 mb-4 min-h-[80px] flex items-center justify-center gap-2 flex-wrap">
+          {selected.length === 0 ? (
+            <span className="font-body text-gray-400 text-lg">Tap letters below...</span>
+          ) : (
+            selected.map((letter, idx) => (
+              <span
+                key={idx}
+                className="kid-card border-4 bg-grass-300 border-grass-600 w-12 h-12 flex items-center justify-center font-heading text-2xl text-grass-900"
               >
-                🔄 Reset Word
-              </button>
-            </div>
-          </>
+                {letter}
+              </span>
+            ))
+          )}
+        </div>
+
+        {/* Solved State */}
+        {solved && (
+          <div className="kid-card border-4 bg-sunshine-200 border-sunshine-500 p-4 mb-4 text-center flex items-center justify-center gap-3">
+            <CheckCircle className="text-grass-600" size={32} />
+            <span className="font-heading text-2xl text-sunshine-700">🎉 Correct! Well done!</span>
+          </div>
         )}
+
+        {/* Letter Tiles */}
+        {!solved && (
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
+            {tiles.map((letter, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleTileClick(letter, idx)}
+                className={`kid-card border-4 w-14 h-14 flex items-center justify-center font-heading text-2xl hover:scale-110 hover:shadow-fun-xl active:scale-95 ${TILE_COLORS[idx % TILE_COLORS.length]}`}
+              >
+                {letter}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Controls */}
+        <div className="flex justify-center gap-4">
+          {!solved && (
+            <button
+              onClick={handleRemoveLast}
+              disabled={selected.length === 0}
+              className="kid-btn bg-cherry-400 hover:bg-cherry-500 text-white px-6 py-3 text-lg border-4 border-cherry-600 disabled:opacity-40"
+            >
+              ← Remove
+            </button>
+          )}
+          <button
+            onClick={handleReset}
+            className="kid-btn bg-sky-400 hover:bg-sky-500 text-white px-6 py-3 text-lg border-4 border-sky-600 flex items-center gap-2"
+          >
+            <RotateCcw size={20} /> Reset
+          </button>
+          {solved && (
+            <button
+              onClick={handleNext}
+              className="kid-btn bg-grass-400 hover:bg-grass-500 text-white px-6 py-3 text-lg border-4 border-grass-600"
+            >
+              Next Word ➡️
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

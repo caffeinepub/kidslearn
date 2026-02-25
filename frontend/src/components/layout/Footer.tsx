@@ -1,45 +1,76 @@
-import { Link } from '@tanstack/react-router';
+import React from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { Heart } from 'lucide-react';
+import { useInternetIdentity } from '../../hooks/useInternetIdentity';
+import { useGetCallerRole } from '../../hooks/useQueries';
+import { UserRole } from '../../backend';
 
-export default function Footer() {
-  const year = new Date().getFullYear();
-  const appId = encodeURIComponent(typeof window !== 'undefined' ? window.location.hostname : 'kidslearn-app');
+const Footer: React.FC = () => {
+  const navigate = useNavigate();
+  const { identity } = useInternetIdentity();
+  const isAuthenticated = !!identity;
+  const { data: role } = useGetCallerRole();
+
+  const appId = typeof window !== 'undefined' ? encodeURIComponent(window.location.hostname) : 'kidslearn-app';
+  const caffeineUrl = `https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appId}`;
 
   return (
-    <footer className="bg-sunshine-400 border-t-4 border-sunshine-600 mt-8">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <img
-              src="/assets/generated/kidslearn-logo.dim_256x256.png"
-              alt="KidsLearn"
-              className="w-8 h-8 rounded-xl"
-            />
-            <span className="font-fredoka text-white text-lg">KidsLearn</span>
-          </div>
+    <footer className="bg-sunshine-400 text-white py-6 px-4 mt-auto">
+      <div className="max-w-4xl mx-auto">
+        {/* Navigation Links */}
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-4 text-sm font-nunito">
+          <button onClick={() => navigate({ to: '/' })} className="hover:text-sunshine-100 transition-colors">
+            Home
+          </button>
+          <button onClick={() => navigate({ to: '/alphabet' })} className="hover:text-sunshine-100 transition-colors">
+            Alphabet
+          </button>
+          <button onClick={() => navigate({ to: '/numbers' })} className="hover:text-sunshine-100 transition-colors">
+            Numbers
+          </button>
+          <button onClick={() => navigate({ to: '/quiz' })} className="hover:text-sunshine-100 transition-colors">
+            Quiz
+          </button>
+          <button onClick={() => navigate({ to: '/progress' })} className="hover:text-sunshine-100 transition-colors">
+            Progress
+          </button>
+          {isAuthenticated && role === UserRole.parent && (
+            <button onClick={() => navigate({ to: '/parent-dashboard' })} className="hover:text-sunshine-100 transition-colors">
+              Parent Dashboard
+            </button>
+          )}
+          {isAuthenticated && role === UserRole.teacher && (
+            <button onClick={() => navigate({ to: '/teacher-dashboard' })} className="hover:text-sunshine-100 transition-colors">
+              Teacher Dashboard
+            </button>
+          )}
+          <button onClick={() => navigate({ to: '/donate' })} className="hover:text-sunshine-100 transition-colors">
+            Donate
+          </button>
+        </div>
 
-          <div className="flex items-center gap-4 text-sm font-nunito text-white/90">
-            <Link to="/donation" className="hover:text-white underline">Support Us</Link>
-            <Link to="/parent-dashboard" className="hover:text-white underline">Parent Dashboard</Link>
-            <Link to="/progress" className="hover:text-white underline">Progress</Link>
-          </div>
-
-          <div className="text-center text-sm font-nunito text-white/90">
-            <p>© {year} KidsLearn. All rights reserved.</p>
-            <p className="flex items-center justify-center gap-1 mt-1">
-              Built with <Heart size={14} className="text-cherry-300 fill-cherry-300" /> using{' '}
-              <a
-                href={`https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline hover:text-white font-bold"
-              >
-                caffeine.ai
-              </a>
-            </p>
-          </div>
+        {/* Attribution */}
+        <div className="text-center text-sm font-nunito text-sunshine-100">
+          <p>
+            Built with{' '}
+            <Heart size={14} className="inline text-cherry-300 fill-cherry-300" />{' '}
+            using{' '}
+            <a
+              href={caffeineUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-white transition-colors"
+            >
+              caffeine.ai
+            </a>
+          </p>
+          <p className="mt-1 text-xs text-sunshine-200">
+            © {new Date().getFullYear()} KidsLearn — Learning made fun for every child 🌟
+          </p>
         </div>
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;

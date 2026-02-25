@@ -1,253 +1,230 @@
-import { useState, useEffect, useRef } from 'react';
-import { Timer, RotateCcw, Trophy } from 'lucide-react';
-import { useNavigate } from '@tanstack/react-router';
-import CelebrationAnimation from '../components/CelebrationAnimation';
+import React, { useState, useEffect, useRef } from "react";
+import { Timer, RotateCcw } from "lucide-react";
+import { getQuizQuestions } from "../data/languageData";
+import type { Language } from "../data/languageData";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import { useRecordGameSession } from "../hooks/useQueries";
+import { GameType } from "../backend";
+import CelebrationAnimation from "../components/CelebrationAnimation";
 
-type Language = 'english' | 'telugu' | 'hindi' | 'tamil';
-
-const LANGUAGE_LABELS: Record<Language, string> = {
-  english: '🇬🇧 English',
-  telugu: '🌺 Telugu',
-  hindi: '🪔 Hindi',
-  tamil: '🌸 Tamil',
+const LANGUAGE_CONFIG: Record<Language, { label: string; btnClass: string }> = {
+  english: { label: "English", btnClass: "bg-sky-400 hover:bg-sky-500 text-white border-sky-600" },
+  telugu: { label: "తెలుగు", btnClass: "bg-grass-400 hover:bg-grass-500 text-white border-grass-600" },
+  hindi: { label: "हिंदी", btnClass: "bg-tangerine-400 hover:bg-tangerine-500 text-white border-tangerine-600" },
+  tamil: { label: "தமிழ்", btnClass: "bg-lavender-400 hover:bg-lavender-500 text-white border-lavender-600" },
 };
 
-interface Question {
-  question: string;
-  options: string[];
-  correctIndex: number;
-  emoji: string;
-}
+const OPTION_COLORS = [
+  "bg-sky-200 border-sky-500 hover:bg-sky-300 text-sky-800",
+  "bg-sunshine-200 border-sunshine-500 hover:bg-sunshine-300 text-sunshine-800",
+  "bg-grass-200 border-grass-500 hover:bg-grass-300 text-grass-800",
+  "bg-lavender-200 border-lavender-500 hover:bg-lavender-300 text-lavender-800",
+];
 
-const QUESTIONS: Record<Language, Question[]> = {
-  english: [
-    { question: 'What is 2 + 3?', options: ['4', '5', '6', '7'], correctIndex: 1, emoji: '🔢' },
-    { question: 'What color is the sky?', options: ['Red', 'Green', 'Blue', 'Yellow'], correctIndex: 2, emoji: '🌤️' },
-    { question: 'How many legs does a dog have?', options: ['2', '4', '6', '8'], correctIndex: 1, emoji: '🐶' },
-    { question: 'What letter comes after A?', options: ['B', 'C', 'D', 'E'], correctIndex: 0, emoji: '🔤' },
-    { question: 'What is the largest animal?', options: ['Elephant', 'Blue Whale', 'Giraffe', 'Lion'], correctIndex: 1, emoji: '🐋' },
-    { question: 'How many days in a week?', options: ['5', '6', '7', '8'], correctIndex: 2, emoji: '📅' },
-    { question: 'What do plants need to grow?', options: ['Only water', 'Sunlight & water', 'Only soil', 'Only air'], correctIndex: 1, emoji: '🌱' },
-    { question: 'What is 10 - 4?', options: ['5', '6', '7', '8'], correctIndex: 1, emoji: '➖' },
-  ],
-  telugu: [
-    { question: '"ఒకటి" అంటే ఏమిటి?', options: ['One', 'Two', 'Three', 'Four'], correctIndex: 0, emoji: '🔢' },
-    { question: '"ఆవు" అంటే ఏమిటి?', options: ['Dog', 'Cat', 'Cow', 'Bird'], correctIndex: 2, emoji: '🐄' },
-    { question: '"ఎరుపు" అంటే ఏమిటి?', options: ['Green', 'Blue', 'Red', 'Yellow'], correctIndex: 2, emoji: '🔴' },
-    { question: '"నమస్కారం" అంటే ఏమిటి?', options: ['Goodbye', 'Hello', 'Thank you', 'Sorry'], correctIndex: 1, emoji: '🙏' },
-    { question: '"పది" అంటే ఏమిటి?', options: ['5', '8', '10', '12'], correctIndex: 2, emoji: '🔟' },
-    { question: '"పక్షి" అంటే ఏమిటి?', options: ['Fish', 'Bird', 'Dog', 'Cat'], correctIndex: 1, emoji: '🐦' },
-    { question: '"సూర్యుడు" అంటే ఏమిటి?', options: ['Moon', 'Star', 'Sun', 'Cloud'], correctIndex: 2, emoji: '☀️' },
-    { question: '"రెండు" అంటే ఏమిటి?', options: ['1', '2', '3', '4'], correctIndex: 1, emoji: '✌️' },
-  ],
-  hindi: [
-    { question: '"एक" का मतलब क्या है?', options: ['One', 'Two', 'Three', 'Four'], correctIndex: 0, emoji: '🔢' },
-    { question: '"गाय" का मतलब क्या है?', options: ['Dog', 'Cat', 'Cow', 'Bird'], correctIndex: 2, emoji: '🐄' },
-    { question: '"लाल" का मतलब क्या है?', options: ['Green', 'Blue', 'Red', 'Yellow'], correctIndex: 2, emoji: '🔴' },
-    { question: '"नमस्ते" का मतलब क्या है?', options: ['Goodbye', 'Hello', 'Thank you', 'Sorry'], correctIndex: 1, emoji: '🙏' },
-    { question: '"दस" का मतलब क्या है?', options: ['5', '8', '10', '12'], correctIndex: 2, emoji: '🔟' },
-    { question: '"पक्षी" का मतलब क्या है?', options: ['Fish', 'Bird', 'Dog', 'Cat'], correctIndex: 1, emoji: '🐦' },
-    { question: '"सूरज" का मतलब क्या है?', options: ['Moon', 'Star', 'Sun', 'Cloud'], correctIndex: 2, emoji: '☀️' },
-    { question: '"दो" का मतलब क्या है?', options: ['1', '2', '3', '4'], correctIndex: 1, emoji: '✌️' },
-  ],
-  tamil: [
-    { question: '"ஒன்று" என்றால் என்ன?', options: ['One', 'Two', 'Three', 'Four'], correctIndex: 0, emoji: '🔢' },
-    { question: '"பசு" என்றால் என்ன?', options: ['Dog', 'Cat', 'Cow', 'Bird'], correctIndex: 2, emoji: '🐄' },
-    { question: '"சிவப்பு" என்றால் என்ன?', options: ['Green', 'Blue', 'Red', 'Yellow'], correctIndex: 2, emoji: '🔴' },
-    { question: '"வணக்கம்" என்றால் என்ன?', options: ['Goodbye', 'Hello', 'Thank you', 'Sorry'], correctIndex: 1, emoji: '🙏' },
-    { question: '"பத்து" என்றால் என்ன?', options: ['5', '8', '10', '12'], correctIndex: 2, emoji: '🔟' },
-    { question: '"பறவை" என்றால் என்ன?', options: ['Fish', 'Bird', 'Dog', 'Cat'], correctIndex: 1, emoji: '🐦' },
-    { question: '"சூரியன்" என்றால் என்ன?', options: ['Moon', 'Star', 'Sun', 'Cloud'], correctIndex: 2, emoji: '☀️' },
-    { question: '"இரண்டு" என்றால் என்ன?', options: ['1', '2', '3', '4'], correctIndex: 1, emoji: '✌️' },
-  ],
-};
-
-const TOTAL_TIME = 60;
+const TIME_PER_QUESTION = 15;
 
 export default function TimedChallenge() {
-  const navigate = useNavigate();
-  const [language, setLanguage] = useState<Language>('english');
+  const { identity } = useInternetIdentity();
+  const [language, setLanguage] = useState<Language>("english");
   const [started, setStarted] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIdx, setCurrentIdx] = useState(0);
   const [score, setScore] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
+  const [timeLeft, setTimeLeft] = useState(TIME_PER_QUESTION);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [isFinished, setIsFinished] = useState(false);
+  const [finished, setFinished] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const recordGameSession = useRecordGameSession();
 
-  const questions = QUESTIONS[language];
+  const questions = getQuizQuestions(language);
+
+  const clearTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+  };
+
+  const finishGame = async (finalScore: number) => {
+    clearTimer();
+    setFinished(true);
+    if (finalScore >= Math.ceil(questions.length * 0.7)) setShowCelebration(true);
+    if (identity) {
+      try {
+        await recordGameSession.mutateAsync({
+          gameType: GameType.timedChallenge,
+          language,
+          score: BigInt(finalScore),
+          totalQuestions: BigInt(questions.length),
+        });
+      } catch { /* ignore */ }
+    }
+  };
 
   useEffect(() => {
-    if (!started || isFinished) return;
+    if (!started || finished || selectedAnswer !== null) return;
     timerRef.current = setInterval(() => {
-      setTimeLeft(t => {
+      setTimeLeft((t) => {
         if (t <= 1) {
-          clearInterval(timerRef.current!);
-          setIsFinished(true);
-          setShowCelebration(true);
-          return 0;
+          clearTimer();
+          setCurrentIdx((prev) => {
+            const next = prev + 1;
+            if (next >= questions.length) {
+              finishGame(score);
+            } else {
+              setTimeLeft(TIME_PER_QUESTION);
+            }
+            return next >= questions.length ? prev : next;
+          });
+          return TIME_PER_QUESTION;
         }
         return t - 1;
       });
     }, 1000);
-    return () => clearInterval(timerRef.current!);
-  }, [started, isFinished]);
+    return clearTimer;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [started, currentIdx, finished, selectedAnswer]);
 
-  const handleAnswer = (optionIndex: number) => {
+  const handleAnswer = (idx: number) => {
     if (selectedAnswer !== null) return;
-    setSelectedAnswer(optionIndex);
-    if (optionIndex === questions[currentIndex].correctIndex) {
-      setScore(s => s + 1);
-    }
+    clearTimer();
+    setSelectedAnswer(idx);
+    const correct = idx === questions[currentIdx].correctIndex;
+    const newScore = correct ? score + 1 : score;
+    if (correct) setScore(newScore);
     setTimeout(() => {
-      if (currentIndex < questions.length - 1) {
-        setCurrentIndex(i => i + 1);
-        setSelectedAnswer(null);
+      if (currentIdx + 1 >= questions.length) {
+        finishGame(newScore);
       } else {
-        clearInterval(timerRef.current!);
-        setIsFinished(true);
-        setShowCelebration(true);
+        setCurrentIdx((i) => i + 1);
+        setSelectedAnswer(null);
+        setTimeLeft(TIME_PER_QUESTION);
       }
-    }, 700);
+    }, 800);
   };
 
   const handleRestart = () => {
+    clearTimer();
     setStarted(false);
-    setCurrentIndex(0);
+    setCurrentIdx(0);
     setScore(0);
-    setTimeLeft(TOTAL_TIME);
+    setTimeLeft(TIME_PER_QUESTION);
     setSelectedAnswer(null);
-    setIsFinished(false);
+    setFinished(false);
     setShowCelebration(false);
   };
 
-  const timerPercent = (timeLeft / TOTAL_TIME) * 100;
-  const timerColor = timeLeft > 30 ? 'bg-grass-500' : timeLeft > 10 ? 'bg-sunshine-500' : 'bg-cherry-500';
-
-  if (!started) {
+  if (finished) {
+    const pct = Math.round((score / questions.length) * 100);
     return (
-      <div className="min-h-screen bg-gradient-to-b from-tangerine-100 to-sunshine-50 px-4 py-8">
-        <div className="max-w-lg mx-auto text-center">
-          <h1 className="font-fredoka text-4xl sm:text-5xl text-tangerine-700 mb-2">Timed Challenge ⚡</h1>
-          <p className="font-nunito text-muted-foreground text-lg mb-8">
-            Answer as many questions as you can in {TOTAL_TIME} seconds!
+      <div className="min-h-screen bg-gradient-to-br from-sunshine-100 via-tangerine-100 to-cherry-100 flex items-center justify-center p-4">
+        <CelebrationAnimation active={showCelebration} />
+        <div className="kid-card border-4 bg-white border-sunshine-400 max-w-md w-full p-8 text-center">
+          <div className="text-7xl mb-4">{pct >= 70 ? "🏆" : "💪"}</div>
+          <h2 className="font-heading text-4xl text-sunshine-600 mb-2">{pct >= 70 ? "Amazing!" : "Good Try!"}</h2>
+          <p className="font-body text-xl text-gray-600 mb-4">
+            Score: <span className="font-heading text-cherry-500 text-2xl">{score}</span> / {questions.length}
           </p>
-
-          <div className="flex flex-wrap justify-center gap-3 mb-8">
-            {(Object.keys(LANGUAGE_LABELS) as Language[]).map((lang) => (
-              <button
-                key={lang}
-                onClick={() => setLanguage(lang)}
-                className={`font-nunito font-bold px-4 py-2 rounded-3xl border-4 transition-all hover:scale-105 active:scale-95 text-sm ${
-                  language === lang
-                    ? 'bg-tangerine-500 border-tangerine-700 text-white shadow-fun'
-                    : 'bg-white border-tangerine-300 text-tangerine-700 hover:bg-tangerine-50'
-                }`}
-              >
-                {LANGUAGE_LABELS[lang]}
-              </button>
-            ))}
+          <div className="w-full bg-gray-200 rounded-full h-6 mb-6 overflow-hidden">
+            <div
+              className={`h-6 rounded-full transition-all duration-1000 ${pct >= 70 ? "bg-grass-400" : "bg-tangerine-400"}`}
+              style={{ width: `${pct}%` }}
+            />
           </div>
-
           <button
-            onClick={() => setStarted(true)}
-            className="bg-tangerine-500 hover:bg-tangerine-600 border-4 border-tangerine-700 text-white font-fredoka text-3xl px-10 py-5 rounded-4xl shadow-fun-xl hover:scale-105 active:scale-95 transition-all animate-pulse-ring"
+            onClick={handleRestart}
+            className="kid-btn bg-sky-400 hover:bg-sky-500 text-white px-8 py-3 text-xl border-4 border-sky-600 flex items-center gap-2 mx-auto"
           >
-            ⚡ Start Challenge!
+            <RotateCcw size={22} /> Play Again
           </button>
         </div>
       </div>
     );
   }
 
-  if (isFinished) {
-    const pct = Math.round((score / questions.length) * 100);
+  if (!started) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-tangerine-100 to-sunshine-50 px-4 py-8">
-        <CelebrationAnimation active={showCelebration} onComplete={() => setShowCelebration(false)} />
-        <div className="max-w-lg mx-auto text-center">
-          <div className="bg-sunshine-400 border-4 border-sunshine-600 rounded-4xl p-8 shadow-fun-xl animate-bounce-in">
-            <div className="text-6xl mb-3">🏆</div>
-            <h2 className="font-fredoka text-4xl text-white mb-2">Time's Up!</h2>
-            <p className="font-nunito text-white/90 font-bold text-xl mb-2">
-              Score: {score} / {questions.length}
-            </p>
-            <p className="font-fredoka text-white text-3xl mb-4">{pct}%</p>
-            <div className="flex gap-3 justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-sunshine-100 via-tangerine-100 to-cherry-100 flex items-center justify-center p-4">
+        <div className="kid-card border-4 bg-white border-tangerine-400 max-w-md w-full p-8 text-center">
+          <div className="text-7xl mb-4">⏱️</div>
+          <h1 className="font-heading text-4xl text-tangerine-600 mb-4">Timed Challenge!</h1>
+          <p className="font-body text-lg text-gray-600 mb-6">
+            Answer {questions.length} questions as fast as you can! You have {TIME_PER_QUESTION} seconds per question.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
+            {(Object.keys(LANGUAGE_CONFIG) as Language[]).map((lang) => (
               <button
-                onClick={handleRestart}
-                className="bg-white text-sunshine-700 font-fredoka text-xl px-5 py-3 rounded-3xl shadow-fun hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+                key={lang}
+                onClick={() => setLanguage(lang)}
+                className={`kid-btn px-5 py-2.5 text-base font-heading border-4 ${
+                  language === lang
+                    ? LANGUAGE_CONFIG[lang].btnClass + " scale-110 shadow-fun-lg"
+                    : "bg-white border-gray-300 text-gray-600 hover:scale-105"
+                }`}
               >
-                <RotateCcw size={20} /> Try Again
+                {LANGUAGE_CONFIG[lang].label}
               </button>
-              <button
-                onClick={() => navigate({ to: '/progress' })}
-                className="bg-grass-500 border-4 border-grass-700 text-white font-fredoka text-xl px-5 py-3 rounded-3xl shadow-fun hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
-              >
-                <Trophy size={20} /> Progress
-              </button>
-            </div>
+            ))}
           </div>
+          <button
+            onClick={() => setStarted(true)}
+            className="kid-btn bg-tangerine-400 hover:bg-tangerine-500 text-white px-10 py-4 text-2xl border-4 border-tangerine-600 shadow-fun-xl"
+          >
+            🚀 Start!
+          </button>
         </div>
       </div>
     );
   }
 
-  const currentQ = questions[currentIndex];
+  const question = questions[currentIdx];
+  const timerPct = (timeLeft / TIME_PER_QUESTION) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-tangerine-100 to-sunshine-50 px-4 py-8">
-      <div className="max-w-lg mx-auto">
-        <h1 className="font-fredoka text-3xl text-center text-tangerine-700 mb-4">⚡ Timed Challenge</h1>
-
-        {/* Timer */}
-        <div className="bg-white border-4 border-tangerine-400 rounded-3xl p-4 mb-4 shadow-fun">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Timer className="text-tangerine-500" size={24} />
-              <span className="font-fredoka text-3xl text-tangerine-600">{timeLeft}s</span>
-            </div>
-            <span className="font-nunito font-bold text-muted-foreground">
-              Q {currentIndex + 1}/{questions.length} • Score: {score}
-            </span>
+    <div className="min-h-screen bg-gradient-to-br from-sunshine-100 via-tangerine-100 to-cherry-100 py-6 px-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Timer & Score */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className={`kid-card border-4 px-5 py-3 flex items-center gap-2 ${timeLeft <= 5 ? "bg-cherry-200 border-cherry-500" : "bg-sunshine-200 border-sunshine-500"}`}>
+            <Timer size={24} className={timeLeft <= 5 ? "text-cherry-600 animate-pulse" : "text-sunshine-600"} />
+            <span className={`font-heading text-2xl ${timeLeft <= 5 ? "text-cherry-700" : "text-sunshine-700"}`}>{timeLeft}s</span>
           </div>
-          <div className="w-full bg-muted rounded-full h-4 overflow-hidden">
+          <div className="flex-1 bg-gray-200 rounded-full h-5 overflow-hidden">
             <div
-              className={`${timerColor} h-4 rounded-full transition-all duration-1000`}
-              style={{ width: `${timerPercent}%` }}
+              className={`h-5 rounded-full transition-all duration-1000 ${timerPct > 50 ? "bg-grass-400" : timerPct > 25 ? "bg-sunshine-400" : "bg-cherry-400"}`}
+              style={{ width: `${timerPct}%` }}
             />
           </div>
+          <div className="kid-card border-4 bg-grass-200 border-grass-500 px-5 py-3">
+            <span className="font-heading text-2xl text-grass-700">⭐ {score}</span>
+          </div>
+        </div>
+
+        {/* Progress */}
+        <div className="text-center mb-4">
+          <span className="font-heading text-xl text-gray-600">{currentIdx + 1} / {questions.length}</span>
         </div>
 
         {/* Question */}
-        <div className="bg-white border-4 border-sunshine-400 rounded-3xl p-5 mb-4 shadow-fun text-center">
-          <div className="text-4xl mb-2">{currentQ.emoji}</div>
-          <p className="font-fredoka text-2xl text-foreground">{currentQ.question}</p>
+        <div className="kid-card border-4 bg-white border-sky-300 p-6 mb-6">
+          <p className="font-heading text-2xl text-gray-800 text-center">{question.question}</p>
         </div>
 
         {/* Options */}
-        <div className="grid grid-cols-2 gap-3">
-          {currentQ.options.map((option, i) => {
-            const isSelected = selectedAnswer === i;
-            const isCorrect = i === currentQ.correctIndex;
-            let cls = 'bg-white border-4 border-sunshine-300 text-foreground hover:border-sunshine-500 hover:bg-sunshine-50';
-            if (selectedAnswer !== null) {
-              if (isCorrect) cls = 'bg-grass-400 border-grass-600 text-white';
-              else if (isSelected) cls = 'bg-cherry-400 border-cherry-600 text-white';
-              else cls = 'bg-muted border-muted text-muted-foreground opacity-60';
-            }
-            return (
-              <button
-                key={i}
-                onClick={() => handleAnswer(i)}
-                disabled={selectedAnswer !== null}
-                className={`${cls} rounded-3xl p-4 font-nunito font-bold text-lg transition-all hover:scale-105 active:scale-95 shadow-fun min-h-[64px]`}
-              >
-                {option}
-              </button>
-            );
-          })}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {question.options.map((option, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleAnswer(idx)}
+              disabled={selectedAnswer !== null}
+              className={`kid-card border-4 p-4 font-heading text-xl text-left transition-all duration-200 ${
+                selectedAnswer === idx
+                  ? idx === question.correctIndex
+                    ? "bg-grass-300 border-grass-600"
+                    : "bg-cherry-300 border-cherry-600"
+                  : OPTION_COLORS[idx % OPTION_COLORS.length]
+              } disabled:cursor-default`}
+            >
+              {option}
+            </button>
+          ))}
         </div>
       </div>
     </div>

@@ -1,85 +1,221 @@
-import { useNavigate } from '@tanstack/react-router';
-import { BookOpen, Hash, Type, Music, Image, Map, Gamepad2, Zap, Puzzle, Trophy } from 'lucide-react';
+import React from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { LayoutDashboard } from "lucide-react";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import { useGetCallerRole, useGetCallerUserProfile } from "../hooks/useQueries";
+import RoleSelectionModal from "../components/RoleSelectionModal";
+import { UserRole } from "../backend";
 
-const sections = [
-  { label: 'Numbers', icon: Hash, path: '/numbers', color: 'bg-sunshine-400', border: 'border-sunshine-600', emoji: '🔢' },
-  { label: 'Alphabet', icon: Type, path: '/alphabet', color: 'bg-grass-400', border: 'border-grass-600', emoji: '🔤' },
-  { label: 'Poems', icon: Music, path: '/poems', color: 'bg-tangerine-400', border: 'border-tangerine-600', emoji: '📖' },
-  { label: 'Vocabulary', icon: Image, path: '/vocabulary', color: 'bg-cherry-400', border: 'border-cherry-600', emoji: '🌟' },
-  { label: 'India Map', icon: Map, path: '/map', color: 'bg-sky-400', border: 'border-sky-600', emoji: '🗺️' },
-  { label: 'Matching Game', icon: Gamepad2, path: '/matching-game', color: 'bg-lavender-400', border: 'border-lavender-600', emoji: '🎮' },
-  { label: 'Timed Challenge', icon: Zap, path: '/timed-challenge', color: 'bg-tangerine-500', border: 'border-tangerine-700', emoji: '⚡' },
-  { label: 'Puzzle', icon: Puzzle, path: '/puzzle', color: 'bg-grass-500', border: 'border-grass-700', emoji: '🧩' },
-  { label: 'Quiz', icon: BookOpen, path: '/quiz', color: 'bg-sunshine-500', border: 'border-sunshine-700', emoji: '🧠' },
-  { label: 'Progress', icon: Trophy, path: '/progress', color: 'bg-cherry-500', border: 'border-cherry-700', emoji: '🏆' },
+const NAV_CARDS = [
+  {
+    title: "Alphabet",
+    emoji: "🔤",
+    description: "Learn A to Z in 4 languages!",
+    path: "/alphabet",
+    bgClass: "bg-sky-200 border-sky-500 hover:bg-sky-300",
+    textClass: "text-sky-700",
+  },
+  {
+    title: "Numbers 1–10",
+    emoji: "🔢",
+    description: "Count from 1 to 10!",
+    path: "/numbers",
+    bgClass: "bg-sunshine-200 border-sunshine-500 hover:bg-sunshine-300",
+    textClass: "text-sunshine-700",
+  },
+  {
+    title: "Numbers 1–100",
+    emoji: "💯",
+    description: "Count all the way to 100!",
+    path: "/numbers-100",
+    bgClass: "bg-tangerine-200 border-tangerine-500 hover:bg-tangerine-300",
+    textClass: "text-tangerine-700",
+  },
+  {
+    title: "Vocabulary",
+    emoji: "📚",
+    description: "Learn new words with pictures!",
+    path: "/vocabulary",
+    bgClass: "bg-grass-200 border-grass-500 hover:bg-grass-300",
+    textClass: "text-grass-700",
+  },
+  {
+    title: "Poems",
+    emoji: "🎵",
+    description: "Fun rhymes and songs!",
+    path: "/poems",
+    bgClass: "bg-lavender-200 border-lavender-500 hover:bg-lavender-300",
+    textClass: "text-lavender-700",
+  },
+  {
+    title: "Quiz",
+    emoji: "❓",
+    description: "Test what you know!",
+    path: "/quiz",
+    bgClass: "bg-cherry-200 border-cherry-500 hover:bg-cherry-300",
+    textClass: "text-cherry-700",
+  },
+  {
+    title: "Matching Game",
+    emoji: "🃏",
+    description: "Match the cards!",
+    path: "/matching-game",
+    bgClass: "bg-mint-200 border-mint-500 hover:bg-mint-300",
+    textClass: "text-mint-700",
+  },
+  {
+    title: "Puzzle",
+    emoji: "🧩",
+    description: "Spell the word!",
+    path: "/puzzle",
+    bgClass: "bg-coral-200 border-coral-500 hover:bg-coral-300",
+    textClass: "text-coral-700",
+  },
+  {
+    title: "Timed Challenge",
+    emoji: "⏱️",
+    description: "Race against the clock!",
+    path: "/timed-challenge",
+    bgClass: "bg-sunshine-300 border-sunshine-600 hover:bg-sunshine-400",
+    textClass: "text-sunshine-800",
+  },
+  {
+    title: "Flashcards",
+    emoji: "🗂️",
+    description: "Flip and learn!",
+    path: "/flashcards",
+    bgClass: "bg-sky-300 border-sky-600 hover:bg-sky-400",
+    textClass: "text-sky-800",
+  },
+  {
+    title: "Mini Games",
+    emoji: "🎮",
+    description: "Play and learn!",
+    path: "/mini-game",
+    bgClass: "bg-lavender-300 border-lavender-600 hover:bg-lavender-400",
+    textClass: "text-lavender-800",
+  },
+  {
+    title: "My Progress",
+    emoji: "⭐",
+    description: "See your badges!",
+    path: "/progress",
+    bgClass: "bg-grass-300 border-grass-600 hover:bg-grass-400",
+    textClass: "text-grass-800",
+  },
 ];
 
 export default function Home() {
   const navigate = useNavigate();
+  const { identity } = useInternetIdentity();
+  const isAuthenticated = !!identity;
+
+  const { data: userProfile, isLoading: profileLoading, isFetched: profileFetched } = useGetCallerUserProfile();
+  const { data: callerRole } = useGetCallerRole();
+
+  // Show role modal when authenticated but no profile yet
+  const showRoleModal = isAuthenticated && !profileLoading && profileFetched && userProfile === null;
+
+  const dashboardPath =
+    callerRole === UserRole.teacher
+      ? "/teacher-dashboard"
+      : callerRole === UserRole.parent
+      ? "/parent-dashboard"
+      : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sunshine-50">
+    <div className="min-h-screen bg-gradient-to-br from-sunshine-100 via-sky-100 to-lavender-100">
       {/* Hero Banner */}
-      <div className="relative overflow-hidden">
-        <img
-          src="/assets/generated/hero-banner.dim_1200x400.png"
-          alt="KidsLearn Hero"
-          className="w-full object-cover max-h-64 sm:max-h-80"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-sunshine-500/70 to-sky-500/50 flex items-center justify-center">
-          <div className="text-center text-white px-4">
-            <div className="flex items-center justify-center gap-3 mb-2">
+      <section className="relative overflow-hidden">
+        <div className="relative bg-gradient-to-r from-sky-400 via-lavender-400 to-cherry-400 py-12 px-4">
+          <div className="absolute inset-0 opacity-20 pointer-events-none">
+            <div className="absolute top-4 left-8 text-6xl animate-float">⭐</div>
+            <div className="absolute top-8 right-12 text-5xl animate-bounce">🌈</div>
+            <div className="absolute bottom-4 left-1/4 text-4xl">🎉</div>
+            <div className="absolute bottom-6 right-1/3 text-5xl animate-float">🦋</div>
+          </div>
+          <div className="max-w-4xl mx-auto text-center relative z-10">
+            <div className="flex justify-center mb-4">
               <img
                 src="/assets/generated/kidslearn-logo.dim_256x256.png"
-                alt="KidsLearn"
-                className="w-16 h-16 rounded-3xl shadow-fun-lg animate-float"
+                alt="KidsLearn Logo"
+                className="w-24 h-24 rounded-3xl shadow-fun-xl border-4 border-white"
               />
-              <h1 className="font-fredoka text-5xl sm:text-6xl drop-shadow-lg">KidsLearn</h1>
             </div>
-            <p className="font-nunito text-xl sm:text-2xl font-bold drop-shadow-md">
-              Learn Numbers, Alphabets, Poems & More! 🎉
+            <h1 className="font-heading text-5xl md:text-7xl text-white drop-shadow-lg mb-3">
+              🌟 KidsLearn! 🌟
+            </h1>
+            <p className="font-body text-xl md:text-2xl text-white/90 font-bold mb-6">
+              Learn Alphabets, Numbers &amp; Words in Telugu, Hindi, Tamil &amp; English!
             </p>
-            <p className="font-nunito text-base sm:text-lg mt-1 drop-shadow-md opacity-90">
-              Telugu • Hindi • English • Tamil
-            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <button
+                onClick={() => navigate({ to: "/age-group" })}
+                className="kid-btn bg-sunshine-400 hover:bg-sunshine-500 text-white px-8 py-4 text-xl border-4 border-sunshine-600 shadow-fun-xl"
+              >
+                🚀 Start Learning!
+              </button>
+              {isAuthenticated && dashboardPath && (
+                <button
+                  onClick={() => navigate({ to: dashboardPath })}
+                  className="kid-btn bg-white hover:bg-gray-100 text-sky-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
+                >
+                  <LayoutDashboard size={22} /> Dashboard
+                </button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <h2 className="font-fredoka text-3xl sm:text-4xl text-center text-sunshine-700 mb-2">
-          What do you want to learn today? 🌈
+      {/* Navigation Grid */}
+      <section className="max-w-6xl mx-auto px-4 py-10">
+        <h2 className="font-heading text-4xl text-center text-lavender-600 mb-8 drop-shadow-sm">
+          🎯 What do you want to learn today?
         </h2>
-        <p className="font-nunito text-center text-muted-foreground mb-8 text-lg">
-          Tap any card to start learning!
-        </p>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-          {sections.map((section, i) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {NAV_CARDS.map((card, idx) => (
             <button
-              key={section.path}
-              onClick={() => navigate({ to: section.path })}
-              className={`card-enter-${Math.min(i + 1, 8)} ${section.color} border-4 ${section.border} rounded-3xl p-4 flex flex-col items-center gap-2 shadow-fun-lg hover:scale-105 hover:shadow-fun-xl active:scale-95 transition-all duration-200 min-h-[120px] justify-center`}
+              key={card.path}
+              onClick={() => navigate({ to: card.path })}
+              className={`kid-card border-4 ${card.bgClass} p-4 flex flex-col items-center gap-2 text-center cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 animate-card-entrance card-delay-${Math.min(idx + 1, 6)}`}
             >
-              <span className="text-4xl">{section.emoji}</span>
-              <span className="font-fredoka text-white text-lg drop-shadow-sm text-center leading-tight">
-                {section.label}
-              </span>
+              <span className="text-5xl">{card.emoji}</span>
+              <span className={`font-heading text-xl ${card.textClass}`}>{card.title}</span>
+              <span className="font-body text-sm text-gray-600 leading-tight">{card.description}</span>
             </button>
           ))}
         </div>
+      </section>
 
-        {/* Age Group Section */}
-        <div className="mt-10 text-center">
-          <button
-            onClick={() => navigate({ to: '/age-group' })}
-            className="bg-lavender-500 hover:bg-lavender-600 border-4 border-lavender-700 text-white font-fredoka text-2xl px-8 py-4 rounded-4xl shadow-fun-xl hover:scale-105 active:scale-95 transition-all duration-200"
-          >
-            🎓 Start Structured Learning by Age Group
-          </button>
+      {/* Fun Stats Banner */}
+      <section className="bg-gradient-to-r from-grass-400 to-mint-400 py-8 px-4 mx-4 mb-8 rounded-3xl max-w-6xl md:mx-auto">
+        <div className="flex flex-wrap justify-center gap-8 text-white text-center">
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-4xl">🌍</span>
+            <span className="font-heading text-2xl">4 Languages</span>
+            <span className="font-body text-sm opacity-90">Telugu, Hindi, Tamil, English</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-4xl">📖</span>
+            <span className="font-heading text-2xl">100+ Lessons</span>
+            <span className="font-body text-sm opacity-90">Fun &amp; Interactive</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-4xl">🏆</span>
+            <span className="font-heading text-2xl">11 Badges</span>
+            <span className="font-body text-sm opacity-90">Earn as you learn!</span>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <span className="text-4xl">🎮</span>
+            <span className="font-heading text-2xl">5+ Games</span>
+            <span className="font-body text-sm opacity-90">Play &amp; Learn!</span>
+          </div>
         </div>
-      </div>
+      </section>
+
+      {/* Role Selection Modal — only accepts `open` prop */}
+      <RoleSelectionModal open={showRoleModal} />
     </div>
   );
 }

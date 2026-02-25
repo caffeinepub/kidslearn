@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearch } from '@tanstack/react-router';
 import { useGetMiniGameContent, useAwardBadge } from '../hooks/useQueries';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import CelebrationAnimation from '../components/CelebrationAnimation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RotateCcw, Trophy } from 'lucide-react';
@@ -31,7 +32,6 @@ function ToddlerGame({ onWin }: { onWin: () => void }) {
       allCards.push({ id: pairId * 2, content: pair[0], pairId, isFlipped: false, isMatched: false });
       allCards.push({ id: pairId * 2 + 1, content: pair[1], pairId, isFlipped: false, isMatched: false });
     });
-    // Shuffle
     for (let i = allCards.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [allCards[i], allCards[j]] = [allCards[j], allCards[i]];
@@ -143,7 +143,7 @@ function EarlyLearnerGame({ onWin }: { onWin: () => void }) {
   };
 
   const isCorrect = (letter: string) => matches[letter] === letter;
-  const isWrong = (letter: string) => matches[letter] && matches[letter] !== letter;
+  const isWrong = (letter: string) => !!(matches[letter] && matches[letter] !== letter);
 
   return (
     <div>
@@ -151,7 +151,6 @@ function EarlyLearnerGame({ onWin }: { onWin: () => void }) {
         Drag the letter to its matching word! 🔤
       </p>
 
-      {/* Draggable letters */}
       <div className="flex justify-center gap-3 mb-6">
         {LETTER_PAIRS.map((pair) => {
           const isUsed = Object.values(matches).includes(pair.letter);
@@ -176,7 +175,6 @@ function EarlyLearnerGame({ onWin }: { onWin: () => void }) {
         })}
       </div>
 
-      {/* Drop targets */}
       <div className="space-y-3">
         {shuffledWords.map((pair) => (
           <div
@@ -240,7 +238,6 @@ function scrambleWord(word: string): string {
 
 function OlderKidsGame({ onWin }: { onWin: () => void }) {
   const [wordIndex, setWordIndex] = useState(0);
-  const [scrambled, setScrambled] = useState('');
   const [letters, setLetters] = useState<Array<{ char: string; id: number; used: boolean }>>([]);
   const [answer, setAnswer] = useState<Array<{ char: string; id: number }>>([]);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
@@ -250,7 +247,6 @@ function OlderKidsGame({ onWin }: { onWin: () => void }) {
 
   useEffect(() => {
     const sc = scrambleWord(currentWord.word);
-    setScrambled(sc);
     setLetters(sc.split('').map((char, i) => ({ char, id: i, used: false })));
     setAnswer([]);
     setIsCorrect(null);
@@ -289,7 +285,6 @@ function OlderKidsGame({ onWin }: { onWin: () => void }) {
 
   const handleReset = () => {
     const sc = scrambleWord(currentWord.word);
-    setScrambled(sc);
     setLetters(sc.split('').map((char, i) => ({ char, id: i, used: false })));
     setAnswer([]);
     setIsCorrect(null);
@@ -304,12 +299,10 @@ function OlderKidsGame({ onWin }: { onWin: () => void }) {
         Word {wordIndex + 1} of {SCRAMBLE_WORDS.length} — Solved: {solvedCount}
       </p>
 
-      {/* Hint */}
       <div className="bg-sunshine-100 border-2 border-sunshine-400 rounded-2xl p-3 mb-5 text-center">
         <p className="font-nunito font-bold text-foreground">{currentWord.hint}</p>
       </div>
 
-      {/* Answer area */}
       <div className={`
         flex justify-center gap-2 flex-wrap min-h-14 p-3 rounded-2xl border-4 mb-4 transition-all
         ${isCorrect === true ? 'bg-grass-400 border-grass-600' :
@@ -337,7 +330,6 @@ function OlderKidsGame({ onWin }: { onWin: () => void }) {
         <p className="text-center font-fredoka text-xl text-cherry-600 mb-3">❌ Not quite! Try again!</p>
       )}
 
-      {/* Scrambled letters */}
       <div className="flex justify-center gap-2 flex-wrap mb-4">
         {letters.map((l) => (
           <button
@@ -372,20 +364,26 @@ function OlderKidsGame({ onWin }: { onWin: () => void }) {
 export default function MiniGame() {
   const search = useSearch({ strict: false }) as { ageGroup?: string; subject?: string };
   const ageGroup = search.ageGroup || 'early-learner';
-  const subject = search.subject || 'math';
 
   const [hasWon, setHasWon] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [badgeAwarded, setBadgeAwarded] = useState(false);
 
+  const { identity } = useInternetIdentity();
   const awardBadgeMutation = useAwardBadge();
+
+  // useGetMiniGameContent is kept for potential future use
+  useGetMiniGameContent();
 
   const handleWin = async () => {
     setHasWon(true);
     setShowCelebration(true);
-    if (!badgeAwarded) {
+    if (!badgeAwarded && identity) {
       try {
-        await awardBadgeMutation.mutateAsync(`${ageGroup}-minigame-badge`);
+        await awardBadgeMutation.mutateAsync({
+          targetPrincipal: identity.getPrincipal().toString(),
+          badgeId: `${ageGroup}-minigame-badge`,
+        });
         setBadgeAwarded(true);
       } catch { /* ignore duplicate */ }
     }
@@ -397,8 +395,14 @@ export default function MiniGame() {
     setBadgeAwarded(false);
   };
 
-  const gameTitle = ageGroup === 'toddler' ? '🎴 Memory Match' : ageGroup === 'early-learner' ? '🔤 Letter Match' : '🔀 Word Scramble';
-  const ageLabel = ageGroup === 'toddler' ? 'Toddlers' : ageGroup === 'early-learner' ? 'Early Learners' : 'Older Kids';
+  const gameTitle =
+    ageGroup === 'toddler' ? '🎴 Memory Match' :
+    ageGroup === 'early-learner' ? '🔤 Letter Match' :
+    '🔀 Word Scramble';
+  const ageLabel =
+    ageGroup === 'toddler' ? 'Toddlers' :
+    ageGroup === 'early-learner' ? 'Early Learners' :
+    'Older Kids';
 
   return (
     <div className="animate-fade-slide-in max-w-lg mx-auto px-4 py-8">
@@ -422,23 +426,26 @@ export default function MiniGame() {
               <Trophy className="w-8 h-8 text-white" />
               <div className="text-left">
                 <p className="font-fredoka text-white text-lg">Badge Earned! 🎖️</p>
-                <p className="font-nunito text-white/80 text-sm">Mini-Game Champion</p>
+                <p className="font-nunito text-white/80 text-sm">Keep playing to earn more badges!</p>
               </div>
             </div>
           )}
 
           <button
             onClick={handleRestart}
-            className="touch-target w-full py-4 rounded-2xl bg-tangerine-400 text-white font-nunito font-bold shadow-fun hover-bounce transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-3xl bg-tangerine-400 border-4 border-tangerine-600 text-white font-fredoka text-2xl shadow-fun hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3"
           >
-            <RotateCcw className="w-5 h-5" /> Play Again
+            <RotateCcw size={24} /> Play Again
           </button>
         </div>
       ) : (
-        <div className="bg-card border-4 border-sunshine-400 rounded-3xl p-6 shadow-card">
+        <div className="bg-card rounded-3xl border-4 border-sunshine-400 shadow-card p-6">
           {ageGroup === 'toddler' && <ToddlerGame onWin={handleWin} />}
           {ageGroup === 'early-learner' && <EarlyLearnerGame onWin={handleWin} />}
           {ageGroup === 'older-kids' && <OlderKidsGame onWin={handleWin} />}
+          {!['toddler', 'early-learner', 'older-kids'].includes(ageGroup) && (
+            <EarlyLearnerGame onWin={handleWin} />
+          )}
         </div>
       )}
     </div>

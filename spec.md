@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Enhance the KidsLearn app's Alphabet, Poems, and Numbers sections with multilingual content (English, Telugu, Hindi, Tamil), illustrated cards, and text-to-speech support.
+**Goal:** Make the KidsLearn app more visually engaging for young children by applying a bright, child-friendly color scheme and increasing the size of alphabet and number cards.
 
 **Planned changes:**
-- Upgrade the Alphabet & Letters section to show large, colorful letter cards for all 4 languages, each displaying the letter, a relevant illustrated image, and the example word in all 4 languages; add a language selector and tap-to-speak via Web Speech API
-- Upgrade the Poems & Nursery Rhymes section with at least 3 pre-built classic poems per language (English, Telugu, Hindi, Tamil) displayed in native script on colorful cards, with a read-aloud button using Web Speech API and a language tab/filter
-- Upgrade the Numbers section to show numbers 1–20 as large colorful cards, each displaying the digit, number word in all 4 languages in native script, and an emoji visual count; add tap-to-speak via Web Speech API with a language selector
-- Add 26 custom illustrated alphabet images (A–Z) as static assets used on each alphabet letter card
+- Apply a bright, vibrant, playful color scheme across all pages (Home, AlphabetLesson, NumbersLesson, Numbers100Lesson, MiniGame, MatchingGame, Quiz, VocabularyLesson, PoemsLesson, PuzzleGame, TimedChallenge, and others) — replacing any muted or adult-oriented colors with bold, saturated, high-contrast colors on backgrounds, buttons, cards, navigation, and interactive elements
+- Increase the font size of alphabet letters on cards in AlphabetLesson significantly (e.g., 4xl–6xl or larger)
+- Increase the font size of number digits on cards in NumbersLesson and Numbers100Lesson significantly
+- Make alphabet and number cards larger and more tappable overall
 
-**User-visible outcome:** Children can explore letters, poems, and numbers in English, Telugu, Hindi, and Tamil with illustrated cards, native-script text, and audio pronunciation at the tap of a button.
+**User-visible outcome:** The app looks colorful and fun for young children, with large, easy-to-read letters and numbers on bigger, tappable cards throughout all lesson pages.

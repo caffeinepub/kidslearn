@@ -16,6 +16,24 @@ export interface Flashcard {
   'back' : string,
   'image' : string,
 }
+export interface GameSession {
+  'userId' : Principal,
+  'score' : bigint,
+  'language' : string,
+  'totalQuestions' : bigint,
+  'timestamp' : Time,
+  'gameType' : GameType,
+}
+export interface GameStatistics {
+  'bestScore' : bigint,
+  'totalScore' : bigint,
+  'totalSessions' : bigint,
+  'averageScore' : bigint,
+}
+export type GameType = { 'quiz' : null } |
+  { 'matchingGame' : null } |
+  { 'puzzle' : null } |
+  { 'timedChallenge' : null };
 export interface Lesson {
   'id' : bigint,
   'title' : string,
@@ -42,8 +60,12 @@ export interface SessionProgress {
   'completedLessons' : Array<bigint>,
   'quizResults' : Array<QuizResult>,
 }
-export interface UserProfile { 'name' : string, 'role' : string }
-export type UserRole = { 'admin' : null } |
+export type Time = bigint;
+export interface UserProfile { 'name' : string, 'role' : UserRole }
+export type UserRole = { 'teacher' : null } |
+  { 'student' : null } |
+  { 'parent' : null };
+export type UserRole__1 = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
 export interface _CaffeineStorageCreateCertificateResult {
@@ -74,20 +96,37 @@ export interface _SERVICE {
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
-  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole__1], undefined>,
   'awardBadge' : ActorMethod<[Principal, string], undefined>,
   'completeLesson' : ActorMethod<[bigint], undefined>,
+  'getAllSessionsProgress' : ActorMethod<[], Array<[string, SessionProgress]>>,
+  'getCallerRole' : ActorMethod<[], UserRole>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
-  'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getCallerUserRole' : ActorMethod<[], UserRole__1>,
   'getFlashcards' : ActorMethod<[], Array<Flashcard>>,
+  'getGameTypeAverage' : ActorMethod<
+    [GameType],
+    [] | [{ 'totalSessions' : bigint, 'averageScore' : bigint }]
+  >,
   'getLessons' : ActorMethod<[], Array<Lesson>>,
   'getMiniGameContent' : ActorMethod<[], Array<MiniGameContent>>,
   'getQuizQuestions' : ActorMethod<[], Array<QuizQuestion>>,
   'getSessionProgress' : ActorMethod<[Principal], SessionProgress>,
+  'getUserGameSessions' : ActorMethod<[Principal], Array<GameSession>>,
+  'getUserGameStatistics' : ActorMethod<
+    [Principal, GameType],
+    [] | [GameStatistics]
+  >,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
+  'getUserRole' : ActorMethod<[Principal], UserRole>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'recordGameSession' : ActorMethod<
+    [GameType, string, bigint, bigint],
+    undefined
+  >,
   'recordQuizResult' : ActorMethod<[string, bigint, bigint], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
+  'setCallerRole' : ActorMethod<[UserRole], undefined>,
   'setupContent' : ActorMethod<[], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;

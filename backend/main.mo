@@ -3,13 +3,17 @@ import Map "mo:core/Map";
 import Text "mo:core/Text";
 import Order "mo:core/Order";
 import Nat "mo:core/Nat";
+import Time "mo:core/Time";
 import Runtime "mo:core/Runtime";
 import Principal "mo:core/Principal";
+import Array "mo:core/Array";
 
 import MixinAuthorization "authorization/MixinAuthorization";
 import MixinStorage "blob-storage/Mixin";
 import AccessControl "authorization/access-control";
 import Storage "blob-storage/Storage";
+
+
 
 actor {
   // Access control state
@@ -17,15 +21,20 @@ actor {
   include MixinAuthorization(accessControlState);
   include MixinStorage();
 
-  // User Profile Type (required by frontend)
+  public type UserRole = {
+    #teacher;
+    #parent;
+    #student;
+  };
+
   public type UserProfile = {
     name : Text;
-    role : Text; // "parent", "teacher", "child"
+    role : UserRole;
   };
 
   let userProfiles = Map.empty<Principal, UserProfile>();
+  let userRoles = Map.empty<Principal, UserRole>();
 
-  // Persistent Types
   type Lesson = {
     id : Nat;
     title : Text;
@@ -64,7 +73,43 @@ actor {
     earnedBadges : [Text];
   };
 
-  // Internal Persistent Types
+  type GameType = {
+    #timedChallenge;
+    #matchingGame;
+    #puzzle;
+    #quiz;
+  };
+
+  module GameType {
+    public func compare(g1 : GameType, g2 : GameType) : Order.Order {
+      let toNat = func(g : GameType) : Nat {
+        switch (g) {
+          case (#timedChallenge) { 0 };
+          case (#matchingGame) { 1 };
+          case (#puzzle) { 2 };
+          case (#quiz) { 3 };
+        };
+      };
+      Nat.compare(toNat(g1), toNat(g2));
+    };
+  };
+
+  type GameSession = {
+    userId : Principal;
+    gameType : GameType;
+    language : Text;
+    score : Nat;
+    totalQuestions : Nat;
+    timestamp : Time.Time;
+  };
+
+  type GameStatistics = {
+    bestScore : Nat;
+    totalSessions : Nat;
+    totalScore : Nat;
+    averageScore : Nat;
+  };
+
   type InternalQuizResult = QuizResult;
   type InternalSessionProgress = {
     completedLessons : List.List<Nat>;
@@ -72,22 +117,40 @@ actor {
     earnedBadges : List.List<Text>;
   };
 
-  // Persistent Store
   let lessons : List.List<Lesson> = List.empty<Lesson>();
   let flashcards : List.List<Flashcard> = List.empty<Flashcard>();
   let quizQuestions : List.List<QuizQuestion> = List.empty<QuizQuestion>();
   let miniGameContents : List.List<MiniGameContent> = List.empty<MiniGameContent>();
-  // sessionProgress keyed by Principal text so only the owner can access their data
   let sessionProgress = Map.empty<Text, InternalSessionProgress>();
+  let gameSessions = List.empty<GameSession>();
 
-  // Helper Sort Functions
+  let emptyGameStatsMap = Map.empty<GameType, GameStatistics>();
+  let perUserGameStats = Map.empty<Principal, Map.Map<GameType, GameStatistics>>();
+
   module LessonSort {
     public func compare(l1 : Lesson, l2 : Lesson) : Order.Order {
       Nat.compare(l1.id, l2.id);
     };
   };
 
-  // User Profile Functions (required by frontend)
+  // Helper: check if a principal has the teacher role
+  func isTeacher(principal : Principal) : Bool {
+    switch (userRoles.get(principal)) {
+      case (?#teacher) { true };
+      case (_) { false };
+    };
+  };
+
+  // Helper: check if a principal has the parent role
+  func isParent(principal : Principal) : Bool {
+    switch (userRoles.get(principal)) {
+      case (?#parent) { true };
+      case (_) { false };
+    };
+  };
+
+  // ── Profile functions ──────────────────────────────────────────────────────
+
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can get their profile");
@@ -96,7 +159,6 @@ actor {
   };
 
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
-    // Admins can view any profile; users can only view their own
     if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Can only view your own profile");
     };
@@ -108,16 +170,51 @@ actor {
       Runtime.trap("Unauthorized: Only authenticated users can save their profile");
     };
     userProfiles.add(caller, profile);
+    userRoles.add(caller, profile.role);
   };
 
-  // Admin: Content Setup
-  // Only admins may seed/reset content
+  // ── Role functions ─────────────────────────────────────────────────────────
+
+  public query ({ caller }) func getCallerRole() : async UserRole {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can get their role");
+    };
+    switch (userRoles.get(caller)) {
+      case (null) { #student };
+      case (?role) { role };
+    };
+  };
+
+  public shared ({ caller }) func setCallerRole(role : UserRole) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can set their role");
+    };
+    userRoles.add(caller, role);
+    // Keep userProfiles in sync if a profile already exists
+    switch (userProfiles.get(caller)) {
+      case (?profile) { userProfiles.add(caller, { profile with role }) };
+      case (null) {};
+    };
+  };
+
+  // Admins can query any user's role; authenticated users can query their own.
+  public query ({ caller }) func getUserRole(user : Principal) : async UserRole {
+    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Can only view your own role");
+    };
+    switch (userRoles.get(user)) {
+      case (null) { #student };
+      case (?role) { role };
+    };
+  };
+
+  // ── Content setup (admin only) ─────────────────────────────────────────────
+
   public shared ({ caller }) func setupContent() : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can set up content");
     };
 
-    // Add sample lessons
     let lessonItems = [
       { id = 1; title = "Counting to 10"; body = "Learn to count from 1 to 10."; image = "counting.png" },
       {
@@ -131,7 +228,6 @@ actor {
       lessons.add(lesson);
     };
 
-    // Add sample flashcards
     let flashcardItems = [
       {
         id = 1;
@@ -145,7 +241,6 @@ actor {
       flashcards.add(flashcard);
     };
 
-    // Add sample quiz questions
     let quizItems = [
       {
         id = 1;
@@ -164,14 +259,14 @@ actor {
       quizQuestions.add(quiz);
     };
 
-    // Add sample mini-game content
     let miniGameItems = [{ id = 1; pairs = [("🐶", "Dog"), ("🍎", "Apple")] }];
     for (miniGame in miniGameItems.values()) {
       miniGameContents.add(miniGame);
     };
   };
 
-  // Content Query Functions (public – guests may read learning content)
+  // ── Public content queries (guest / student access, no auth required) ──────
+
   public query func getLessons() : async [Lesson] {
     lessons.toArray().sort();
   };
@@ -188,10 +283,8 @@ actor {
     miniGameContents.toArray();
   };
 
-  // Progress Tracking (authenticated users only)
-  // completeLesson: any authenticated user may record their own lesson completion.
-  // The session key is derived from the caller's principal so users cannot
-  // tamper with each other's progress.
+  // ── Progress tracking ──────────────────────────────────────────────────────
+
   public shared ({ caller }) func completeLesson(lessonId : Nat) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can record lesson completion");
@@ -208,7 +301,6 @@ actor {
       case (?p) { p };
     };
 
-    // Prevent adding the same lesson twice
     if (progress.completedLessons.any(func(id : Nat) : Bool { id == lessonId })) {
       Runtime.trap("Lesson already completed");
     };
@@ -218,7 +310,6 @@ actor {
     sessionProgress.add(sessionId, { progress with completedLessons = newCompletedLessons });
   };
 
-  // recordQuizResult: authenticated users record their own quiz scores.
   public shared ({ caller }) func recordQuizResult(subject : Text, score : Nat, total : Nat) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can record quiz results");
@@ -240,7 +331,7 @@ actor {
     sessionProgress.add(sessionId, { progress with quizResults = newQuizResults });
   };
 
-  // awardBadge: admin-only – badges are awarded by the system, not self-claimed.
+  // Only admins can award badges to arbitrary principals.
   public shared ({ caller }) func awardBadge(targetPrincipal : Principal, badgeId : Text) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can award badges");
@@ -257,7 +348,6 @@ actor {
       case (?p) { p };
     };
 
-    // Prevent duplicate badges
     if (progress.earnedBadges.any(func(b : Text) : Bool { b == badgeId })) {
       Runtime.trap("Badge already awarded");
     };
@@ -267,14 +357,21 @@ actor {
     sessionProgress.add(sessionId, { progress with earnedBadges = newEarnedBadges });
   };
 
-  // getSessionProgress: authenticated users can view their own progress;
-  // admins can view any user's progress (parent/teacher dashboard).
+  // Viewing progress:
+  //   - A user can always view their own progress.
+  //   - Admins can view any user's progress.
+  //   - Teachers can view any user's progress (needed for Teacher Dashboard).
+  //   - Parents can view any user's progress (needed for Parent Dashboard).
+  //   - Unauthenticated callers (guests/students) cannot call this endpoint.
   public query ({ caller }) func getSessionProgress(targetPrincipal : Principal) : async SessionProgress {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can view progress");
     };
-    // Non-admins may only view their own progress
-    if (caller != targetPrincipal and not AccessControl.isAdmin(accessControlState, caller)) {
+    let callerIsOwner = caller == targetPrincipal;
+    let callerIsAdmin = AccessControl.isAdmin(accessControlState, caller);
+    let callerIsTeacher = isTeacher(caller);
+    let callerIsParent = isParent(caller);
+    if (not callerIsOwner and not callerIsAdmin and not callerIsTeacher and not callerIsParent) {
       Runtime.trap("Unauthorized: Can only view your own progress");
     };
     let sessionId = targetPrincipal.toText();
@@ -292,12 +389,144 @@ actor {
     );
   };
 
-  // Helpers
   func toPublicSessionProgress(progress : InternalSessionProgress) : SessionProgress {
     {
       completedLessons = progress.completedLessons.toArray();
       quizResults = progress.quizResults.toArray();
       earnedBadges = progress.earnedBadges.toArray();
     };
+  };
+
+  // ── Game sessions ──────────────────────────────────────────────────────────
+
+  public shared ({ caller }) func recordGameSession(gameType : GameType, language : Text, score : Nat, totalQuestions : Nat) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can record game sessions");
+    };
+
+    let session : GameSession = {
+      userId = caller;
+      gameType;
+      language;
+      score;
+      totalQuestions;
+      timestamp = Time.now();
+    };
+
+    gameSessions.add(session);
+
+    let userStats = switch (perUserGameStats.get(caller)) {
+      case (null) { Map.empty<GameType, GameStatistics>() };
+      case (?stats) { stats };
+    };
+
+    let currentStats = switch (userStats.get(gameType)) {
+      case (null) {
+        {
+          bestScore = score;
+          totalSessions = 1;
+          totalScore = score;
+          averageScore = score;
+        };
+      };
+      case (?s) {
+        {
+          bestScore = Nat.max(s.bestScore, score);
+          totalSessions = s.totalSessions + 1;
+          totalScore = s.totalScore + score;
+          averageScore = (s.totalScore + score) / (s.totalSessions + 1);
+        };
+      };
+    };
+    userStats.add(gameType, currentStats);
+    perUserGameStats.add(caller, userStats);
+  };
+
+  // Viewing individual game sessions:
+  //   - A user can view their own sessions.
+  //   - Admins and teachers can view any user's sessions.
+  public query ({ caller }) func getUserGameSessions(userId : Principal) : async [GameSession] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view game sessions");
+    };
+    let callerIsOwner = caller == userId;
+    let callerIsAdmin = AccessControl.isAdmin(accessControlState, caller);
+    let callerIsTeacher = isTeacher(caller);
+    let callerIsParent = isParent(caller);
+    if (not callerIsOwner and not callerIsAdmin and not callerIsTeacher and not callerIsParent) {
+      Runtime.trap("Unauthorized: Can only view your own game sessions");
+    };
+
+    let sessionIter = gameSessions.values();
+    let filtered = sessionIter.filter(
+      func(session) { session.userId == userId }
+    );
+    filtered.toArray();
+  };
+
+  // Viewing per-user game statistics:
+  //   - A user can view their own statistics.
+  //   - Admins and teachers can view any user's statistics.
+  public query ({ caller }) func getUserGameStatistics(userId : Principal, gameType : GameType) : async ?GameStatistics {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view game statistics");
+    };
+    let callerIsOwner = caller == userId;
+    let callerIsAdmin = AccessControl.isAdmin(accessControlState, caller);
+    let callerIsTeacher = isTeacher(caller);
+    let callerIsParent = isParent(caller);
+    if (not callerIsOwner and not callerIsAdmin and not callerIsTeacher and not callerIsParent) {
+      Runtime.trap("Unauthorized: Can only view your own game statistics");
+    };
+
+    switch (perUserGameStats.get(userId)) {
+      case (null) { null };
+      case (?userStats) {
+        userStats.get(gameType);
+      };
+    };
+  };
+
+  // Aggregated statistics across all users — accessible to authenticated users
+  // (teachers use this for the Teacher Dashboard overview).
+  public query ({ caller }) func getGameTypeAverage(gameType : GameType) : async ?{ totalSessions : Nat; averageScore : Nat } {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view aggregated statistics");
+    };
+
+    var totalScore = 0;
+    var sessionCount = 0;
+    let sessionsIter = gameSessions.values();
+    sessionsIter.forEach(
+      func(session) {
+        if (session.gameType == gameType) {
+          sessionCount += 1;
+          totalScore += session.score;
+        };
+      }
+    );
+
+    if (sessionCount == 0) { null } else {
+      ?{
+        totalSessions = sessionCount;
+        averageScore = totalScore / sessionCount;
+      };
+    };
+  };
+
+  // Returns aggregated progress data across all tracked sessions — intended for
+  // the Teacher Dashboard.  Only teachers and admins may call this.
+  public query ({ caller }) func getAllSessionsProgress() : async [(Text, SessionProgress)] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view all progress");
+    };
+    if (not AccessControl.isAdmin(accessControlState, caller) and not isTeacher(caller)) {
+      Runtime.trap("Unauthorized: Only teachers and admins can view all progress");
+    };
+    let result = List.empty<(Text, SessionProgress)>();
+    for ((sessionId, progress) in sessionProgress.entries()) {
+      result.add((sessionId, toPublicSessionProgress(progress)));
+    };
+    result.toArray();
   };
 };

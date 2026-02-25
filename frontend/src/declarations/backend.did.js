@@ -19,17 +19,38 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
-export const UserRole = IDL.Variant({
+export const UserRole__1 = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
-export const UserProfile = IDL.Record({ 'name' : IDL.Text, 'role' : IDL.Text });
+export const QuizResult = IDL.Record({
+  'total' : IDL.Nat,
+  'subject' : IDL.Text,
+  'score' : IDL.Nat,
+});
+export const SessionProgress = IDL.Record({
+  'earnedBadges' : IDL.Vec(IDL.Text),
+  'completedLessons' : IDL.Vec(IDL.Nat),
+  'quizResults' : IDL.Vec(QuizResult),
+});
+export const UserRole = IDL.Variant({
+  'teacher' : IDL.Null,
+  'student' : IDL.Null,
+  'parent' : IDL.Null,
+});
+export const UserProfile = IDL.Record({ 'name' : IDL.Text, 'role' : UserRole });
 export const Flashcard = IDL.Record({
   'id' : IDL.Nat,
   'front' : IDL.Text,
   'back' : IDL.Text,
   'image' : IDL.Text,
+});
+export const GameType = IDL.Variant({
+  'quiz' : IDL.Null,
+  'matchingGame' : IDL.Null,
+  'puzzle' : IDL.Null,
+  'timedChallenge' : IDL.Null,
 });
 export const Lesson = IDL.Record({
   'id' : IDL.Nat,
@@ -47,15 +68,20 @@ export const QuizQuestion = IDL.Record({
   'correctIndex' : IDL.Nat,
   'options' : IDL.Vec(IDL.Text),
 });
-export const QuizResult = IDL.Record({
-  'total' : IDL.Nat,
-  'subject' : IDL.Text,
+export const Time = IDL.Int;
+export const GameSession = IDL.Record({
+  'userId' : IDL.Principal,
   'score' : IDL.Nat,
+  'language' : IDL.Text,
+  'totalQuestions' : IDL.Nat,
+  'timestamp' : Time,
+  'gameType' : GameType,
 });
-export const SessionProgress = IDL.Record({
-  'earnedBadges' : IDL.Vec(IDL.Text),
-  'completedLessons' : IDL.Vec(IDL.Nat),
-  'quizResults' : IDL.Vec(QuizResult),
+export const GameStatistics = IDL.Record({
+  'bestScore' : IDL.Nat,
+  'totalScore' : IDL.Nat,
+  'totalSessions' : IDL.Nat,
+  'averageScore' : IDL.Nat,
 });
 
 export const idlService = IDL.Service({
@@ -86,12 +112,27 @@ export const idlService = IDL.Service({
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole__1], [], []),
   'awardBadge' : IDL.Func([IDL.Principal, IDL.Text], [], []),
   'completeLesson' : IDL.Func([IDL.Nat], [], []),
+  'getAllSessionsProgress' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Tuple(IDL.Text, SessionProgress))],
+      ['query'],
+    ),
+  'getCallerRole' : IDL.Func([], [UserRole], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole__1], ['query']),
   'getFlashcards' : IDL.Func([], [IDL.Vec(Flashcard)], ['query']),
+  'getGameTypeAverage' : IDL.Func(
+      [GameType],
+      [
+        IDL.Opt(
+          IDL.Record({ 'totalSessions' : IDL.Nat, 'averageScore' : IDL.Nat })
+        ),
+      ],
+      ['query'],
+    ),
   'getLessons' : IDL.Func([], [IDL.Vec(Lesson)], ['query']),
   'getMiniGameContent' : IDL.Func([], [IDL.Vec(MiniGameContent)], ['query']),
   'getQuizQuestions' : IDL.Func([], [IDL.Vec(QuizQuestion)], ['query']),
@@ -100,14 +141,31 @@ export const idlService = IDL.Service({
       [SessionProgress],
       ['query'],
     ),
+  'getUserGameSessions' : IDL.Func(
+      [IDL.Principal],
+      [IDL.Vec(GameSession)],
+      ['query'],
+    ),
+  'getUserGameStatistics' : IDL.Func(
+      [IDL.Principal, GameType],
+      [IDL.Opt(GameStatistics)],
+      ['query'],
+    ),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'getUserRole' : IDL.Func([IDL.Principal], [UserRole], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'recordGameSession' : IDL.Func(
+      [GameType, IDL.Text, IDL.Nat, IDL.Nat],
+      [],
+      [],
+    ),
   'recordQuizResult' : IDL.Func([IDL.Text, IDL.Nat, IDL.Nat], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'setCallerRole' : IDL.Func([UserRole], [], []),
   'setupContent' : IDL.Func([], [], []),
 });
 
@@ -125,17 +183,38 @@ export const idlFactory = ({ IDL }) => {
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
   });
-  const UserRole = IDL.Variant({
+  const UserRole__1 = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
-  const UserProfile = IDL.Record({ 'name' : IDL.Text, 'role' : IDL.Text });
+  const QuizResult = IDL.Record({
+    'total' : IDL.Nat,
+    'subject' : IDL.Text,
+    'score' : IDL.Nat,
+  });
+  const SessionProgress = IDL.Record({
+    'earnedBadges' : IDL.Vec(IDL.Text),
+    'completedLessons' : IDL.Vec(IDL.Nat),
+    'quizResults' : IDL.Vec(QuizResult),
+  });
+  const UserRole = IDL.Variant({
+    'teacher' : IDL.Null,
+    'student' : IDL.Null,
+    'parent' : IDL.Null,
+  });
+  const UserProfile = IDL.Record({ 'name' : IDL.Text, 'role' : UserRole });
   const Flashcard = IDL.Record({
     'id' : IDL.Nat,
     'front' : IDL.Text,
     'back' : IDL.Text,
     'image' : IDL.Text,
+  });
+  const GameType = IDL.Variant({
+    'quiz' : IDL.Null,
+    'matchingGame' : IDL.Null,
+    'puzzle' : IDL.Null,
+    'timedChallenge' : IDL.Null,
   });
   const Lesson = IDL.Record({
     'id' : IDL.Nat,
@@ -153,15 +232,20 @@ export const idlFactory = ({ IDL }) => {
     'correctIndex' : IDL.Nat,
     'options' : IDL.Vec(IDL.Text),
   });
-  const QuizResult = IDL.Record({
-    'total' : IDL.Nat,
-    'subject' : IDL.Text,
+  const Time = IDL.Int;
+  const GameSession = IDL.Record({
+    'userId' : IDL.Principal,
     'score' : IDL.Nat,
+    'language' : IDL.Text,
+    'totalQuestions' : IDL.Nat,
+    'timestamp' : Time,
+    'gameType' : GameType,
   });
-  const SessionProgress = IDL.Record({
-    'earnedBadges' : IDL.Vec(IDL.Text),
-    'completedLessons' : IDL.Vec(IDL.Nat),
-    'quizResults' : IDL.Vec(QuizResult),
+  const GameStatistics = IDL.Record({
+    'bestScore' : IDL.Nat,
+    'totalScore' : IDL.Nat,
+    'totalSessions' : IDL.Nat,
+    'averageScore' : IDL.Nat,
   });
   
   return IDL.Service({
@@ -192,12 +276,27 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole__1], [], []),
     'awardBadge' : IDL.Func([IDL.Principal, IDL.Text], [], []),
     'completeLesson' : IDL.Func([IDL.Nat], [], []),
+    'getAllSessionsProgress' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Text, SessionProgress))],
+        ['query'],
+      ),
+    'getCallerRole' : IDL.Func([], [UserRole], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole__1], ['query']),
     'getFlashcards' : IDL.Func([], [IDL.Vec(Flashcard)], ['query']),
+    'getGameTypeAverage' : IDL.Func(
+        [GameType],
+        [
+          IDL.Opt(
+            IDL.Record({ 'totalSessions' : IDL.Nat, 'averageScore' : IDL.Nat })
+          ),
+        ],
+        ['query'],
+      ),
     'getLessons' : IDL.Func([], [IDL.Vec(Lesson)], ['query']),
     'getMiniGameContent' : IDL.Func([], [IDL.Vec(MiniGameContent)], ['query']),
     'getQuizQuestions' : IDL.Func([], [IDL.Vec(QuizQuestion)], ['query']),
@@ -206,14 +305,31 @@ export const idlFactory = ({ IDL }) => {
         [SessionProgress],
         ['query'],
       ),
+    'getUserGameSessions' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(GameSession)],
+        ['query'],
+      ),
+    'getUserGameStatistics' : IDL.Func(
+        [IDL.Principal, GameType],
+        [IDL.Opt(GameStatistics)],
+        ['query'],
+      ),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'getUserRole' : IDL.Func([IDL.Principal], [UserRole], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'recordGameSession' : IDL.Func(
+        [GameType, IDL.Text, IDL.Nat, IDL.Nat],
+        [],
+        [],
+      ),
     'recordQuizResult' : IDL.Func([IDL.Text, IDL.Nat, IDL.Nat], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'setCallerRole' : IDL.Func([UserRole], [], []),
     'setupContent' : IDL.Func([], [], []),
   });
 };

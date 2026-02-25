@@ -2,10 +2,22 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-enhance-the-alphabet-letters-section-to-display-big-colorful-letters-for-all-4-languages-english-telugu-hindi-tamil-with-a-corresponding-picture-illustration-and-the-word-for-that-letter-in-all-4-languages-each-letter-card-should-be-large-and-visually-prominent-kid-friendly-and-tappable-to-hear-the-letter-sound-via-text-to-speech",
-      "featureTitle": "Enhance the Alphabet & Letters section to display big, colorful letters for all 4 languages (English, Telugu, Hindi, Tamil) with a corresponding picture illustration and the word for that letter in all 4 languages. Each letter card should be large and visually prominent, kid-friendly, and tappable to hear the letter sound via text-to-speech.",
+      "featureId": "feature-apply-a-bright-vibrant-child-friendly-color-scheme-throughout-the-entire-app-use-bold-saturated-colors-for-backgrounds-buttons-cards-navigation-and-interactive-elements-replace-any-muted-or-adult-oriented-palette-with-playful-high-contrast-colors-that-are-visually-engaging-for-young-children-ensure-the-theme-is-consistent-across-all-pages-including-home-alphabetlesson-numberslesson-numbers100lesson-minigame-matchinggame-quiz-vocabularylesson-poemslesson-puzzlegame-timedchallenge-and-all-other-pages",
+      "featureTitle": "Apply a bright, vibrant, child-friendly color scheme throughout the entire app. Use bold, saturated colors for backgrounds, buttons, cards, navigation, and interactive elements. Replace any muted or adult-oriented palette with playful, high-contrast colors that are visually engaging for young children. Ensure the theme is consistent across all pages including Home, AlphabetLesson, NumbersLesson, Numbers100Lesson, MiniGame, MatchingGame, Quiz, VocabularyLesson, PoemsLesson, PuzzleGame, TimedChallenge, and all other pages.",
       "files": [
-        "frontend/src/pages/AlphabetLesson.tsx"
+        "frontend/src/index.css",
+        "frontend/src/pages/AlphabetLesson.tsx",
+        "frontend/src/pages/Flashcards.tsx",
+        "frontend/src/pages/Home.tsx",
+        "frontend/src/pages/MatchingGame.tsx",
+        "frontend/src/pages/Numbers100Lesson.tsx",
+        "frontend/src/pages/NumbersLesson.tsx",
+        "frontend/src/pages/PoemsLesson.tsx",
+        "frontend/src/pages/PuzzleGame.tsx",
+        "frontend/src/pages/Quiz.tsx",
+        "frontend/src/pages/TimedChallenge.tsx",
+        "frontend/src/pages/VocabularyLesson.tsx",
+        "frontend/tailwind.config.js"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -22,29 +34,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-enhance-the-poems-nursery-rhymes-section-to-include-pre-built-classic-rhymes-for-all-4-languages-english-e-g-twinkle-twinkle-little-star-baa-baa-black-sheep-telugu-e-g-chanda-mama-hindi-e-g-chanda-mama-door-ke-machli-jal-ki-rani-hai-and-tamil-e-g-aaduvome-pallu-paduvome-each-poem-should-be-displayed-with-a-colorful-card-the-full-poem-text-in-the-native-script-and-a-text-to-speech-read-aloud-button",
-      "featureTitle": "Enhance the Poems & Nursery Rhymes section to include pre-built classic rhymes for all 4 languages: English (e.g., Twinkle Twinkle Little Star, Baa Baa Black Sheep), Telugu (e.g., Chanda Mama), Hindi (e.g., Chanda Mama Door Ke, Machli Jal Ki Rani Hai), and Tamil (e.g., Aaduvome Pallu Paduvome). Each poem should be displayed with a colorful card, the full poem text in the native script, and a text-to-speech read-aloud button.",
+      "featureId": "feature-increase-the-display-size-of-alphabet-letters-and-number-digits-across-all-relevant-pages-in-alphabetlesson-tsx-significantly-increase-the-font-size-of-the-letter-displayed-on-each-card-in-numberslesson-tsx-and-numbers100lesson-tsx-significantly-increase-the-font-size-of-the-number-on-each-card-cards-themselves-should-also-be-larger-and-more-tappable-the-enlarged-size-should-make-letters-and-numbers-immediately-readable-and-prominent-for-young-children",
+      "featureTitle": "Increase the display size of alphabet letters and number digits across all relevant pages. In AlphabetLesson.tsx, significantly increase the font size of the letter displayed on each card. In NumbersLesson.tsx and Numbers100Lesson.tsx, significantly increase the font size of the number on each card. Cards themselves should also be larger and more tappable. The enlarged size should make letters and numbers immediately readable and prominent for young children.",
       "files": [
-        "frontend/src/pages/PoemsLesson.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-enhance-the-numbers-section-to-display-numbers-1-20-each-showing-the-digit-the-number-word-in-all-4-languages-english-telugu-hindi-tamil-in-their-native-scripts-and-an-illustrated-count-using-emoji-or-pictures-e-g-3-apples-for-the-number-3-each-number-card-should-be-tappable-to-hear-the-number-spoken-in-the-selected-language-via-text-to-speech",
-      "featureTitle": "Enhance the Numbers section to display numbers 1–20, each showing the digit, the number word in all 4 languages (English, Telugu, Hindi, Tamil) in their native scripts, and an illustrated count using emoji or pictures (e.g., 3 apples for the number 3). Each number card should be tappable to hear the number spoken in the selected language via text-to-speech.",
-      "files": [
+        "frontend/src/pages/AlphabetLesson.tsx",
+        "frontend/src/pages/Numbers100Lesson.tsx",
         "frontend/src/pages/NumbersLesson.tsx"
       ],
       "components": [
@@ -57,27 +51,7 @@
         "blob-storage@4.0.0"
       ],
       "testIds": [
-        "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-generate-and-display-custom-illustrated-image-assets-for-the-alphabet-section-one-picture-per-letter-in-english-a-z-26-images-to-be-placed-in-frontend-public-assets-generated-use-these-static-images-as-the-visual-illustration-on-each-alphabet-card",
-      "featureTitle": "Generate and display custom illustrated image assets for the alphabet section (one picture per letter in English, A–Z, 26 images), to be placed in frontend/public/assets/generated. Use these static images as the visual illustration on each alphabet card.",
-      "files": [
-        "frontend/src/pages/AlphabetLesson.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "blob-storage@4.0.0"
-      ],
-      "testIds": [
-        "REQ-4"
+        "REQ-2"
       ],
       "confidence": "high"
     }

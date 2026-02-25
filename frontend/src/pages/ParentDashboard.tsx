@@ -1,29 +1,34 @@
+import React from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useGetCallerRole, useGetSessionProgress } from '../hooks/useQueries';
+import { UserRole } from '../backend';
 import { useQueryClient } from '@tanstack/react-query';
-import { useGetSessionProgress } from '../hooks/useQueries';
-import { LogOut, Trophy, BookOpen, Zap, TrendingUp, AlertCircle, LogIn } from 'lucide-react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { LogOut, Loader2, BookOpen, Star, Trophy, BarChart2 } from 'lucide-react';
 
-const BADGE_INFO: Record<string, { label: string; emoji: string }> = {
-  'math-quiz-badge': { label: 'Math Champion', emoji: '🔢' },
-  'alphabet-quiz-badge': { label: 'Alphabet Star', emoji: '🔤' },
-  'science-quiz-badge': { label: 'Science Whiz', emoji: '🔬' },
-  'telugu-quiz-badge': { label: 'Telugu Hero', emoji: '🌺' },
-  'hindi-quiz-badge': { label: 'Hindi Star', emoji: '🪔' },
-  'english-quiz-badge': { label: 'English Pro', emoji: '📖' },
-  'first-lesson': { label: 'First Lesson', emoji: '🎓' },
-  'quiz-master': { label: 'Quiz Master', emoji: '🧠' },
-};
+const ALL_BADGES = [
+  { id: 'first_lesson', label: 'First Lesson', emoji: '📖' },
+  { id: 'quiz_master', label: 'Quiz Master', emoji: '🧠' },
+  { id: 'perfect_score', label: 'Perfect Score', emoji: '💯' },
+  { id: 'streak_3', label: '3-Day Streak', emoji: '🔥' },
+  { id: 'alphabet_hero', label: 'Alphabet Hero', emoji: '🔤' },
+  { id: 'number_ninja', label: 'Number Ninja', emoji: '🔢' },
+  { id: 'word_wizard', label: 'Word Wizard', emoji: '✨' },
+  { id: 'poem_reader', label: 'Poem Reader', emoji: '🎵' },
+  { id: 'game_champion', label: 'Game Champion', emoji: '🏆' },
+  { id: 'fast_learner', label: 'Fast Learner', emoji: '⚡' },
+  { id: 'curious_mind', label: 'Curious Mind', emoji: '🔍' },
+];
 
-export default function ParentDashboard() {
+const ParentDashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { identity, clear, login, loginStatus } = useInternetIdentity();
+  const { identity, clear } = useInternetIdentity();
   const queryClient = useQueryClient();
   const isAuthenticated = !!identity;
-  const isLoggingIn = loginStatus === 'logging-in';
 
-  const { data: progress, isLoading } = useGetSessionProgress();
+  const { data: role, isLoading: roleLoading, isFetched: roleFetched } = useGetCallerRole();
+  const principalStr = identity?.getPrincipal().toString();
+  const { data: progress, isLoading: progressLoading } = useGetSessionProgress(principalStr);
 
   const handleLogout = async () => {
     await clear();
@@ -31,162 +36,174 @@ export default function ParentDashboard() {
     navigate({ to: '/' });
   };
 
-  const handleLogin = async () => {
-    try {
-      await login();
-    } catch (e) {
-      console.error('Login error', e);
-    }
-  };
-
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-lavender-100 to-sunshine-50 flex items-center justify-center px-4">
-        <div className="bg-white border-4 border-lavender-400 rounded-4xl p-8 max-w-md w-full text-center shadow-fun-xl">
-          <div className="text-6xl mb-4">👨‍👩‍👧‍👦</div>
-          <h1 className="font-fredoka text-3xl text-lavender-700 mb-2">Parent & Teacher Dashboard</h1>
-          <p className="font-nunito text-muted-foreground mb-6">
-            Log in to view your child's progress, scores, and achievements.
-          </p>
+      <div className="min-h-screen bg-gradient-to-b from-sunshine-50 to-grass-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-fun border-4 border-sunshine-200 p-8 max-w-md text-center">
+          <span className="text-6xl">🔒</span>
+          <h2 className="text-2xl font-bold font-fredoka text-sunshine-600 mt-4">Login Required</h2>
+          <p className="text-gray-600 font-nunito mt-2">Please log in to view the Parent Dashboard.</p>
           <button
-            onClick={handleLogin}
-            disabled={isLoggingIn}
-            className="w-full bg-lavender-500 hover:bg-lavender-600 border-4 border-lavender-700 text-white font-fredoka text-2xl py-4 rounded-3xl shadow-fun hover:scale-105 active:scale-95 transition-all disabled:opacity-60 flex items-center justify-center gap-3"
+            onClick={() => navigate({ to: '/' })}
+            className="mt-6 px-6 py-3 bg-sunshine-400 text-white rounded-xl font-bold font-nunito hover:bg-sunshine-500 transition-colors"
           >
-            <LogIn size={28} />
-            {isLoggingIn ? 'Logging in...' : 'Login with Internet Identity'}
+            Go Home
           </button>
-          <p className="font-nunito text-xs text-muted-foreground mt-4">
-            Secure login — children do not need to log in.
-          </p>
         </div>
       </div>
     );
   }
 
-  const badges = progress?.earnedBadges || [];
-  const completedLessons = progress?.completedLessons || [];
-  const quizResults = progress?.quizResults || [];
+  if (roleLoading || !roleFetched) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-sunshine-50 to-grass-50 flex items-center justify-center">
+        <Loader2 className="animate-spin text-sunshine-500" size={48} />
+      </div>
+    );
+  }
 
-  const avgScore = quizResults.length > 0
-    ? Math.round(quizResults.reduce((sum, r) => sum + (Number(r.score) / Number(r.total)) * 100, 0) / quizResults.length)
-    : 0;
+  if (role !== UserRole.parent) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-sunshine-50 to-grass-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-fun border-4 border-cherry-200 p-8 max-w-md text-center">
+          <span className="text-6xl">🚫</span>
+          <h2 className="text-2xl font-bold font-fredoka text-cherry-600 mt-4">Access Denied</h2>
+          <p className="text-gray-600 font-nunito mt-2">This dashboard is only for Parents.</p>
+          <button
+            onClick={() => navigate({ to: '/' })}
+            className="mt-6 px-6 py-3 bg-sunshine-400 text-white rounded-xl font-bold font-nunito hover:bg-sunshine-500 transition-colors"
+          >
+            Go Home
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  const weakAreas = quizResults
-    .filter(r => (Number(r.score) / Number(r.total)) < 0.6)
-    .map(r => r.subject);
+  const earnedBadges = progress?.earnedBadges ?? [];
+  const completedLessons = progress?.completedLessons ?? [];
+  const quizResults = progress?.quizResults ?? [];
+  const avgScore =
+    quizResults.length > 0
+      ? Math.round(
+          quizResults.reduce(
+            (sum, r) => sum + (Number(r.total) > 0 ? (Number(r.score) / Number(r.total)) * 100 : 0),
+            0
+          ) / quizResults.length
+        )
+      : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-lavender-100 to-sunshine-50 px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+    <div className="min-h-screen bg-gradient-to-b from-sunshine-50 to-grass-50 pb-12">
+      {/* Header */}
+      <div className="bg-tangerine-400 py-6 px-4 shadow-md">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
           <div>
-            <h1 className="font-fredoka text-3xl sm:text-4xl text-lavender-700">
-              👨‍👩‍👧‍👦 Parent Dashboard
-            </h1>
-            <p className="font-nunito text-muted-foreground text-sm mt-1">
-              Logged in as: {identity.getPrincipal().toString().slice(0, 20)}...
+            <h1 className="text-2xl font-bold text-white font-fredoka">👨‍👩‍👧 Parent Dashboard</h1>
+            <p className="text-tangerine-100 font-nunito text-sm mt-0.5">
+              Track your child's learning journey
             </p>
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-2 bg-cherry-500 hover:bg-cherry-600 border-4 border-cherry-700 text-white font-nunito font-bold px-4 py-2 rounded-3xl shadow-fun hover:scale-105 active:scale-95 transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/40 text-white rounded-xl font-nunito font-bold text-sm transition-colors"
           >
-            <LogOut size={18} />
+            <LogOut size={16} />
             Logout
           </button>
         </div>
+      </div>
 
-        {isLoading ? (
-          <div className="space-y-4">
-            <Skeleton className="h-32 w-full rounded-3xl" />
-            <Skeleton className="h-32 w-full rounded-3xl" />
-            <Skeleton className="h-32 w-full rounded-3xl" />
+      <div className="max-w-4xl mx-auto px-4 mt-8">
+        {progressLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="animate-spin text-tangerine-400" size={40} />
+            <span className="ml-3 text-gray-500 font-nunito">Loading progress...</span>
           </div>
         ) : (
           <>
-            {/* Summary Cards */}
+            {/* Summary Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-              <div className="bg-sunshine-400 border-4 border-sunshine-600 rounded-3xl p-4 text-center shadow-fun">
-                <div className="text-3xl mb-1">⭐</div>
-                <p className="font-fredoka text-white text-2xl">{badges.length}</p>
-                <p className="font-nunito text-white/90 text-xs">Badges Earned</p>
+              <div className="bg-white rounded-2xl border-2 border-sunshine-200 p-4 text-center shadow-sm">
+                <BookOpen className="mx-auto text-sunshine-500 mb-1" size={28} />
+                <div className="text-2xl font-bold font-fredoka text-sunshine-600">{completedLessons.length}</div>
+                <div className="text-xs text-gray-500 font-nunito">Lessons Done</div>
               </div>
-              <div className="bg-grass-400 border-4 border-grass-600 rounded-3xl p-4 text-center shadow-fun">
-                <BookOpen className="mx-auto text-white mb-1" size={28} />
-                <p className="font-fredoka text-white text-2xl">{completedLessons.length}</p>
-                <p className="font-nunito text-white/90 text-xs">Lessons Done</p>
+              <div className="bg-white rounded-2xl border-2 border-grass-200 p-4 text-center shadow-sm">
+                <Star className="mx-auto text-grass-500 mb-1" size={28} />
+                <div className="text-2xl font-bold font-fredoka text-grass-600">{earnedBadges.length}</div>
+                <div className="text-xs text-gray-500 font-nunito">Badges Earned</div>
               </div>
-              <div className="bg-tangerine-400 border-4 border-tangerine-600 rounded-3xl p-4 text-center shadow-fun">
-                <Zap className="mx-auto text-white mb-1" size={28} />
-                <p className="font-fredoka text-white text-2xl">{quizResults.length}</p>
-                <p className="font-nunito text-white/90 text-xs">Quizzes Taken</p>
+              <div className="bg-white rounded-2xl border-2 border-tangerine-200 p-4 text-center shadow-sm">
+                <Trophy className="mx-auto text-tangerine-500 mb-1" size={28} />
+                <div className="text-2xl font-bold font-fredoka text-tangerine-600">{quizResults.length}</div>
+                <div className="text-xs text-gray-500 font-nunito">Quizzes Taken</div>
               </div>
-              <div className="bg-lavender-400 border-4 border-lavender-600 rounded-3xl p-4 text-center shadow-fun">
-                <TrendingUp className="mx-auto text-white mb-1" size={28} />
-                <p className="font-fredoka text-white text-2xl">{avgScore}%</p>
-                <p className="font-nunito text-white/90 text-xs">Avg Score</p>
+              <div className="bg-white rounded-2xl border-2 border-cherry-200 p-4 text-center shadow-sm">
+                <BarChart2 className="mx-auto text-cherry-500 mb-1" size={28} />
+                <div className="text-2xl font-bold font-fredoka text-cherry-600">
+                  {avgScore !== null ? `${avgScore}%` : '—'}
+                </div>
+                <div className="text-xs text-gray-500 font-nunito">Avg Score</div>
+              </div>
+            </div>
+
+            {/* Badges */}
+            <div className="bg-white rounded-2xl border-2 border-sunshine-200 shadow-sm mb-6 overflow-hidden">
+              <div className="bg-sunshine-100 px-6 py-4 border-b border-sunshine-200">
+                <h2 className="text-lg font-bold font-fredoka text-sunshine-700">⭐ Badges</h2>
+              </div>
+              <div className="p-4 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                {ALL_BADGES.map((badge) => {
+                  const earned = earnedBadges.includes(badge.id);
+                  return (
+                    <div
+                      key={badge.id}
+                      className={`flex flex-col items-center gap-1 p-2 rounded-xl border-2 transition-all ${
+                        earned
+                          ? 'border-sunshine-300 bg-sunshine-50'
+                          : 'border-gray-200 bg-gray-50 opacity-40 grayscale'
+                      }`}
+                    >
+                      <span className="text-3xl">{badge.emoji}</span>
+                      <span className="text-xs font-nunito text-center text-gray-600 leading-tight">
+                        {badge.label}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
             {/* Quiz Results */}
-            <div className="bg-white border-4 border-tangerine-300 rounded-4xl p-5 mb-6 shadow-fun">
-              <h2 className="font-fredoka text-2xl text-tangerine-700 mb-4 flex items-center gap-2">
-                <Zap size={24} /> Quiz Performance
-              </h2>
+            <div className="bg-white rounded-2xl border-2 border-grass-200 shadow-sm overflow-hidden">
+              <div className="bg-grass-100 px-6 py-4 border-b border-grass-200">
+                <h2 className="text-lg font-bold font-fredoka text-grass-700">📝 Quiz Results</h2>
+              </div>
               {quizResults.length === 0 ? (
-                <p className="font-nunito text-muted-foreground text-center py-4">No quizzes taken yet.</p>
+                <div className="text-center py-10 text-gray-400 font-nunito">
+                  No quizzes taken yet. Encourage your child to try a quiz!
+                </div>
               ) : (
-                <div className="space-y-3">
-                  {quizResults.map((result, i) => {
-                    const pct = Math.round((Number(result.score) / Number(result.total)) * 100);
-                    const barColor = pct >= 70 ? 'bg-grass-500' : pct >= 40 ? 'bg-sunshine-500' : 'bg-cherry-500';
+                <div className="p-4 space-y-3">
+                  {quizResults.map((r, i) => {
+                    const pct = Number(r.total) > 0 ? Math.round((Number(r.score) / Number(r.total)) * 100) : 0;
                     return (
                       <div key={i} className="flex items-center gap-3">
-                        <span className="font-nunito font-bold text-foreground w-24 text-sm capitalize">{result.subject}</span>
-                        <div className="flex-1 bg-muted rounded-full h-4 overflow-hidden">
-                          <div className={`${barColor} h-4 rounded-full transition-all`} style={{ width: `${pct}%` }} />
+                        <span className="font-nunito font-bold text-gray-700 w-24 shrink-0 text-sm">
+                          {r.subject}
+                        </span>
+                        <div className="flex-1 bg-gray-100 rounded-full h-4 overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all ${
+                              pct >= 80 ? 'bg-grass-400' : pct >= 50 ? 'bg-sunshine-400' : 'bg-cherry-400'
+                            }`}
+                            style={{ width: `${pct}%` }}
+                          />
                         </div>
-                        <span className="font-fredoka text-foreground w-16 text-right">{Number(result.score)}/{Number(result.total)}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {/* Weak Areas */}
-            {weakAreas.length > 0 && (
-              <div className="bg-cherry-50 border-4 border-cherry-300 rounded-4xl p-5 mb-6 shadow-fun">
-                <h2 className="font-fredoka text-2xl text-cherry-700 mb-3 flex items-center gap-2">
-                  <AlertCircle size={24} /> Areas Needing Improvement
-                </h2>
-                <div className="flex flex-wrap gap-2">
-                  {weakAreas.map((area, i) => (
-                    <span key={i} className="bg-cherry-400 border-2 border-cherry-600 text-white font-nunito font-bold px-3 py-1 rounded-2xl text-sm capitalize">
-                      {area}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Badges */}
-            <div className="bg-white border-4 border-sunshine-300 rounded-4xl p-5 shadow-fun">
-              <h2 className="font-fredoka text-2xl text-sunshine-700 mb-4 flex items-center gap-2">
-                <Trophy size={24} /> Earned Badges ({badges.length})
-              </h2>
-              {badges.length === 0 ? (
-                <p className="font-nunito text-muted-foreground text-center py-4">No badges earned yet.</p>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {badges.map((badgeId, i) => {
-                    const info = BADGE_INFO[badgeId] || { label: badgeId, emoji: '🏅' };
-                    return (
-                      <div key={i} className="bg-sunshine-100 border-4 border-sunshine-400 rounded-3xl p-3 text-center">
-                        <div className="text-3xl mb-1">{info.emoji}</div>
-                        <p className="font-nunito font-bold text-sunshine-700 text-xs">{info.label}</p>
+                        <span className="text-sm font-bold font-nunito text-gray-600 w-16 text-right shrink-0">
+                          {Number(r.score)}/{Number(r.total)} ({pct}%)
+                        </span>
                       </div>
                     );
                   })}
@@ -198,4 +215,6 @@ export default function ParentDashboard() {
       </div>
     </div>
   );
-}
+};
+
+export default ParentDashboard;

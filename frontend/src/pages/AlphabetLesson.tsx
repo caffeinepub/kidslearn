@@ -1,254 +1,212 @@
-import { useState } from 'react';
-import { Volume2 } from 'lucide-react';
+import React, { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { Volume2, ArrowLeft, ArrowRight } from "lucide-react";
+import { getAlphabetCards } from "../data/languageData";
 
-type Language = 'english' | 'telugu' | 'hindi' | 'tamil';
+type Language = "english" | "telugu" | "hindi" | "tamil";
 
-const LANGUAGE_LABELS: Record<Language, string> = {
-  english: '🇬🇧 English',
-  telugu: '🌺 Telugu',
-  hindi: '🪔 Hindi',
-  tamil: '🌸 Tamil',
+const LANGUAGE_CONFIG: Record<Language, { label: string; voice: string; bgClass: string; borderClass: string; btnClass: string }> = {
+  english: {
+    label: "English",
+    voice: "en-US",
+    bgClass: "bg-sky-100 border-sky-400",
+    borderClass: "border-sky-400",
+    btnClass: "bg-sky-400 hover:bg-sky-500 text-white",
+  },
+  telugu: {
+    label: "తెలుగు",
+    voice: "te-IN",
+    bgClass: "bg-grass-100 border-grass-400",
+    borderClass: "border-grass-400",
+    btnClass: "bg-grass-400 hover:bg-grass-500 text-white",
+  },
+  hindi: {
+    label: "हिंदी",
+    voice: "hi-IN",
+    bgClass: "bg-tangerine-100 border-tangerine-400",
+    borderClass: "border-tangerine-400",
+    btnClass: "bg-tangerine-400 hover:bg-tangerine-500 text-white",
+  },
+  tamil: {
+    label: "தமிழ்",
+    voice: "ta-IN",
+    bgClass: "bg-lavender-100 border-lavender-400",
+    borderClass: "border-lavender-400",
+    btnClass: "bg-lavender-400 hover:bg-lavender-500 text-white",
+  },
 };
-
-const LANG_CODES: Record<Language, string> = {
-  english: 'en-US',
-  telugu: 'te-IN',
-  hindi: 'hi-IN',
-  tamil: 'ta-IN',
-};
-
-interface LetterEntry {
-  letter: string;
-  image: string;
-  imageAlt: string;
-  words: Record<Language, string>;
-}
-
-// 26 English letters with generated images and multilingual words
-const ALPHABET_DATA: LetterEntry[] = [
-  {
-    letter: 'A', image: '/assets/generated/alphabet-a.dim_200x200.png', imageAlt: 'Illustration of an apple for letter A',
-    words: { english: 'Apple 🍎', telugu: 'అరటి (Arati)', hindi: 'अनार (Anaar)', tamil: 'அன்னாசி (Annaasi)' },
-  },
-  {
-    letter: 'B', image: '/assets/generated/alphabet-b.dim_200x200.png', imageAlt: 'Illustration of a ball for letter B',
-    words: { english: 'Ball ⚽', telugu: 'బంతి (Banti)', hindi: 'बकरी (Bakri)', tamil: 'பந்து (Panthu)' },
-  },
-  {
-    letter: 'C', image: '/assets/generated/alphabet-c.dim_200x200.png', imageAlt: 'Illustration of a cat for letter C',
-    words: { english: 'Cat 🐱', telugu: 'పిల్లి (Pilli)', hindi: 'चाँद (Chaand)', tamil: 'பூனை (Poonai)' },
-  },
-  {
-    letter: 'D', image: '/assets/generated/alphabet-d.dim_200x200.png', imageAlt: 'Illustration of a dog for letter D',
-    words: { english: 'Dog 🐶', telugu: 'కుక్క (Kukka)', hindi: 'दरवाज़ा (Darwaaza)', tamil: 'நாய் (Naai)' },
-  },
-  {
-    letter: 'E', image: '/assets/generated/alphabet-e.dim_200x200.png', imageAlt: 'Illustration of an elephant for letter E',
-    words: { english: 'Elephant 🐘', telugu: 'ఏనుగు (Enugu)', hindi: 'हाथी (Haathi)', tamil: 'யானை (Yaanai)' },
-  },
-  {
-    letter: 'F', image: '/assets/generated/alphabet-f.dim_200x200.png', imageAlt: 'Illustration of a fish for letter F',
-    words: { english: 'Fish 🐟', telugu: 'చేప (Chepa)', hindi: 'फूल (Phool)', tamil: 'மீன் (Meen)' },
-  },
-  {
-    letter: 'G', image: '/assets/generated/alphabet-g.dim_200x200.png', imageAlt: 'Illustration of a goat for letter G',
-    words: { english: 'Goat 🐐', telugu: 'మేక (Meka)', hindi: 'गाय (Gaay)', tamil: 'ஆடு (Aadu)' },
-  },
-  {
-    letter: 'H', image: '/assets/generated/alphabet-h.dim_200x200.png', imageAlt: 'Illustration of a hat for letter H',
-    words: { english: 'Hat 🎩', telugu: 'టోపీ (Topi)', hindi: 'घर (Ghar)', tamil: 'தொப்பி (Thoppi)' },
-  },
-  {
-    letter: 'I', image: '/assets/generated/alphabet-i.dim_200x200.png', imageAlt: 'Illustration of ice cream for letter I',
-    words: { english: 'Ice cream 🍦', telugu: 'ఐస్ క్రీమ్ (Ice Cream)', hindi: 'इमली (Imli)', tamil: 'ஐஸ்கிரீம் (Ice Cream)' },
-  },
-  {
-    letter: 'J', image: '/assets/generated/alphabet-j.dim_200x200.png', imageAlt: 'Illustration of a jar for letter J',
-    words: { english: 'Jar 🫙', telugu: 'జాడీ (Jaadi)', hindi: 'जल (Jal)', tamil: 'ஜாடி (Jaadi)' },
-  },
-  {
-    letter: 'K', image: '/assets/generated/alphabet-k.dim_200x200.png', imageAlt: 'Illustration of a kite for letter K',
-    words: { english: 'Kite 🪁', telugu: 'గాలిపటం (Gaalipatam)', hindi: 'कमल (Kamal)', tamil: 'காற்றாடி (Kaattraadi)' },
-  },
-  {
-    letter: 'L', image: '/assets/generated/alphabet-l.dim_200x200.png', imageAlt: 'Illustration of a lion for letter L',
-    words: { english: 'Lion 🦁', telugu: 'సింహం (Simham)', hindi: 'लड्डू (Laddoo)', tamil: 'சிங்கம் (Singam)' },
-  },
-  {
-    letter: 'M', image: '/assets/generated/alphabet-m.dim_200x200.png', imageAlt: 'Illustration of a mango for letter M',
-    words: { english: 'Mango 🥭', telugu: 'మామిడి (Maamidi)', hindi: 'मछली (Machhli)', tamil: 'மாம்பழம் (Maambazham)' },
-  },
-  {
-    letter: 'N', image: '/assets/generated/alphabet-n.dim_200x200.png', imageAlt: 'Illustration of a nest for letter N',
-    words: { english: 'Nest 🪺', telugu: 'గూడు (Guudu)', hindi: 'नाव (Naav)', tamil: 'கூடு (Koodu)' },
-  },
-  {
-    letter: 'O', image: '/assets/generated/alphabet-o.dim_200x200.png', imageAlt: 'Illustration of an orange for letter O',
-    words: { english: 'Orange 🍊', telugu: 'నారింజ (Naarinja)', hindi: 'ओस (Os)', tamil: 'ஆரஞ்சு (Aaranchu)' },
-  },
-  {
-    letter: 'P', image: '/assets/generated/alphabet-p.dim_200x200.png', imageAlt: 'Illustration of a parrot for letter P',
-    words: { english: 'Parrot 🦜', telugu: 'చిలుక (Chiluka)', hindi: 'पत्ता (Patta)', tamil: 'கிளி (Kili)' },
-  },
-  {
-    letter: 'Q', image: '/assets/generated/alphabet-q.dim_200x200.png', imageAlt: 'Illustration of a queen for letter Q',
-    words: { english: 'Queen 👑', telugu: 'రాణి (Raani)', hindi: 'क्वीन (Queen)', tamil: 'ராணி (Raani)' },
-  },
-  {
-    letter: 'R', image: '/assets/generated/alphabet-r.dim_200x200.png', imageAlt: 'Illustration of a rose for letter R',
-    words: { english: 'Rose 🌹', telugu: 'గులాబి (Gulaabi)', hindi: 'रोटी (Roti)', tamil: 'ரோஜா (Roja)' },
-  },
-  {
-    letter: 'S', image: '/assets/generated/alphabet-s.dim_200x200.png', imageAlt: 'Illustration of the sun for letter S',
-    words: { english: 'Sun ☀️', telugu: 'సూర్యుడు (Suryudu)', hindi: 'सेब (Seb)', tamil: 'சூரியன் (Suuriyan)' },
-  },
-  {
-    letter: 'T', image: '/assets/generated/alphabet-t.dim_200x200.png', imageAlt: 'Illustration of a tiger for letter T',
-    words: { english: 'Tiger 🐯', telugu: 'పులి (Puli)', hindi: 'तारा (Taara)', tamil: 'புலி (Puli)' },
-  },
-  {
-    letter: 'U', image: '/assets/generated/alphabet-u.dim_200x200.png', imageAlt: 'Illustration of an umbrella for letter U',
-    words: { english: 'Umbrella ☂️', telugu: 'గొడుగు (Godugu)', hindi: 'उल्लू (Ullu)', tamil: 'குடை (Kudai)' },
-  },
-  {
-    letter: 'V', image: '/assets/generated/alphabet-v.dim_200x200.png', imageAlt: 'Illustration of a van for letter V',
-    words: { english: 'Van 🚐', telugu: 'వాహనం (Vaahanam)', hindi: 'वर्षा (Varsha)', tamil: 'வண்டி (Vandi)' },
-  },
-  {
-    letter: 'W', image: '/assets/generated/alphabet-w.dim_200x200.png', imageAlt: 'Illustration of water for letter W',
-    words: { english: 'Water 💧', telugu: 'నీరు (Neeru)', hindi: 'वृक्ष (Vriksha)', tamil: 'நீர் (Neer)' },
-  },
-  {
-    letter: 'X', image: '/assets/generated/alphabet-x.dim_200x200.png', imageAlt: 'Illustration of a xylophone for letter X',
-    words: { english: 'Xylophone 🎵', telugu: 'జైలోఫోన్ (Xylophone)', hindi: 'एक्स (X)', tamil: 'சைலோஃபோன் (Xylophone)' },
-  },
-  {
-    letter: 'Y', image: '/assets/generated/alphabet-y.dim_200x200.png', imageAlt: 'Illustration of a yak for letter Y',
-    words: { english: 'Yak 🐃', telugu: 'యాక్ (Yak)', hindi: 'यात्रा (Yaatra)', tamil: 'யாக் (Yak)' },
-  },
-  {
-    letter: 'Z', image: '/assets/generated/alphabet-z.dim_200x200.png', imageAlt: 'Illustration of a zebra for letter Z',
-    words: { english: 'Zebra 🦓', telugu: 'జీబ్రా (Zebra)', hindi: 'ज़ेबरा (Zebra)', tamil: 'ஜீப்ரா (Zebra)' },
-  },
-];
 
 const CARD_COLORS = [
-  'bg-sunshine-400 border-sunshine-600',
-  'bg-grass-400 border-grass-600',
-  'bg-tangerine-400 border-tangerine-600',
-  'bg-cherry-400 border-cherry-600',
-  'bg-sky-400 border-sky-600',
-  'bg-lavender-400 border-lavender-600',
+  "bg-sunshine-200 border-sunshine-500",
+  "bg-cherry-200 border-cherry-500",
+  "bg-sky-200 border-sky-500",
+  "bg-grass-200 border-grass-500",
+  "bg-tangerine-200 border-tangerine-500",
+  "bg-lavender-200 border-lavender-500",
+  "bg-mint-200 border-mint-500",
+  "bg-coral-200 border-coral-500",
 ];
 
-function speakText(text: string, langCode: string) {
-  if (!('speechSynthesis' in window)) return;
+function speak(text: string, lang: string) {
+  if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = langCode;
-  utterance.rate = 0.85;
-  utterance.pitch = 1.1;
+  utterance.lang = lang;
+  utterance.rate = 0.8;
   window.speechSynthesis.speak(utterance);
 }
 
 export default function AlphabetLesson() {
-  const [language, setLanguage] = useState<Language>('english');
-  const [speaking, setSpeaking] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [language, setLanguage] = useState<Language>("english");
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const handleSpeak = (entry: LetterEntry) => {
-    const text = `${entry.letter}. ${entry.words[language].replace(/\(.*?\)/g, '').trim()}`;
-    setSpeaking(entry.letter);
-    speakText(text, LANG_CODES[language]);
-    setTimeout(() => setSpeaking(null), 2000);
+  const cards = getAlphabetCards(language);
+  const CARDS_PER_PAGE = 6;
+  const totalPages = Math.ceil(cards.length / CARDS_PER_PAGE);
+  const pageCards = cards.slice(currentPage * CARDS_PER_PAGE, (currentPage + 1) * CARDS_PER_PAGE);
+
+  const config = LANGUAGE_CONFIG[language];
+
+  const getImageSrc = (letter: string, lang: Language): string | null => {
+    if (lang !== "english") return null;
+    const letterLower = letter.toLowerCase();
+    const imageMap: Record<string, string> = {
+      a: "/assets/generated/alphabet-a.dim_200x200.png",
+      b: "/assets/generated/alphabet-b.dim_200x200.png",
+      c: "/assets/generated/alphabet-c.dim_200x200.png",
+      d: "/assets/generated/alphabet-d.dim_200x200.png",
+      e: "/assets/generated/alphabet-e.dim_200x200.png",
+      f: "/assets/generated/alphabet-f.dim_200x200.png",
+      g: "/assets/generated/alphabet-g.dim_200x200.png",
+      h: "/assets/generated/alphabet-h.dim_200x200.png",
+      i: "/assets/generated/alphabet-i.dim_200x200.png",
+      j: "/assets/generated/alphabet-j.dim_200x200.png",
+      k: "/assets/generated/alphabet-k.dim_200x200.png",
+      l: "/assets/generated/alphabet-l.dim_200x200.png",
+      m: "/assets/generated/alphabet-m.dim_200x200.png",
+      n: "/assets/generated/alphabet-n.dim_200x200.png",
+      o: "/assets/generated/alphabet-o.dim_200x200.png",
+    };
+    return imageMap[letterLower] || null;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-grass-100 to-sunshine-50 px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-sky-100 via-sunshine-100 to-lavender-100 py-6 px-4">
       <div className="max-w-6xl mx-auto">
-        <h1 className="font-fredoka text-4xl sm:text-5xl text-center text-grass-700 mb-2">
-          Alphabet 🔤
-        </h1>
-        <p className="font-nunito text-center text-muted-foreground text-lg mb-6">
-          Learn letters with pictures and words in 4 languages!
-        </p>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="font-heading text-5xl md:text-6xl text-sky-600 drop-shadow-md mb-2">
+            🔤 Alphabet Fun!
+          </h1>
+          <p className="font-body text-xl text-sky-500 font-semibold">
+            Tap a card to hear the letter!
+          </p>
+        </div>
 
         {/* Language Selector */}
         <div className="flex flex-wrap justify-center gap-3 mb-8">
-          {(Object.keys(LANGUAGE_LABELS) as Language[]).map((lang) => (
+          {(Object.keys(LANGUAGE_CONFIG) as Language[]).map((lang) => (
             <button
               key={lang}
-              onClick={() => setLanguage(lang)}
-              className={`font-nunito font-bold px-5 py-2 rounded-3xl border-4 transition-all hover:scale-105 active:scale-95 text-base ${
+              onClick={() => { setLanguage(lang); setCurrentPage(0); }}
+              className={`kid-btn px-6 py-3 text-lg font-heading border-4 ${
                 language === lang
-                  ? 'bg-grass-500 border-grass-700 text-white shadow-fun'
-                  : 'bg-white border-grass-300 text-grass-700 hover:bg-grass-50'
+                  ? LANGUAGE_CONFIG[lang].btnClass + " scale-110 shadow-fun-lg border-white"
+                  : "bg-white border-gray-300 text-gray-600 hover:scale-105"
               }`}
             >
-              {LANGUAGE_LABELS[lang]}
+              {LANGUAGE_CONFIG[lang].label}
             </button>
           ))}
         </div>
 
-        {/* Letters Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-          {ALPHABET_DATA.map((entry, i) => {
-            const colorClass = CARD_COLORS[i % CARD_COLORS.length];
-            const isSpeaking = speaking === entry.letter;
+        {/* Info Banner */}
+        <div className={`mx-auto max-w-xl mb-8 p-4 rounded-3xl border-4 text-center font-heading text-lg ${config.bgClass}`}>
+          Showing {language.charAt(0).toUpperCase() + language.slice(1)} alphabet — Page {currentPage + 1} of {totalPages}
+        </div>
+
+        {/* Cards Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 mb-8">
+          {pageCards.map((card, idx) => {
+            const colorClass = CARD_COLORS[idx % CARD_COLORS.length];
+            const imgSrc = getImageSrc(card.letter, language);
             return (
               <div
-                key={entry.letter}
-                onClick={() => handleSpeak(entry)}
-                className={`${colorClass} border-4 rounded-3xl p-3 flex flex-col items-center gap-2 shadow-fun hover:scale-105 transition-all duration-200 cursor-pointer select-none ${isSpeaking ? 'scale-105 ring-4 ring-white/60' : ''}`}
+                key={`${language}-${card.letter}-${idx}`}
+                className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 animate-card-entrance card-delay-${Math.min(idx + 1, 6)} flex flex-col items-center justify-between p-4 min-h-[280px]`}
+                onClick={() => speak(`${card.letter}. ${card.word}`, config.voice)}
               >
-                {/* Big Letter */}
-                <span className="font-fredoka text-5xl text-white drop-shadow-md leading-none">
-                  {entry.letter}
-                </span>
-
-                {/* Illustration Image */}
-                <div className="w-full flex justify-center">
-                  <img
-                    src={entry.image}
-                    alt={entry.imageAlt}
-                    className="w-16 h-16 object-cover rounded-2xl border-2 border-white/50 shadow-md"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
+                {/* Letter - VERY LARGE */}
+                <div className="flex-1 flex items-center justify-center w-full">
+                  <span className="font-heading text-8xl md:text-9xl leading-none drop-shadow-md select-none">
+                    {card.letter}
+                  </span>
                 </div>
 
-                {/* Word in selected language */}
-                <span className="font-nunito font-bold text-white text-xs text-center leading-tight px-1">
-                  {entry.words[language]}
-                </span>
-
-                {/* All 4 language words (compact) */}
-                <div className="w-full flex flex-col gap-0.5">
-                  {(Object.keys(LANGUAGE_LABELS) as Language[])
-                    .filter((l) => l !== language)
-                    .map((l) => (
-                      <span key={l} className="font-nunito text-white/80 text-[10px] text-center leading-tight">
-                        {entry.words[l]}
-                      </span>
-                    ))}
+                {/* Image or Emoji */}
+                <div className="w-full flex items-center justify-center py-2">
+                  {imgSrc ? (
+                    <img
+                      src={imgSrc}
+                      alt={card.word}
+                      className="w-20 h-20 object-contain rounded-2xl"
+                    />
+                  ) : (
+                    <span className="text-5xl">{card.emoji}</span>
+                  )}
                 </div>
 
-                {/* Speak button */}
-                <button
-                  onClick={(e) => { e.stopPropagation(); handleSpeak(entry); }}
-                  className={`mt-1 bg-white/30 hover:bg-white/50 text-white rounded-2xl px-2 py-1 flex items-center gap-1 font-nunito font-bold text-xs transition-all hover:scale-105 active:scale-95 ${isSpeaking ? 'bg-white/60' : ''}`}
-                >
-                  <Volume2 size={12} />
-                  {isSpeaking ? '...' : 'Say it!'}
-                </button>
+                {/* Word + Speak Button */}
+                <div className="w-full flex items-center justify-between gap-2 mt-1">
+                  <span className="font-heading text-xl text-gray-700 truncate flex-1">
+                    {card.word}
+                  </span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); speak(`${card.letter}. ${card.word}`, config.voice); }}
+                    className={`kid-btn p-2 rounded-xl border-2 border-white ${config.btnClass} shrink-0`}
+                    aria-label="Speak"
+                  >
+                    <Volume2 size={20} />
+                  </button>
+                </div>
               </div>
             );
           })}
         </div>
 
-        <p className="font-nunito text-center text-muted-foreground text-sm mt-8">
-          🔊 Tap any card to hear the letter and word spoken aloud!
-        </p>
+        {/* Pagination */}
+        <div className="flex justify-center items-center gap-4">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
+            disabled={currentPage === 0}
+            className="kid-btn bg-sky-400 hover:bg-sky-500 text-white px-6 py-3 text-lg border-4 border-sky-600 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            <ArrowLeft size={22} /> Prev
+          </button>
+          <div className="flex gap-2">
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i)}
+                className={`w-10 h-10 rounded-full font-heading text-lg border-4 transition-all ${
+                  i === currentPage
+                    ? "bg-sunshine-400 border-sunshine-600 text-white scale-110"
+                    : "bg-white border-gray-300 text-gray-600 hover:scale-105"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages - 1, p + 1))}
+            disabled={currentPage === totalPages - 1}
+            className="kid-btn bg-sky-400 hover:bg-sky-500 text-white px-6 py-3 text-lg border-4 border-sky-600 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            Next <ArrowRight size={22} />
+          </button>
+        </div>
       </div>
     </div>
   );

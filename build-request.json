@@ -1,139 +1,63 @@
 {
   "kind": "build_request",
-  "title": "Enhance KidsLearn with multilingual alphabet, poems, and numbers sections",
+  "title": "Child-friendly colors and larger alphabet/number cards",
   "projectName": "KidsLearn",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Enhance the Alphabet & Letters section to display big, colorful letters for all 4 languages (English, Telugu, Hindi, Tamil) with a corresponding picture illustration and the word for that letter in all 4 languages. Each letter card should be large and visually prominent, kid-friendly, and tappable to hear the letter sound via text-to-speech.",
+      "text": "Apply a bright, vibrant, child-friendly color scheme throughout the entire app. Use bold, saturated colors for backgrounds, buttons, cards, navigation, and interactive elements. Replace any muted or adult-oriented palette with playful, high-contrast colors that are visually engaging for young children. Ensure the theme is consistent across all pages including Home, AlphabetLesson, NumbersLesson, Numbers100Lesson, MiniGame, MatchingGame, Quiz, VocabularyLesson, PoemsLesson, PuzzleGame, TimedChallenge, and all other pages.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4",
-          "msg-6"
+          "msg-recent-1"
         ],
         "quotes": [
-          "show big letters and with pictures word with all languages letters",
-          "Big, colorful letters with pictures and words in all 4 languages (e.g., A for Apple / అ for అరటి / अ for अनार / அ for அன்னாசி)"
+          "Make good colour and children friendly"
         ]
       },
       "acceptanceCriteria": [
-        "Letters are displayed in a large, bold, colorful font suitable for young children",
-        "Each letter card shows the letter, a relevant emoji or picture, and the example word in English, Telugu, Hindi, and Tamil",
-        "A language selector allows switching the primary display language between English, Telugu, Hindi, and Tamil",
-        "Tapping/clicking a letter card triggers text-to-speech pronunciation in the selected language",
-        "Layout is responsive and works on mobile screen sizes for young users"
+        "All pages use bright, saturated, playful colors instead of muted tones",
+        "Buttons, cards, and interactive elements are visually distinct and colorful",
+        "Color contrast is sufficient for readability",
+        "The theme is consistent across all pages and components",
+        "Colors feel appropriate and engaging for children aged 2–8"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Enhance the Poems & Nursery Rhymes section to include pre-built classic rhymes for all 4 languages: English (e.g., Twinkle Twinkle Little Star, Baa Baa Black Sheep), Telugu (e.g., Chanda Mama), Hindi (e.g., Chanda Mama Door Ke, Machli Jal Ki Rani Hai), and Tamil (e.g., Aaduvome Pallu Paduvome). Each poem should be displayed with a colorful card, the full poem text in the native script, and a text-to-speech read-aloud button.",
+      "text": "Increase the display size of alphabet letters and number digits across all relevant pages. In AlphabetLesson.tsx, significantly increase the font size of the letter displayed on each card. In NumbersLesson.tsx and Numbers100Lesson.tsx, significantly increase the font size of the number on each card. Cards themselves should also be larger and more tappable. The enlarged size should make letters and numbers immediately readable and prominent for young children.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4",
-          "msg-6"
+          "msg-recent-1"
         ],
         "quotes": [
-          "poem for all languages",
-          "Poems: Should the poems be pre-written/built-in for each language",
-          "Pre-built classic poems/rhymes for each language"
+          "alphabet and Number increase the size of it"
         ]
       },
       "acceptanceCriteria": [
-        "At least 3 pre-built poems/rhymes are available for each of the 4 languages",
-        "Poems are displayed in their native script (Latin for English, Telugu script, Devanagari for Hindi, Tamil script)",
-        "Each poem card has a read-aloud button that uses the Web Speech API to speak the poem in the correct language",
-        "Poems are organized by language with a clear language tab or filter selector",
-        "Cards are colorful, illustrated with a relevant emoji or icon, and visually engaging for children"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Enhance the Numbers section to display numbers 1–20, each showing the digit, the number word in all 4 languages (English, Telugu, Hindi, Tamil) in their native scripts, and an illustrated count using emoji or pictures (e.g., 3 apples for the number 3). Each number card should be tappable to hear the number spoken in the selected language via text-to-speech.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4",
-          "msg-6"
-        ],
-        "quotes": [
-          "Numbers and Numbers with words in all languages",
-          "Numbers 1–20 with digits, number words in all 4 languages, and illustrated with pictures"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Numbers 1 through 20 are each displayed on a separate colorful card",
-        "Each card shows the digit, the number word in English, Telugu (e.g., ఒకటి), Hindi (e.g., एक), and Tamil (e.g., ஒன்று)",
-        "Each card displays a visual count using emoji (e.g., 🍎🍎🍎 for 3)",
-        "A language selector allows choosing the primary spoken language for text-to-speech playback",
-        "Tapping/clicking a card speaks the number in the selected language",
-        "Cards are large, colorful, and easy to read for children aged 3–12"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Generate and display custom illustrated image assets for the alphabet section (one picture per letter in English, A–Z, 26 images), to be placed in frontend/public/assets/generated. Use these static images as the visual illustration on each alphabet card.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4"
-        ],
-        "quotes": [
-          "show pictures and make Lear kids",
-          "show big letters and with pictures word with all languages letters"
-        ]
-      },
-      "acceptanceCriteria": [
-        "One illustrated image is shown per English alphabet letter card (A–Z)",
-        "Images are bright, simple, and appropriate for children aged 3–12",
-        "Images load from frontend/public/assets/generated as static files"
+        "Alphabet letter characters on cards are noticeably larger than before (e.g., at least 4xl–6xl or equivalent)",
+        "Number digits on cards in NumbersLesson and Numbers100Lesson are noticeably larger than before",
+        "Cards are large enough to be easily tapped/clicked by young children",
+        "Text remains fully visible and not clipped within card boundaries",
+        "Changes apply consistently for all supported languages (English, Telugu, Hindi, Tamil)"
       ]
     }
   ],
   "constraints": [
-    "All poem and word content must be pre-built and hardcoded in the frontend — no external API calls for content",
-    "Text-to-speech must use the browser's built-in Web Speech API only",
-    "Do not modify files in frontend/src/hooks/ or frontend/src/components/ui",
-    "All native language scripts (Telugu, Hindi, Tamil) must be stored as Unicode string literals in the source code"
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
+    "Do not change backend logic or data models",
+    "Do not remove or break any existing features (alphabet matching, number lessons, quiz, teacher/parent login, etc.)"
   ],
   "nonGoals": [
-    "User authentication or login-gated content for the alphabet, poems, or numbers sections",
-    "Audio file recording or external audio hosting",
-    "Transliteration or romanization of Telugu, Hindi, or Tamil words",
-    "Content beyond numbers 1–20",
-    "Languages other than English, Telugu, Hindi, and Tamil"
+    "Adding payment, donation, or Stripe integration",
+    "Adding new content or subjects",
+    "Changing app routing or navigation structure",
+    "Modifying backend actor or data schemas"
   ],
   "imageRequirements": {
-    "required": [
-      "Cute cartoon illustration of an Apple, bright and simple for kids (alphabet-a.dim_200x200.png)",
-      "Cute cartoon illustration of a Ball, bright and simple for kids (alphabet-b.dim_200x200.png)",
-      "Cute cartoon illustration of a Cat, bright and simple for kids (alphabet-c.dim_200x200.png)",
-      "Cute cartoon illustration of a Dog, bright and simple for kids (alphabet-d.dim_200x200.png)",
-      "Cute cartoon illustration of an Elephant, bright and simple for kids (alphabet-e.dim_200x200.png)",
-      "Cute cartoon illustration of a Fish, bright and simple for kids (alphabet-f.dim_200x200.png)",
-      "Cute cartoon illustration of a Goat, bright and simple for kids (alphabet-g.dim_200x200.png)",
-      "Cute cartoon illustration of a Hat, bright and simple for kids (alphabet-h.dim_200x200.png)",
-      "Cute cartoon illustration of an Ice cream, bright and simple for kids (alphabet-i.dim_200x200.png)",
-      "Cute cartoon illustration of a Jar, bright and simple for kids (alphabet-j.dim_200x200.png)",
-      "Cute cartoon illustration of a Kite, bright and simple for kids (alphabet-k.dim_200x200.png)",
-      "Cute cartoon illustration of a Lion, bright and simple for kids (alphabet-l.dim_200x200.png)",
-      "Cute cartoon illustration of a Monkey, bright and simple for kids (alphabet-m.dim_200x200.png)",
-      "Cute cartoon illustration of a Nest, bright and simple for kids (alphabet-n.dim_200x200.png)",
-      "Cute cartoon illustration of an Orange fruit, bright and simple for kids (alphabet-o.dim_200x200.png)",
-      "Cute cartoon illustration of a Parrot, bright and simple for kids (alphabet-p.dim_200x200.png)",
-      "Cute cartoon illustration of a Queen with a crown, bright and simple for kids (alphabet-q.dim_200x200.png)",
-      "Cute cartoon illustration of a Rainbow, bright and simple for kids (alphabet-r.dim_200x200.png)",
-      "Cute cartoon illustration of a Sun, bright and simple for kids (alphabet-s.dim_200x200.png)",
-      "Cute cartoon illustration of a Tiger, bright and simple for kids (alphabet-t.dim_200x200.png)",
-      "Cute cartoon illustration of an Umbrella, bright and simple for kids (alphabet-u.dim_200x200.png)",
-      "Cute cartoon illustration of a Violin, bright and simple for kids (alphabet-v.dim_200x200.png)",
-      "Cute cartoon illustration of a Watermelon, bright and simple for kids (alphabet-w.dim_200x200.png)",
-      "Cute cartoon illustration of a Xylophone, bright and simple for kids (alphabet-x.dim_200x200.png)",
-      "Cute cartoon illustration of a Yak, bright and simple for kids (alphabet-y.dim_200x200.png)",
-      "Cute cartoon illustration of a Zebra, bright and simple for kids (alphabet-z.dim_200x200.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }
