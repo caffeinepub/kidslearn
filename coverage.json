@@ -1,0 +1,87 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-25T02:49:16.676Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 4,
+    "implemented": 4,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Enhance the Alphabet & Letters section to display big, colorful letters for all 4 languages (English, Telugu, Hindi, Tamil) with a corresponding picture illustration and the word for that letter in all 4 languages. Each letter card should be large and visually prominent, kid-friendly, and tappable to hear the letter sound via text-to-speech.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/AlphabetLesson.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/AlphabetLesson.tsx"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Enhance the Poems & Nursery Rhymes section to include pre-built classic rhymes for all 4 languages: English (e.g., Twinkle Twinkle Little Star, Baa Baa Black Sheep), Telugu (e.g., Chanda Mama), Hindi (e.g., Chanda Mama Door Ke, Machli Jal Ki Rani Hai), and Tamil (e.g., Aaduvome Pallu Paduvome). Each poem should be displayed with a colorful card, the full poem text in the native script, and a text-to-speech read-aloud button.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/PoemsLesson.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/PoemsLesson.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Enhance the Numbers section to display numbers 1–20, each showing the digit, the number word in all 4 languages (English, Telugu, Hindi, Tamil) in their native scripts, and an illustrated count using emoji or pictures (e.g., 3 apples for the number 3). Each number card should be tappable to hear the number spoken in the selected language via text-to-speech.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/NumbersLesson.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/NumbersLesson.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Generate and display custom illustrated image assets for the alphabet section (one picture per letter in English, A–Z, 26 images), to be placed in frontend/public/assets/generated. Use these static images as the visual illustration on each alphabet card.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/AlphabetLesson.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/AlphabetLesson.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/public/assets/generated/alphabet-a.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-b.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-c.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-d.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-e.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-f.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-g.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-h.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-i.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-j.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-k.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-l.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-m.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-n.dim_200x200.png",
+    "frontend/public/assets/generated/alphabet-o.dim_200x200.png",
+    "frontend/src/pages/AlphabetLesson.tsx",
+    "frontend/src/pages/NumbersLesson.tsx",
+    "frontend/src/pages/PoemsLesson.tsx",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

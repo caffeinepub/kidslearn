@@ -1,0 +1,78 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Enhance KidsLearn with multilingual alphabet, poems, and numbers sections",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Enhance the Alphabet & Letters section to display big, colorful letters for all 4 languages (English, Telugu, Hindi, Tamil) with corresponding picture illustrations and words in all 4 languages, with text-to-speech support",
+      "acceptanceCriteria": [
+        "Letters are displayed in a large, bold, colorful font suitable for young children",
+        "Each letter card shows the letter, a relevant emoji or picture, and the example word in English, Telugu, Hindi, and Tamil",
+        "A language selector allows switching the primary display language between English, Telugu, Hindi, and Tamil",
+        "Tapping/clicking a letter card triggers text-to-speech pronunciation in the selected language",
+        "Layout is responsive and works on mobile screen sizes for young users"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AlphabetLesson.tsx",
+          "operation": "modify",
+          "description": "Replace the current single-language alphabet implementation with a comprehensive multilingual version that displays all 26 English letters (A-Z) in a grid layout. Each letter card must show: the letter in large bold text, the generated illustration from frontend/public/assets/generated/alphabet-{letter}.dim_200x200.png (e.g., alphabet-a.dim_200x200.png for A), and the example word in all 4 languages (English, Telugu in Telugu script, Hindi in Devanagari, Tamil in Tamil script). Add a language selector dropdown at the top to switch the primary display language. Implement onClick handlers for each card that use the Web Speech API to pronounce the letter and word in the selected language. Ensure cards are large, colorful, and use kid-friendly styling with responsive grid layout (grid-cols-2 on mobile, grid-cols-4 on tablet, grid-cols-6 on desktop). Store all language data as hardcoded Unicode string literals in the component. Verify the component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Enhance the Poems & Nursery Rhymes section to include pre-built classic rhymes for all 4 languages with native script display and text-to-speech read-aloud functionality",
+      "acceptanceCriteria": [
+        "At least 3 pre-built poems/rhymes are available for each of the 4 languages",
+        "Poems are displayed in their native script (Latin for English, Telugu script, Devanagari for Hindi, Tamil script)",
+        "Each poem card has a read-aloud button that uses the Web Speech API to speak the poem in the correct language",
+        "Poems are organized by language with a clear language tab or filter selector",
+        "Cards are colorful, illustrated with a relevant emoji or icon, and visually engaging for children"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/PoemsLesson.tsx",
+          "operation": "modify",
+          "description": "Expand the existing poems page to include at least 3 pre-built classic poems/rhymes for each of the 4 languages: English (e.g., Twinkle Twinkle Little Star, Baa Baa Black Sheep, Humpty Dumpty), Telugu (e.g., Chanda Mama, Amma Andam, Chinni Chinni Aasa), Hindi (e.g., Chanda Mama Door Ke, Machli Jal Ki Rani Hai, Aloo Kachaloo), and Tamil (e.g., Aaduvome Pallu Paduvome, Chinna Chinna Aasai, Kannan Vanthan). Store all poem text as hardcoded Unicode string literals in their native scripts. Add a language tab/filter selector at the top to filter poems by language. Each poem card should display the poem title, a relevant emoji icon, the full poem text in native script, and a prominent read-aloud button that uses the Web Speech API with the correct language code (en-US, te-IN, hi-IN, ta-IN). Ensure cards are colorful with distinct background colors per language and use large, readable fonts suitable for children. Maintain the expandable card pattern if already present, or implement collapsible poem content for better mobile UX."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Enhance the Numbers section to display numbers 1–20 with digits, number words in all 4 languages in native scripts, illustrated emoji counts, and text-to-speech support",
+      "acceptanceCriteria": [
+        "Numbers 1 through 20 are each displayed on a separate colorful card",
+        "Each card shows the digit, the number word in English, Telugu (e.g., ఒకటి), Hindi (e.g., एक), and Tamil (e.g., ஒன்று)",
+        "Each card displays a visual count using emoji (e.g., 🍎🍎🍎 for 3)",
+        "A language selector allows choosing the primary spoken language for text-to-speech playback",
+        "Tapping/clicking a card speaks the number in the selected language",
+        "Cards are large, colorful, and easy to read for children aged 3–12"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/NumbersLesson.tsx",
+          "operation": "modify",
+          "description": "Enhance the existing numbers lesson page to display numbers 1–20 in a responsive grid layout (grid-cols-2 on mobile, grid-cols-4 on tablet, grid-cols-5 on desktop). Each number card must show: the digit in large bold text, the number word in all 4 languages (English, Telugu in Telugu script, Hindi in Devanagari, Tamil in Tamil script) stored as hardcoded Unicode string literals, and a visual count representation using emoji (e.g., 🍎 for 1, 🍎🍎 for 2, up to 🍎🍎🍎🍎🍎 for 5, then simplified patterns for 6-20). Add a language selector dropdown at the top to choose the primary spoken language for text-to-speech. Implement onClick handlers for each card that use the Web Speech API to speak the number in the selected language with appropriate language codes (en-US, te-IN, hi-IN, ta-IN). Use distinct, bright background colors for each card (cycling through sunshine, sky, lavender, tangerine, cherry, grass theme colors). Ensure large, kid-friendly fonts and touch-friendly card sizes with proper spacing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Wire generated alphabet illustration images into the enhanced Alphabet & Letters section as static assets for each letter card",
+      "acceptanceCriteria": [
+        "One illustrated image is shown per English alphabet letter card (A–Z)",
+        "Images are bright, simple, and appropriate for children aged 3–12",
+        "Images load from frontend/public/assets/generated as static files"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/AlphabetLesson.tsx",
+          "operation": "modify",
+          "description": "Ensure each alphabet letter card (A-Z) displays the corresponding generated illustration from frontend/public/assets/generated/ using the exact filenames: alphabet-a.dim_200x200.png, alphabet-b.dim_200x200.png, alphabet-c.dim_200x200.png, alphabet-d.dim_200x200.png, alphabet-e.dim_200x200.png, alphabet-f.dim_200x200.png, alphabet-g.dim_200x200.png, alphabet-h.dim_200x200.png, alphabet-i.dim_200x200.png, alphabet-j.dim_200x200.png, alphabet-k.dim_200x200.png, alphabet-l.dim_200x200.png, alphabet-m.dim_200x200.png, alphabet-n.dim_200x200.png, alphabet-o.dim_200x200.png, alphabet-p.dim_200x200.png, alphabet-q.dim_200x200.png, alphabet-r.dim_200x200.png, alphabet-s.dim_200x200.png, alphabet-t.dim_200x200.png, alphabet-u.dim_200x200.png, alphabet-v.dim_200x200.png, alphabet-w.dim_200x200.png, alphabet-x.dim_200x200.png, alphabet-y.dim_200x200.png, alphabet-z.dim_200x200.png. Use img elements with src='/assets/generated/alphabet-{letter}.dim_200x200.png' for each letter card. Add alt text describing each image (e.g., 'Illustration of an apple for letter A'). Ensure images are displayed prominently on each card with proper sizing (width and height constrained to maintain aspect ratio) and rounded corners for a kid-friendly appearance."
+        }
+      ]
+    }
+  ]
+}

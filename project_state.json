@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "KidsLearn app for kids aged 3-12 supporting English, Telugu, Hindi, and Tamil. Features: alphabet/letters with pictures and words, pre-built poems/nursery rhymes, and numbers 1-20 with words in all 4 languages. Bright, kid-friendly design.",
+  "architectural_notes": [
+    "Support 4 languages: English, Telugu, Hindi, Tamil — all content must be available in all 4 languages",
+    "Target age range: 3-12 years — use bright, kid-friendly visuals and large text"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Cute cartoon illustration of an Apple, bright and simple for kids (alphabet-a.dim_200x200.png)\n- Cute cartoon illustration of a Ball, bright and simple for kids (alphabet-b.dim_200x200.png)\n- Cute cartoon illustration of a Cat, bright and simple for kids (alphabet-c.dim_200x200.png)\n- Cute cartoon illustration of a Dog, bright and simple for kids (alphabet-d.dim_200x200.png)\n- Cute cartoon illustration of an Elephant, bright and simple for kids (alphabet-e.dim_200x200.png)\n- Cute cartoon illustration of a Fish, bright and simple for kids (alphabet-f.dim_200x200.png)\n- Cute cartoon illustration of a Goat, bright and simple for kids (alphabet-g.dim_200x200.png)\n- Cute cartoon illustration of a Hat, bright and simple for kids (alphabet-h.dim_200x200.png)\n- Cute cartoon illustration of an Ice cream, bright and simple for kids (alphabet-i.dim_200x200.png)\n- Cute cartoon illustration of a Jar, bright and simple for kids (alphabet-j.dim_200x200.png)\n- Cute cartoon illustration of a Kite, bright and simple for kids (alphabet-k.dim_200x200.png)\n- Cute cartoon illustration of a Lion, bright and simple for kids (alphabet-l.dim_200x200.png)\n- Cute cartoon illustration of a Monkey, bright and simple for kids (alphabet-m.dim_200x200.png)\n- Cute cartoon illustration of a Nest, bright and simple for kids (alphabet-n.dim_200x200.png)\n- Cute cartoon illustration of an Orange fruit, bright and simple for kids (alphabet-o.dim_200x200.png)\n- Cute cartoon illustration of a Parrot, bright and simple for kids (alphabet-p.dim_200x200.png)\n- Cute cartoon illustration of a Queen with a crown, bright and simple for kids (alphabet-q.dim_200x200.png)\n- Cute cartoon illustration of a Rainbow, bright and simple for kids (alphabet-r.dim_200x200.png)\n- Cute cartoon illustration of a Sun, bright and simple for kids (alphabet-s.dim_200x200.png)\n- Cute cartoon illustration of a Tiger, bright and simple for kids (alphabet-t.dim_200x200.png)\n- Cute cartoon illustration of an Umbrella, bright and simple for kids (alphabet-u.dim_200x200.png)\n- Cute cartoon illustration of a Violin, bright and simple for kids (alphabet-v.dim_200x200.png)\n- Cute cartoon illustration of a Watermelon, bright and simple for kids (alphabet-w.dim_200x200.png)\n- Cute cartoon illustration of a Xylophone, bright and simple for kids (alphabet-x.dim_200x200.png)\n- Cute cartoon illustration of a Yak, bright and simple for kids (alphabet-y.dim_200x200.png)\n- Cute cartoon illustration of a Zebra, bright and simple for kids (alphabet-z.dim_200x200.png)",
+  "existing_features": [
+    {
+      "id": "feature-enhance-the-alphabet-letters-section-to-display-big-colorful-letters-for-all-4-languages-english-telugu-hindi-tamil-with-a-corresponding-picture-illustration-and-the-word-for-that-letter-in-all-4-languages-each-letter-card-should-be-large-and-visually-prominent-kid-friendly-and-tappable-to-hear-the-letter-sound-via-text-to-speech",
+      "title": "Enhance the Alphabet & Letters section to display big, colorful letters for all 4 languages (English, Telugu, Hindi, Tamil) with a corresponding picture illustration and the word for that letter in all 4 languages. Each letter card should be large and visually prominent, kid-friendly, and tappable to hear the letter sound via text-to-speech.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-the-poems-nursery-rhymes-section-to-include-pre-built-classic-rhymes-for-all-4-languages-english-e-g-twinkle-twinkle-little-star-baa-baa-black-sheep-telugu-e-g-chanda-mama-hindi-e-g-chanda-mama-door-ke-machli-jal-ki-rani-hai-and-tamil-e-g-aaduvome-pallu-paduvome-each-poem-should-be-displayed-with-a-colorful-card-the-full-poem-text-in-the-native-script-and-a-text-to-speech-read-aloud-button",
+      "title": "Enhance the Poems & Nursery Rhymes section to include pre-built classic rhymes for all 4 languages: English (e.g., Twinkle Twinkle Little Star, Baa Baa Black Sheep), Telugu (e.g., Chanda Mama), Hindi (e.g., Chanda Mama Door Ke, Machli Jal Ki Rani Hai), and Tamil (e.g., Aaduvome Pallu Paduvome). Each poem should be displayed with a colorful card, the full poem text in the native script, and a text-to-speech read-aloud button.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-the-numbers-section-to-display-numbers-1-20-each-showing-the-digit-the-number-word-in-all-4-languages-english-telugu-hindi-tamil-in-their-native-scripts-and-an-illustrated-count-using-emoji-or-pictures-e-g-3-apples-for-the-number-3-each-number-card-should-be-tappable-to-hear-the-number-spoken-in-the-selected-language-via-text-to-speech",
+      "title": "Enhance the Numbers section to display numbers 1–20, each showing the digit, the number word in all 4 languages (English, Telugu, Hindi, Tamil) in their native scripts, and an illustrated count using emoji or pictures (e.g., 3 apples for the number 3). Each number card should be tappable to hear the number spoken in the selected language via text-to-speech.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-generate-and-display-custom-illustrated-image-assets-for-the-alphabet-section-one-picture-per-letter-in-english-a-z-26-images-to-be-placed-in-frontend-public-assets-generated-use-these-static-images-as-the-visual-illustration-on-each-alphabet-card",
+      "title": "Generate and display custom illustrated image assets for the alphabet section (one picture per letter in English, A–Z, 26 images), to be placed in frontend/public/assets/generated. Use these static images as the visual illustration on each alphabet card.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Alphabet & Letters section with big colorful letters, pictures, and words in English, Telugu, Hindi, and Tamil",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Poems & Nursery Rhymes section with pre-built classic rhymes for each of the 4 languages",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Numbers 1-20 section with digits, number words in all 4 languages, and illustrations",
+      "reqIds": [],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "KidsLearn",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
