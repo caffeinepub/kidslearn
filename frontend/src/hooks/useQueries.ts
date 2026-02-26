@@ -1,25 +1,216 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import { useInternetIdentity } from './useInternetIdentity';
-import { GameType, UserRole, SessionProgress } from '../backend';
-import type { GameStatistics, GameSession } from '../backend';
+import type { KidsProfile, ParentalControls, GameType } from '../backend';
+import { Principal } from '@dfinity/principal';
 
-// ─── Session Progress ─────────────────────────────────────────────────────────
+// ─── Kids Profile Hooks ───────────────────────────────────────────────────────
 
-export function useGetSessionProgress(targetPrincipal?: string) {
-  const { actor, isFetching } = useActor();
-  return useQuery({
-    queryKey: ['sessionProgress', targetPrincipal],
+export function useGetKidsProfile() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  const query = useQuery<KidsProfile | null>({
+    queryKey: ['kidsProfile'],
     queryFn: async () => {
-      if (!actor || !targetPrincipal) return null;
-      const { Principal } = await import('@dfinity/principal');
-      return actor.getSessionProgress(Principal.fromText(targetPrincipal));
+      if (!actor) throw new Error('Actor not available');
+      return actor.getKidsProfile();
     },
-    enabled: !!actor && !isFetching && !!targetPrincipal,
+    enabled: !!actor && !actorFetching,
+    retry: false,
+  });
+
+  return {
+    ...query,
+    isLoading: actorFetching || query.isLoading,
+    isFetched: !!actor && query.isFetched,
+  };
+}
+
+export function useCreateKidsProfile() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (profile: KidsProfile) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.createKidsProfile(profile);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['kidsProfile'] });
+    },
   });
 }
 
-// ─── Lessons ──────────────────────────────────────────────────────────────────
+export function useUpdateKidsProfile() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (profile: KidsProfile) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.updateKidsProfile(profile);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['kidsProfile'] });
+    },
+  });
+}
+
+export function useVerifyKidsPin() {
+  const { actor } = useActor();
+
+  return useMutation({
+    mutationFn: async (pin: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.verifyKidsPin(pin);
+    },
+  });
+}
+
+export function useUpdateKidsPin() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (newPin: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.updateKidsPin(newPin);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['kidsProfile'] });
+    },
+  });
+}
+
+// ─── Parental Controls Hooks ──────────────────────────────────────────────────
+
+export function useGetParentalControls() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<ParentalControls | null>({
+    queryKey: ['parentalControls'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getParentalControls();
+    },
+    enabled: !!actor && !actorFetching,
+    retry: false,
+  });
+}
+
+export function useSetParentalControls() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (settings: ParentalControls) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.setParentalControls(settings);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['parentalControls'] });
+    },
+  });
+}
+
+// ─── Display Name Hooks ───────────────────────────────────────────────────────
+
+export function useGetDisplayName() {
+  const { actor, isFetching: actorFetching } = useActor();
+
+  return useQuery<string | null>({
+    queryKey: ['displayName'],
+    queryFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.getDisplayName();
+    },
+    enabled: !!actor && !actorFetching,
+  });
+}
+
+export function useSetDisplayName() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (name: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.setDisplayName(name);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['displayName'] });
+    },
+  });
+}
+
+// ─── Progress Hooks ───────────────────────────────────────────────────────────
+
+/**
+ * Fetches session progress for a given principal.
+ * If no principal is provided, uses the currently authenticated user's principal.
+ */
+export function useGetSessionProgress(targetPrincipal?: Principal | null) {
+  const { actor, isFetching: actorFetching } = useActor();
+  const { identity } = useInternetIdentity();
+
+  const principal = targetPrincipal !== undefined ? targetPrincipal : (identity?.getPrincipal() ?? null);
+
+  return useQuery({
+    queryKey: ['sessionProgress', principal?.toString()],
+    queryFn: async () => {
+      if (!actor || !principal) throw new Error('Actor or principal not available');
+      return actor.getSessionProgress(principal);
+    },
+    enabled: !!actor && !actorFetching && !!principal,
+  });
+}
+
+export function useCompleteLesson() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (lessonId: bigint) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.completeLesson(lessonId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sessionProgress'] });
+    },
+  });
+}
+
+export function useRecordQuizResult() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ subject, score, total }: { subject: string; score: bigint; total: bigint }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.recordQuizResult(subject, score, total);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sessionProgress'] });
+    },
+  });
+}
+
+export function useAwardBadge() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ targetPrincipal, badgeId }: { targetPrincipal: Principal; badgeId: string }) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.awardBadge(targetPrincipal, badgeId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['sessionProgress'] });
+    },
+  });
+}
+
+// ─── Content Hooks ────────────────────────────────────────────────────────────
 
 export function useGetLessons() {
   const { actor, isFetching } = useActor();
@@ -33,8 +224,6 @@ export function useGetLessons() {
   });
 }
 
-// ─── Flashcards ───────────────────────────────────────────────────────────────
-
 export function useGetFlashcards() {
   const { actor, isFetching } = useActor();
   return useQuery({
@@ -46,8 +235,6 @@ export function useGetFlashcards() {
     enabled: !!actor && !isFetching,
   });
 }
-
-// ─── Quiz Questions ───────────────────────────────────────────────────────────
 
 export function useGetQuizQuestions() {
   const { actor, isFetching } = useActor();
@@ -61,8 +248,6 @@ export function useGetQuizQuestions() {
   });
 }
 
-// ─── Mini Game Content ────────────────────────────────────────────────────────
-
 export function useGetMiniGameContent() {
   const { actor, isFetching } = useActor();
   return useQuery({
@@ -75,60 +260,12 @@ export function useGetMiniGameContent() {
   });
 }
 
-// ─── Complete Lesson ──────────────────────────────────────────────────────────
-
-export function useCompleteLesson() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (lessonId: bigint) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.completeLesson(lessonId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sessionProgress'] });
-    },
-  });
-}
-
-// ─── Record Quiz Result ───────────────────────────────────────────────────────
-
-export function useRecordQuizResult() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ subject, score, total }: { subject: string; score: bigint; total: bigint }) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.recordQuizResult(subject, score, total);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sessionProgress'] });
-    },
-  });
-}
-
-// ─── Award Badge ──────────────────────────────────────────────────────────────
-
-export function useAwardBadge() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ targetPrincipal, badgeId }: { targetPrincipal: string; badgeId: string }) => {
-      if (!actor) throw new Error('Actor not available');
-      const { Principal } = await import('@dfinity/principal');
-      return actor.awardBadge(Principal.fromText(targetPrincipal), badgeId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['sessionProgress'] });
-    },
-  });
-}
-
-// ─── Game Sessions ────────────────────────────────────────────────────────────
+// ─── Game Session Hooks ───────────────────────────────────────────────────────
 
 export function useRecordGameSession() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async ({
       gameType,
@@ -151,148 +288,29 @@ export function useRecordGameSession() {
   });
 }
 
-export function useGetUserGameSessions(userId?: string) {
-  const { actor, isFetching } = useActor();
-  return useQuery<GameSession[]>({
-    queryKey: ['gameSessions', userId],
-    queryFn: async () => {
-      if (!actor || !userId) return [];
-      const { Principal } = await import('@dfinity/principal');
-      return actor.getUserGameSessions(Principal.fromText(userId));
-    },
-    enabled: !!actor && !isFetching && !!userId,
-  });
-}
-
-export function useGetUserGameStatistics(userId?: string, gameType?: GameType) {
-  const { actor, isFetching } = useActor();
-  return useQuery<GameStatistics | null>({
-    queryKey: ['gameStatistics', userId, gameType],
-    queryFn: async () => {
-      if (!actor || !userId || gameType === undefined) return null;
-      const { Principal } = await import('@dfinity/principal');
-      return actor.getUserGameStatistics(Principal.fromText(userId), gameType);
-    },
-    enabled: !!actor && !isFetching && !!userId && gameType !== undefined,
-  });
-}
-
-// ─── Role Management ──────────────────────────────────────────────────────────
-
-export function useGetCallerRole() {
+export function useGetUserGameSessions(userId: Principal | null) {
   const { actor, isFetching: actorFetching } = useActor();
-  const query = useQuery<UserRole | null>({
-    queryKey: ['callerRole'],
+
+  return useQuery({
+    queryKey: ['gameSessions', userId?.toString()],
     queryFn: async () => {
-      if (!actor) return null;
-      try {
-        return await actor.getCallerRole();
-      } catch {
-        return null;
-      }
+      if (!actor || !userId) throw new Error('Actor or userId not available');
+      return actor.getUserGameSessions(userId);
     },
-    enabled: !!actor && !actorFetching,
-    retry: false,
-  });
-  return {
-    ...query,
-    isLoading: actorFetching || query.isLoading,
-    isFetched: !!actor && query.isFetched,
-  };
-}
-
-export function useSetCallerRole() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (role: UserRole) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.setCallerRole(role);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['callerRole'] });
-    },
+    enabled: !!actor && !actorFetching && !!userId,
   });
 }
 
-// ─── All Sessions Progress (Teacher) ─────────────────────────────────────────
-
-export function useGetAllSessionsProgress() {
-  const { actor, isFetching } = useActor();
-  return useQuery<Array<[string, SessionProgress]>>({
-    queryKey: ['allSessionsProgress'],
-    queryFn: async () => {
-      if (!actor) return [];
-      return actor.getAllSessionsProgress();
-    },
-    enabled: !!actor && !isFetching,
-    retry: false,
-  });
-}
-
-// ─── Caller User Profile ──────────────────────────────────────────────────────
-
-export function useGetCallerUserProfile() {
+export function useGetUserGameStatistics(userId: Principal | null, gameType: GameType | null) {
   const { actor, isFetching: actorFetching } = useActor();
-  const query = useQuery({
-    queryKey: ['currentUserProfile'],
+
+  return useQuery({
+    queryKey: ['gameStatistics', userId?.toString(), gameType],
     queryFn: async () => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.getCallerUserProfile();
+      if (!actor || !userId || !gameType) throw new Error('Actor, userId, or gameType not available');
+      return actor.getUserGameStatistics(userId, gameType);
     },
-    enabled: !!actor && !actorFetching,
-    retry: false,
-  });
-  return {
-    ...query,
-    isLoading: actorFetching || query.isLoading,
-    isFetched: !!actor && query.isFetched,
-  };
-}
-
-// ─── Display Name ─────────────────────────────────────────────────────────────
-
-export function useGetDisplayName(principalText?: string) {
-  const { actor, isFetching: actorFetching } = useActor();
-  const { identity } = useInternetIdentity();
-  const isAuthenticated = !!identity;
-
-  const query = useQuery<string | null>({
-    queryKey: ['displayName', principalText],
-    queryFn: async () => {
-      if (!actor || !principalText) return null;
-      try {
-        const { Principal } = await import('@dfinity/principal');
-        return await actor.getDisplayName(Principal.fromText(principalText));
-      } catch {
-        return null;
-      }
-    },
-    enabled: !!actor && !actorFetching && isAuthenticated && !!principalText,
-    retry: false,
-  });
-
-  return {
-    ...query,
-    isLoading: actorFetching || query.isLoading,
-    isFetched: !!actor && query.isFetched,
-  };
-}
-
-export function useSetDisplayName() {
-  const { actor } = useActor();
-  const queryClient = useQueryClient();
-  const { identity } = useInternetIdentity();
-
-  return useMutation({
-    mutationFn: async (name: string) => {
-      if (!actor) throw new Error('Actor not available');
-      return actor.setDisplayName(name);
-    },
-    onSuccess: () => {
-      const principalText = identity?.getPrincipal().toString();
-      queryClient.invalidateQueries({ queryKey: ['displayName', principalText] });
-    },
+    enabled: !!actor && !actorFetching && !!userId && !!gameType,
   });
 }
 
@@ -343,8 +361,6 @@ export function getGuestGameStatistics(gameType: string): {
   return { bestScore: best, averageScore: avg, totalSessions: sessions.length };
 }
 
-// ─── Combined hook: backend if authenticated, sessionStorage if guest ─────────
-
 export function useRecordGameSessionWithFallback() {
   const { identity } = useInternetIdentity();
   const recordMutation = useRecordGameSession();
@@ -362,6 +378,7 @@ export function useRecordGameSessionWithFallback() {
   }) => {
     if (identity) {
       try {
+        const { GameType } = await import('../backend');
         const gtMap: Record<string, GameType> = {
           timedChallenge: GameType.timedChallenge,
           matchingGame: GameType.matchingGame,

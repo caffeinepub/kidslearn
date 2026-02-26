@@ -1,88 +1,74 @@
-import { useNavigate, useSearch } from '@tanstack/react-router';
+import React from 'react';
+import { useNavigate, useParams } from '@tanstack/react-router';
+import { useContentRestrictions } from '../hooks/useContentRestrictions';
+import { Lock } from 'lucide-react';
 
-const subjects = [
-  { id: 'math', label: 'Math', emoji: '🔢', color: 'bg-sunshine-400', border: 'border-sunshine-600', image: '/assets/generated/subject-math.dim_128x128.png' },
-  { id: 'alphabet', label: 'Alphabet', emoji: '🔤', color: 'bg-grass-400', border: 'border-grass-600', image: '/assets/generated/subject-alphabet.dim_128x128.png' },
-  { id: 'science', label: 'Science', emoji: '🔬', color: 'bg-sky-400', border: 'border-sky-600', image: '/assets/generated/subject-science.dim_128x128.png' },
-  { id: 'telugu', label: 'Telugu', emoji: '🌺', color: 'bg-tangerine-400', border: 'border-tangerine-600', image: '/assets/generated/subject-telugu.dim_128x128.png' },
-  { id: 'hindi', label: 'Hindi', emoji: '🪔', color: 'bg-cherry-400', border: 'border-cherry-600', image: '/assets/generated/subject-hindi.dim_128x128.png' },
-  { id: 'english', label: 'English', emoji: '📚', color: 'bg-lavender-400', border: 'border-lavender-600', image: '/assets/generated/subject-english.dim_128x128.png' },
+const SUBJECTS = [
+  { id: 'math', label: 'Math', emoji: '🔢', icon: '/assets/generated/subject-math.dim_128x128.png', color: 'bg-sky-100 border-sky-300' },
+  { id: 'alphabet', label: 'Alphabet', emoji: '🔤', icon: '/assets/generated/subject-alphabet.dim_128x128.png', color: 'bg-sunshine-100 border-sunshine-300' },
+  { id: 'science', label: 'Science', emoji: '🔬', icon: '/assets/generated/subject-science.dim_128x128.png', color: 'bg-grass-100 border-grass-300' },
+  { id: 'telugu', label: 'Telugu', emoji: '🇮🇳', icon: '/assets/generated/subject-telugu.dim_128x128.png', color: 'bg-tangerine-100 border-tangerine-300' },
+  { id: 'hindi', label: 'Hindi', emoji: '🇮🇳', icon: '/assets/generated/subject-hindi.dim_128x128.png', color: 'bg-cherry-100 border-cherry-300' },
+  { id: 'english', label: 'English', emoji: '📚', icon: '/assets/generated/subject-english.dim_128x128.png', color: 'bg-purple-100 border-purple-300' },
 ];
 
-const activities = [
-  { label: 'Lessons', emoji: '📖', path: '/lessons' },
-  { label: 'Flashcards', emoji: '🃏', path: '/flashcards' },
-  { label: 'Quiz', emoji: '🧠', path: '/quiz' },
-  { label: 'Mini-Game', emoji: '🎮', path: '/mini-game' },
-  { label: 'Matching Game', emoji: '🔗', path: '/matching-game' },
-  { label: 'Puzzle', emoji: '🧩', path: '/puzzle' },
-  { label: 'Timed Challenge', emoji: '⚡', path: '/timed-challenge' },
+const ACTIVITIES = [
+  { label: 'Lessons', emoji: '📖', pathFn: (s: string) => `/lessons/${s}` },
+  { label: 'Flashcards', emoji: '🃏', pathFn: (s: string) => `/flashcards/${s}` },
+  { label: 'Quiz', emoji: '🧪', pathFn: (s: string) => `/quiz/${s}` },
+  { label: 'Mini-Game', emoji: '🎮', pathFn: (s: string) => `/mini-game/${s}` },
 ];
 
 export default function SubjectSelection() {
   const navigate = useNavigate();
-  const search = useSearch({ strict: false }) as { ageGroup?: string };
-  const ageGroup = search.ageGroup || 'early';
+  const { ageGroup } = useParams({ from: '/subjects/$ageGroup' });
+  const { isSubjectAllowed } = useContentRestrictions();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-grass-100 to-sunshine-50 px-4 py-8">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="font-fredoka text-4xl sm:text-5xl text-center text-grass-700 mb-2">
+    <div className="min-h-screen bg-gradient-to-b from-sky-50 to-sunshine-50 p-4 md:p-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-fredoka text-cherry-600 text-center mb-2">
           Choose a Subject! 📚
         </h1>
-        <p className="font-nunito text-center text-muted-foreground text-lg mb-8">
-          Pick what you want to learn
+        <p className="text-center text-muted-foreground font-nunito mb-8">
+          Age Group: <span className="capitalize font-semibold text-tangerine-600">{ageGroup}</span>
         </p>
 
-        {/* Subjects Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
-          {subjects.map((subject, i) => (
-            <button
-              key={subject.id}
-              onClick={() => navigate({ to: '/lessons', search: { ageGroup, subject: subject.id } })}
-              className={`card-enter-${i + 1} ${subject.color} border-4 ${subject.border} rounded-3xl p-4 flex flex-col items-center gap-2 shadow-fun-lg hover:scale-105 active:scale-95 transition-all duration-200`}
-            >
-              <img src={subject.image} alt={subject.label} className="w-16 h-16 rounded-2xl" />
-              <span className="text-2xl">{subject.emoji}</span>
-              <span className="font-fredoka text-white text-xl drop-shadow-sm">{subject.label}</span>
-            </button>
-          ))}
-        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          {SUBJECTS.map((subject) => {
+            const allowed = isSubjectAllowed(subject.id);
+            return (
+              <div
+                key={subject.id}
+                className={`${subject.color} border-2 rounded-2xl p-4 ${allowed ? '' : 'opacity-60'}`}
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <img src={subject.icon} alt={subject.label} className="w-10 h-10 rounded-lg" />
+                  <span className="font-fredoka text-lg text-gray-800">{subject.label}</span>
+                  {!allowed && <Lock className="h-4 w-4 text-cherry-500 ml-auto" />}
+                </div>
 
-        {/* Activities */}
-        <h2 className="font-fredoka text-3xl text-center text-tangerine-600 mb-4">Activities 🎯</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {activities.map((activity, i) => (
-            <button
-              key={activity.path}
-              onClick={() => navigate({ to: activity.path, search: { ageGroup, subject: 'math' } })}
-              className={`card-enter-${i + 1} bg-white border-4 border-sunshine-400 rounded-3xl p-3 flex flex-col items-center gap-1 shadow-fun hover:scale-105 active:scale-95 transition-all duration-200`}
-            >
-              <span className="text-3xl">{activity.emoji}</span>
-              <span className="font-fredoka text-sunshine-700 text-base">{activity.label}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Special Sections */}
-        <h2 className="font-fredoka text-3xl text-center text-sky-600 mt-10 mb-4">Explore More 🌍</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          {[
-            { label: 'Numbers', emoji: '🔢', path: '/numbers' },
-            { label: 'Alphabet', emoji: '🔤', path: '/alphabet' },
-            { label: 'Poems', emoji: '📖', path: '/poems' },
-            { label: 'Vocabulary', emoji: '🌟', path: '/vocabulary' },
-            { label: 'India Map', emoji: '🗺️', path: '/map' },
-          ].map((item, i) => (
-            <button
-              key={item.path}
-              onClick={() => navigate({ to: item.path })}
-              className={`card-enter-${i + 1} bg-sky-100 border-4 border-sky-400 rounded-3xl p-3 flex flex-col items-center gap-1 shadow-fun hover:scale-105 active:scale-95 transition-all duration-200`}
-            >
-              <span className="text-3xl">{item.emoji}</span>
-              <span className="font-fredoka text-sky-700 text-base">{item.label}</span>
-            </button>
-          ))}
+                {!allowed ? (
+                  <div className="text-center py-2">
+                    <p className="text-xs font-nunito text-cherry-600">🔒 Locked by parent</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    {ACTIVITIES.map((activity) => (
+                      <button
+                        key={activity.label}
+                        onClick={() => navigate({ to: activity.pathFn(subject.id) as any })}
+                        className="bg-white/70 hover:bg-white rounded-xl p-2 text-center transition-all hover:scale-105 active:scale-95 border border-white/50"
+                      >
+                        <div className="text-xl">{activity.emoji}</div>
+                        <div className="text-xs font-nunito text-gray-700 mt-0.5">{activity.label}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

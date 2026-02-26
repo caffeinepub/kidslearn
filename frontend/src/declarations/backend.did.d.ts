@@ -10,6 +10,28 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export interface AdditionProblem {
+  'hindi' : string,
+  'answer' : bigint,
+  'firstNumber' : bigint,
+  'telugu' : string,
+  'secondNumber' : bigint,
+  'english' : string,
+}
+export interface AnimalCard {
+  'nameHindi' : string,
+  'nameTelugu' : string,
+  'nameEnglish' : string,
+  'audioUrl' : string,
+  'imageUrl' : string,
+}
+export interface BodyPart {
+  'nameHindi' : string,
+  'nameTelugu' : string,
+  'nameEnglish' : string,
+  'audioUrl' : string,
+  'imageUrl' : string,
+}
 export interface Flashcard {
   'id' : bigint,
   'front' : string,
@@ -34,6 +56,20 @@ export type GameType = { 'quiz' : null } |
   { 'matchingGame' : null } |
   { 'puzzle' : null } |
   { 'timedChallenge' : null };
+export interface KidsProfile {
+  'age' : bigint,
+  'pin' : string,
+  'name' : string,
+  'avatar' : string,
+}
+export interface LearningContentPackage {
+  'animalCards' : Array<AnimalCard>,
+  'stateInfos' : Array<StateInfo>,
+  'additionProblems' : Array<AdditionProblem>,
+  'bodyParts' : Array<BodyPart>,
+  'numberCards' : Array<NumberCard>,
+  'plantCards' : Array<PlantCard>,
+}
 export interface Lesson {
   'id' : bigint,
   'title' : string,
@@ -43,6 +79,24 @@ export interface Lesson {
 export interface MiniGameContent {
   'id' : bigint,
   'pairs' : Array<[string, string]>,
+}
+export interface NumberCard {
+  'hindi' : string,
+  'audioUrl' : string,
+  'number' : bigint,
+  'telugu' : string,
+  'english' : string,
+}
+export interface ParentalControls {
+  'gamesAllowed' : Array<bigint>,
+  'contentRestrictions' : Array<string>,
+}
+export interface PlantCard {
+  'nameHindi' : string,
+  'nameTelugu' : string,
+  'nameEnglish' : string,
+  'audioUrl' : string,
+  'imageUrl' : string,
 }
 export interface QuizQuestion {
   'id' : bigint,
@@ -60,11 +114,23 @@ export interface SessionProgress {
   'completedLessons' : Array<bigint>,
   'quizResults' : Array<QuizResult>,
 }
+export interface StateInfo {
+  'nameHindi' : string,
+  'stateId' : bigint,
+  'capitalEnglish' : string,
+  'nameTelugu' : string,
+  'nameEnglish' : string,
+  'emoji' : string,
+  'capitalHindi' : string,
+  'capitalTelugu' : string,
+}
 export type Time = bigint;
-export interface UserProfile { 'name' : string, 'role' : UserRole }
-export type UserRole = { 'student' : null } |
-  { 'parent' : null };
-export type UserRole__1 = { 'admin' : null } |
+export interface UserProfile {
+  'name' : string,
+  'email' : string,
+  'avatarUrl' : string,
+}
+export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
 export interface _CaffeineStorageCreateCertificateResult {
@@ -95,21 +161,24 @@ export interface _SERVICE {
   >,
   '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
-  'assignCallerUserRole' : ActorMethod<[Principal, UserRole__1], undefined>,
+  'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'awardBadge' : ActorMethod<[Principal, string], undefined>,
   'completeLesson' : ActorMethod<[bigint], undefined>,
+  'createKidsProfile' : ActorMethod<[KidsProfile], undefined>,
   'getAllSessionsProgress' : ActorMethod<[], Array<[string, SessionProgress]>>,
-  'getCallerRole' : ActorMethod<[], UserRole>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
-  'getCallerUserRole' : ActorMethod<[], UserRole__1>,
-  'getDisplayName' : ActorMethod<[Principal], [] | [string]>,
+  'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getDisplayName' : ActorMethod<[], [] | [string]>,
   'getFlashcards' : ActorMethod<[], Array<Flashcard>>,
   'getGameTypeAverage' : ActorMethod<
     [GameType],
     [] | [{ 'totalSessions' : bigint, 'averageScore' : bigint }]
   >,
+  'getKidsProfile' : ActorMethod<[], [] | [KidsProfile]>,
+  'getLearningContentPackage' : ActorMethod<[], LearningContentPackage>,
   'getLessons' : ActorMethod<[], Array<Lesson>>,
   'getMiniGameContent' : ActorMethod<[], Array<MiniGameContent>>,
+  'getParentalControls' : ActorMethod<[], [] | [ParentalControls]>,
   'getQuizQuestions' : ActorMethod<[], Array<QuizQuestion>>,
   'getSessionProgress' : ActorMethod<[Principal], SessionProgress>,
   'getUserGameSessions' : ActorMethod<[Principal], Array<GameSession>>,
@@ -118,7 +187,6 @@ export interface _SERVICE {
     [] | [GameStatistics]
   >,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
-  'getUserRole' : ActorMethod<[Principal], UserRole>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
   'recordGameSession' : ActorMethod<
     [GameType, string, bigint, bigint],
@@ -126,9 +194,13 @@ export interface _SERVICE {
   >,
   'recordQuizResult' : ActorMethod<[string, bigint, bigint], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'setCallerRole' : ActorMethod<[UserRole], undefined>,
   'setDisplayName' : ActorMethod<[string], undefined>,
+  'setParentalControls' : ActorMethod<[ParentalControls], undefined>,
   'setupContent' : ActorMethod<[], undefined>,
+  'setupLearningContent' : ActorMethod<[], undefined>,
+  'updateKidsPin' : ActorMethod<[string], undefined>,
+  'updateKidsProfile' : ActorMethod<[KidsProfile], undefined>,
+  'verifyKidsPin' : ActorMethod<[string], boolean>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

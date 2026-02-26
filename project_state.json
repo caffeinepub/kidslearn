@@ -1,47 +1,113 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Project involves a web app with login (parent and admin roles), profile pages, and a donation section. Teacher login is being removed. UPI QR code (Kamera Rajendraprasad, kamerarajendra098@ptyes) is being added to the donation section.",
+  "summary": "Kids learning app for ages 3–12 with kid-friendly bright colors. Features 3 subject sections: Maths (number recognition, counting, addition), Science (body parts, animals, plants with illustrations), and History (map of India with state names). Supports 3 switchable languages: Telugu, Hindi, and English.",
   "architectural_notes": [
-    "Authentication system supports two roles: parent and admin (teacher role removed)",
-    "Donation section uses a static UPI QR code image (Paytm, kamerarajendra098@ptyes)"
+    "Target age group: 3–12 years old",
+    "Language switching must update all on-screen content (numbers, words, labels) dynamically"
   ],
   "known_issues": [],
-  "isFixRequest": true,
-  "existing_features": [
-    {
-      "id": "feature-remove-the-teacher-role-entirely-from-the-system-this-includes-removing-the-teacher-option-from-the-roleselectionmodal-removing-teacher-specific-role-checks-and-routing-in-header-footer-home-and-app-removing-or-hiding-the-teacherdashboard-route-and-ensuring-only-parent-and-admin-roles-remain-functional-throughout-the-application",
-      "title": "Remove the Teacher role entirely from the system. This includes: removing the Teacher option from the RoleSelectionModal, removing teacher-specific role checks and routing in Header, Footer, Home, and App, removing or hiding the TeacherDashboard route, and ensuring only Parent and Admin roles remain functional throughout the application.",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-display-the-uploaded-paytm-upi-qr-code-image-kamerarajendra098-ptyes-kamera-rajendraprasad-directly-in-the-donation-page-replace-the-existing-upi-qr-code-placeholder-with-the-actual-qr-code-image-stored-as-a-static-asset-show-the-upi-id-kamerarajendra098-ptyes-below-the-qr-code-and-include-a-label-such-as-scan-with-any-upi-app-paytm-phonepe-bhim-google-pay",
-      "title": "Display the uploaded Paytm UPI QR code image (kamerarajendra098@ptyes, Kamera Rajendraprasad) directly in the Donation page. Replace the existing UPI QR code placeholder with the actual QR code image stored as a static asset. Show the UPI ID 'kamerarajendra098@ptyes' below the QR code, and include a label such as 'Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)'.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    }
-  ],
+  "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Colorful illustrated human body diagram for kids showing front-facing child figure with labeled zones, bright flat cartoon style (body-parts-diagram.dim_600x800.png)\n- Cheerful cartoon India map outline illustration with state boundary lines, bright colors, flat style for kids (india-map-kids.dim_800x900.png)\n- Bright kids science subject card illustration with microscope, leaf, and animal icons on colorful background (science-subject-card.dim_400x300.png)\n- Bright kids maths subject card illustration with numbers, plus signs, and colorful blocks (maths-subject-card.dim_400x300.png)\n- Bright kids history subject card illustration with a globe, flag, and monument icons (history-subject-card.dim_400x300.png)",
+  "existing_features": [],
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Remove teacher login/role from the system, keeping only parent and admin logins",
+      "summary": "Kid-friendly bright color scheme for ages 3–12",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Display UPI QR code image (Kamera Rajendraprasad, kamerarajendra098@ptyes) directly in the donation section for users to scan",
+      "summary": "Maths section: number recognition, counting, and addition",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Science section: body parts, animals, and plants with illustrations",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "History section: map of India with names of states",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Multilingual support with switchable languages: Telugu, Hindi, and English",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Apply a vibrant, kid-friendly color palette throughout the entire app using bright, high-contrast colors (e.g., sunshine yellow, grass green, sky blue, coral, tangerine) with rounded shapes, large playful fonts (Fredoka One, Nunito), and oversized touch targets appropriate for ages 3–12. Remove any muted or adult-oriented color tones.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Restrict age group selection to only 3–12 years old (remove any age groups outside this range such as toddlers under 3 or teens over 12). Update AgeGroupSelection.tsx to show only age-appropriate tiers within 3–12 (e.g., 3–5, 6–8, 9–12).",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Expand the Maths section to include: (a) number recognition cards for numbers 1–100 in Telugu, Hindi, and English; (b) interactive counting activities; and (c) basic addition exercises (single-digit and double-digit) with visual aids (e.g., fruit/animal icons). All content must be displayed in the currently selected language.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Build a Science section with three sub-sections: (a) Body Parts — illustrated human body diagram with labelled parts in Telugu, Hindi, and English; (b) Animals — flashcard-style cards showing animal images with names in all three languages; (c) Plants — flashcard-style cards showing common plants/flowers with names in all three languages. Each card should include a text-to-speech button.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Build a History section featuring an interactive map of India. Display all 28 states and 8 union territories with their names and capitals in Telugu, Hindi, and English. Each state should be tappable to show a detail card with the state name, capital, and a relevant emoji or icon. Language switch must update all state names and capitals.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Add a persistent language switcher (Telugu / Hindi / English) accessible from the app header and/or subject pages. Remove Tamil as a selectable language option since only Telugu, Hindi, and English are required. Persist the selected language in sessionStorage via the existing useLanguageState hook.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Update the SubjectSelection page to show exactly three primary subjects: Maths, Science, and History, each with its own dedicated section and appropriate kid-friendly icon/illustration. Each subject card should navigate to its own sub-section page. Remove or demote subjects not part of this core set from the primary grid.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Expand languageData.ts to include Telugu and Hindi translations for: numbers 1–100 (words), body part names (at least 10), animal names (at least 15), plant/flower names (at least 10), and all Indian state names and capitals. English entries must also be complete for all these categories.",
+      "reqIds": [
+        "REQ-8"
+      ],
       "status": "pending"
     }
   ],
   "gameProjectType": "none",
-  "projectName": "KidsLearn",
+  "projectName": "Kids Learning App",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

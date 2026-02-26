@@ -1,50 +1,80 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T17:19:53.258Z",
-  "summary": "Both REQ-1 and REQ-2 are substantially implemented. REQ-1 teacher removal is complete across frontend components and backend. REQ-2 UPI QR code is displayed with correct UPI ID and label. One minor AC for REQ-1 regarding the /teacher-dashboard route is partially addressed (page shows a redirect message but route still exists). The QR code image path uses a generated asset path but cannot confirm the actual image file was added as a static asset.",
+  "generatedAt": "2026-02-26T01:10:27.186Z",
+  "summary": "The diff shows only backend changes (backend/main.mo, backend/migration.mo) and a project_state.json update. None of the frontend requirements (REQ-1 through REQ-8) appear to be implemented — no frontend files were added or modified. The backend adds data types and migration structures for the new content, but all frontend UI, language data, and component changes are absent.",
   "missing_requirements": [
     {
       "id": "REQ-1",
-      "requirement": "The /teacher-dashboard route is removed or redirects away",
-      "reason": "The TeacherDashboard page still exists as a component showing a 'Page Not Available' message. App.tsx summary mentions the route was removed, but the file itself was not removed. App.tsx is truncated so full confirmation is not possible.",
-      "evidence": [
-        "frontend/src/pages/TeacherDashboard.tsx",
-        "frontend/src/App.tsx"
-      ]
+      "requirement": "Apply a vibrant, kid-friendly color palette throughout the entire app using bright, high-contrast colors with rounded shapes, large playful fonts (Fredoka One, Nunito), and oversized touch targets.",
+      "reason": "No frontend files (tailwind.config.js, CSS, or any component files) were modified or added in the diff.",
+      "evidence": []
     },
     {
       "id": "REQ-2",
-      "requirement": "The QR code image is served from frontend/public/assets/generated/",
-      "reason": "Donation.tsx references the image at '/assets/generated/upi-qr.dim_300x300.png', but no actual image file addition is shown in the diff. The diff lists 'Added: 1' file but that is backend/migration.mo, not the QR image asset.",
+      "requirement": "Restrict age group selection to only 3–12 years old; update AgeGroupSelection.tsx to show only age-appropriate tiers within 3–12.",
+      "reason": "AgeGroupSelection.tsx was not modified or added in the diff.",
+      "evidence": []
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Expand the Maths section to include number recognition cards 1–100, interactive counting activities, and basic addition exercises with visual aids in Telugu, Hindi, and English.",
+      "reason": "No frontend Maths section files were added or modified. While backend types for NumberCard and AdditionProblem were added, no frontend components or data files were changed.",
       "evidence": [
-        "frontend/src/pages/Donation.tsx"
+        "backend/main.mo",
+        "backend/migration.mo"
       ]
+    },
+    {
+      "id": "REQ-4",
+      "requirement": "Build a Science section with Body Parts, Animals, and Plants sub-sections including illustrated cards with text-to-speech buttons in all three languages.",
+      "reason": "No frontend Science section components were added or modified. Backend types (BodyPart, AnimalCard, PlantCard) were added but no frontend implementation exists.",
+      "evidence": [
+        "backend/main.mo",
+        "backend/migration.mo"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "requirement": "Build a History section with an interactive India map listing all 28 states and 8 union territories with names, capitals, and emojis in Telugu, Hindi, and English.",
+      "reason": "No frontend History section files were added or modified. Backend StateInfo type was added but no frontend implementation exists.",
+      "evidence": [
+        "backend/main.mo",
+        "backend/migration.mo"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "requirement": "Add a persistent language switcher (Telugu/Hindi/English) in the app header; remove Tamil; persist via useLanguageState hook in sessionStorage.",
+      "reason": "No frontend files for language switcher were added or modified in the diff.",
+      "evidence": []
+    },
+    {
+      "id": "REQ-7",
+      "requirement": "Update SubjectSelection page to show exactly three primary subjects: Maths, Science, and History, each with dedicated section and kid-friendly icons.",
+      "reason": "SubjectSelection.tsx or any related frontend file was not added or modified in the diff.",
+      "evidence": []
+    },
+    {
+      "id": "REQ-8",
+      "requirement": "Expand languageData.ts to include Telugu and Hindi translations for numbers 1–100 (words), body part names (10+), animal names (15+), plant names (10+), and all Indian state names and capitals.",
+      "reason": "languageData.ts was not added or modified in the diff. No frontend data files were touched.",
+      "evidence": []
     }
   ],
   "hallucinated_features": [
     {
-      "description": "Backend migration module (migration.mo) added to handle removing teacher roles from existing data",
-      "reason": "The build request only mentions removing the Teacher role from the frontend and ensuring no backend calls reference the Teacher role. A full migration module for transforming existing backend state was not requested.",
+      "description": "Backend migration module (migration.mo) with full OldActor-to-NewActor migration logic for new content types.",
+      "reason": "The build request does not specify any backend migration module. It only references backend data indirectly through language data and content sourcing.",
       "evidence": [
-        "backend/migration.mo",
-        "backend/main.mo"
+        "backend/migration.mo"
       ]
     }
   ],
-  "confidence": 0.75,
+  "confidence": 0.92,
   "changed_files": [
     "backend/main.mo",
     "backend/migration.mo",
-    "frontend-file-summaries.txt",
-    "frontend/src/App.tsx",
-    "frontend/src/components/RoleSelectionModal.tsx",
-    "frontend/src/components/layout/Footer.tsx",
-    "frontend/src/components/layout/Header.tsx",
-    "frontend/src/pages/Donation.tsx",
-    "frontend/src/pages/Home.tsx",
-    "frontend/src/pages/Profile.tsx",
-    "frontend/src/pages/TeacherDashboard.tsx",
     "project_state.json"
   ]
 }

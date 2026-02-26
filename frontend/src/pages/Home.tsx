@@ -1,268 +1,104 @@
-import React from "react";
-import { useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard } from "lucide-react";
-import { useInternetIdentity } from "../hooks/useInternetIdentity";
-import { useGetCallerRole, useGetCallerUserProfile } from "../hooks/useQueries";
-import RoleSelectionModal from "../components/RoleSelectionModal";
-import { UserRole } from "../backend";
+import React, { useEffect } from 'react';
+import { useNavigate } from '@tanstack/react-router';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useGetKidsProfile } from '../hooks/useQueries';
+import { usePinLock } from '../hooks/usePinLock';
+import { Button } from '@/components/ui/button';
+import { BookOpen, Star, Gamepad2, Trophy, Zap, Heart } from 'lucide-react';
 
-const NAV_CARDS = [
-  {
-    title: "Alphabet A–Z",
-    emoji: "🔡",
-    description: "Full-screen A to Z with pictures!",
-    path: "/alphabet-fullscreen",
-    bgClass: "bg-sky-200 border-sky-500 hover:bg-sky-300",
-    textClass: "text-sky-700",
-  },
-  {
-    title: "Alphabet",
-    emoji: "🔤",
-    description: "Learn A to Z in 4 languages!",
-    path: "/alphabet",
-    bgClass: "bg-sky-100 border-sky-400 hover:bg-sky-200",
-    textClass: "text-sky-600",
-  },
-  {
-    title: "Numbers 1–10",
-    emoji: "🔢",
-    description: "Count from 1 to 10!",
-    path: "/numbers",
-    bgClass: "bg-sunshine-200 border-sunshine-500 hover:bg-sunshine-300",
-    textClass: "text-sunshine-700",
-  },
-  {
-    title: "Numbers 1–100",
-    emoji: "💯",
-    description: "Count all the way to 100!",
-    path: "/numbers-100",
-    bgClass: "bg-tangerine-200 border-tangerine-500 hover:bg-tangerine-300",
-    textClass: "text-tangerine-700",
-  },
-  {
-    title: "Vocabulary",
-    emoji: "📚",
-    description: "Learn new words with pictures!",
-    path: "/vocabulary",
-    bgClass: "bg-grass-200 border-grass-500 hover:bg-grass-300",
-    textClass: "text-grass-700",
-  },
-  {
-    title: "Picture Learning",
-    emoji: "🖼️",
-    description: "See pictures, learn words!",
-    path: "/picture-learning",
-    bgClass: "bg-tangerine-100 border-tangerine-400 hover:bg-tangerine-200",
-    textClass: "text-tangerine-700",
-  },
-  {
-    title: "Poems",
-    emoji: "🎵",
-    description: "Fun rhymes and songs!",
-    path: "/poems",
-    bgClass: "bg-lavender-200 border-lavender-500 hover:bg-lavender-300",
-    textClass: "text-lavender-700",
-  },
-  {
-    title: "Quiz",
-    emoji: "❓",
-    description: "Test what you know!",
-    path: "/quiz",
-    bgClass: "bg-cherry-200 border-cherry-500 hover:bg-cherry-300",
-    textClass: "text-cherry-700",
-  },
-  {
-    title: "Matching Game",
-    emoji: "🃏",
-    description: "Match the cards!",
-    path: "/matching-game",
-    bgClass: "bg-mint-200 border-mint-500 hover:bg-mint-300",
-    textClass: "text-mint-700",
-  },
-  {
-    title: "Puzzle",
-    emoji: "🧩",
-    description: "Spell the word!",
-    path: "/puzzle",
-    bgClass: "bg-coral-200 border-coral-500 hover:bg-coral-300",
-    textClass: "text-coral-700",
-  },
-  {
-    title: "Timed Challenge",
-    emoji: "⏱️",
-    description: "Race against the clock!",
-    path: "/timed-challenge",
-    bgClass: "bg-sunshine-300 border-sunshine-600 hover:bg-sunshine-400",
-    textClass: "text-sunshine-800",
-  },
-  {
-    title: "Flashcards",
-    emoji: "🗂️",
-    description: "Flip and learn!",
-    path: "/flashcards",
-    bgClass: "bg-sky-300 border-sky-600 hover:bg-sky-400",
-    textClass: "text-sky-800",
-  },
-  {
-    title: "Mini Games",
-    emoji: "🎮",
-    description: "Play and learn!",
-    path: "/mini-game",
-    bgClass: "bg-lavender-300 border-lavender-600 hover:bg-lavender-400",
-    textClass: "text-lavender-800",
-  },
-  {
-    title: "My Progress",
-    emoji: "⭐",
-    description: "See your badges!",
-    path: "/progress",
-    bgClass: "bg-grass-300 border-grass-600 hover:bg-grass-400",
-    textClass: "text-grass-800",
-  },
-  {
-    title: "My Profile",
-    emoji: "👤",
-    description: "View your profile!",
-    path: "/profile",
-    bgClass: "bg-lavender-200 border-lavender-500 hover:bg-lavender-300",
-    textClass: "text-lavender-700",
-  },
-  {
-    title: "Support Us",
-    emoji: "💝",
-    description: "Donate & help us grow!",
-    path: "/donate",
-    bgClass: "bg-cherry-100 border-cherry-400 hover:bg-cherry-200",
-    textClass: "text-cherry-700",
-  },
+const NAV_ITEMS = [
+  { icon: '📚', label: 'Learn', desc: 'Lessons & Flashcards', path: '/age-group', color: 'bg-sky-100 border-sky-300 hover:bg-sky-200' },
+  { icon: '🔤', label: 'Alphabet', desc: 'Letters & Words', path: '/alphabet-lesson/english', color: 'bg-sunshine-100 border-sunshine-300 hover:bg-sunshine-200' },
+  { icon: '🔢', label: 'Numbers', desc: 'Count & Learn', path: '/numbers-lesson/english', color: 'bg-tangerine-100 border-tangerine-300 hover:bg-tangerine-200' },
+  { icon: '🧪', label: 'Quiz', desc: 'Test Your Skills', path: '/quiz/math', color: 'bg-cherry-100 border-cherry-300 hover:bg-cherry-200' },
+  { icon: '🎮', label: 'Games', desc: 'Fun Mini-Games', path: '/mini-game/math', color: 'bg-grass-100 border-grass-300 hover:bg-grass-200' },
+  { icon: '🏆', label: 'Progress', desc: 'Badges & Stats', path: '/progress', color: 'bg-purple-100 border-purple-300 hover:bg-purple-200' },
+  { icon: '🎯', label: 'Matching', desc: 'Match & Learn', path: '/matching-game/english', color: 'bg-pink-100 border-pink-300 hover:bg-pink-200' },
+  { icon: '⏱️', label: 'Challenge', desc: 'Timed Quiz', path: '/timed-challenge', color: 'bg-orange-100 border-orange-300 hover:bg-orange-200' },
 ];
 
 export default function Home() {
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
+  const { isPinUnlocked } = usePinLock();
+  const { data: kidsProfile, isLoading: profileLoading, isFetched } = useGetKidsProfile();
+
   const isAuthenticated = !!identity;
 
-  const { data: userProfile, isLoading: profileLoading, isFetched: profileFetched } = useGetCallerUserProfile();
-  const { data: callerRole } = useGetCallerRole();
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    if (profileLoading || !isFetched) return;
 
-  // Show role modal when authenticated but no profile yet
-  const showRoleModal = isAuthenticated && !profileLoading && profileFetched && userProfile === null;
+    if (kidsProfile === null) {
+      navigate({ to: '/profile-setup' });
+      return;
+    }
 
-  const dashboardPath = callerRole === UserRole.parent ? "/parent-dashboard" : null;
+    if (kidsProfile !== null && !isPinUnlocked) {
+      navigate({ to: '/pin-entry' });
+    }
+  }, [isAuthenticated, kidsProfile, isPinUnlocked, profileLoading, isFetched, navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sunshine-100 via-sky-100 to-lavender-100">
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-sunshine-50 to-white">
       {/* Hero Banner */}
-      <section className="relative overflow-hidden">
-        <div className="relative bg-gradient-to-r from-sky-400 via-lavender-400 to-cherry-400 py-12 px-4">
-          <div className="absolute inset-0 opacity-20 pointer-events-none">
-            <div className="absolute top-4 left-8 text-6xl animate-float">⭐</div>
-            <div className="absolute top-8 right-12 text-5xl animate-bounce">🌈</div>
-            <div className="absolute bottom-4 left-1/4 text-4xl">🎉</div>
-            <div className="absolute bottom-6 right-1/3 text-5xl animate-float">🦋</div>
-          </div>
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <div className="flex justify-center mb-4">
-              <img
-                src="/assets/generated/kidslearn-logo.dim_256x256.png"
-                alt="KidsLearn Logo"
-                className="w-24 h-24 rounded-3xl shadow-fun-xl border-4 border-white"
-              />
-            </div>
-            <h1 className="font-heading text-5xl md:text-7xl text-white drop-shadow-lg mb-3">
-              🌟 KidsLearn! 🌟
+      <div className="relative overflow-hidden">
+        <img
+          src="/assets/generated/hero-banner.dim_1200x400.png"
+          alt="KidsLearn Hero"
+          className="w-full h-48 md:h-64 object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-sky-900/60 to-transparent flex items-center px-8">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-fredoka text-white drop-shadow-lg">
+              Welcome{isAuthenticated && kidsProfile ? `, ${kidsProfile.name}` : ' to KidsLearn'}! 🌟
             </h1>
-            <p className="font-body text-xl md:text-2xl text-white/90 font-bold mb-6">
-              Learn Alphabets, Numbers &amp; Words in Telugu, Hindi, Tamil &amp; English!
+            <p className="text-lg text-sky-100 font-nunito mt-1">
+              {isAuthenticated ? "Let's learn something amazing today!" : 'Log in to start your adventure!'}
             </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              <button
-                onClick={() => navigate({ to: "/age-group" })}
-                className="kid-btn bg-sunshine-400 hover:bg-sunshine-500 text-white px-8 py-4 text-xl border-4 border-sunshine-600 shadow-fun-xl"
-              >
-                🚀 Start Learning!
-              </button>
-              <button
-                onClick={() => navigate({ to: "/alphabet-fullscreen" })}
-                className="kid-btn bg-white hover:bg-gray-100 text-sky-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
-              >
-                🔡 A–Z Full Screen
-              </button>
-              <button
-                onClick={() => navigate({ to: "/picture-learning" })}
-                className="kid-btn bg-white/90 hover:bg-white text-tangerine-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
-              >
-                🖼️ Picture Learning
-              </button>
-              {isAuthenticated && (
-                <button
-                  onClick={() => navigate({ to: "/profile" })}
-                  className="kid-btn bg-white/80 hover:bg-white text-lavender-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
-                >
-                  👤 My Profile
-                </button>
-              )}
-              {isAuthenticated && dashboardPath && (
-                <button
-                  onClick={() => navigate({ to: dashboardPath })}
-                  className="kid-btn bg-white/80 hover:bg-white text-sky-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
-                >
-                  <LayoutDashboard size={22} /> Dashboard
-                </button>
-              )}
-            </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Navigation Grid */}
-      <section className="max-w-6xl mx-auto px-4 py-10">
-        <h2 className="font-heading text-4xl text-center text-lavender-600 mb-8 drop-shadow-sm">
-          🎯 What do you want to learn today?
-        </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {NAV_CARDS.map((card, idx) => (
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Navigation Grid */}
+        <h2 className="text-2xl font-fredoka text-cherry-600 mb-4 text-center">What do you want to do? 🎉</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+          {NAV_ITEMS.map((item) => (
             <button
-              key={card.path}
-              onClick={() => navigate({ to: card.path })}
-              className={`kid-card border-4 ${card.bgClass} p-4 flex flex-col items-center gap-2 text-center cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 animate-card-entrance card-delay-${Math.min(idx + 1, 6)}`}
+              key={item.path}
+              onClick={() => navigate({ to: item.path as any })}
+              className={`${item.color} border-2 rounded-2xl p-4 text-center transition-all duration-200 hover:scale-105 hover:shadow-fun active:scale-95`}
             >
-              <span className="text-5xl">{card.emoji}</span>
-              <span className={`font-heading text-xl ${card.textClass}`}>{card.title}</span>
-              <span className="font-body text-sm text-gray-600 leading-tight">{card.description}</span>
+              <div className="text-4xl mb-2">{item.icon}</div>
+              <div className="font-fredoka text-lg text-gray-800">{item.label}</div>
+              <div className="text-xs font-nunito text-gray-600 mt-0.5">{item.desc}</div>
             </button>
           ))}
         </div>
-      </section>
 
-      {/* Fun Stats Banner */}
-      <section className="bg-gradient-to-r from-grass-400 to-mint-400 py-8 px-4 mx-4 mb-8 rounded-3xl max-w-6xl md:mx-auto">
-        <div className="flex flex-wrap justify-center gap-8 text-white text-center">
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-4xl">🌍</span>
-            <span className="font-heading text-2xl">4 Languages</span>
-            <span className="font-body text-sm opacity-90">Telugu, Hindi, Tamil, English</span>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-4xl">📖</span>
-            <span className="font-heading text-2xl">100+ Lessons</span>
-            <span className="font-body text-sm opacity-90">Fun &amp; Interactive</span>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-4xl">🏆</span>
-            <span className="font-heading text-2xl">11 Badges</span>
-            <span className="font-body text-sm opacity-90">Earn as you learn!</span>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <span className="text-4xl">🎮</span>
-            <span className="font-heading text-2xl">5+ Games</span>
-            <span className="font-body text-sm opacity-90">Play &amp; Learn!</span>
+        {/* Fun Stats Banner */}
+        <div className="bg-gradient-to-r from-cherry-500 to-tangerine-500 rounded-3xl p-6 text-white text-center shadow-fun">
+          <h3 className="text-2xl font-fredoka mb-3">🚀 Keep Learning Every Day!</h3>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="flex flex-col items-center">
+              <BookOpen className="h-8 w-8 mb-1" />
+              <span className="font-fredoka text-xl">6</span>
+              <span className="text-xs font-nunito opacity-90">Subjects</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <Gamepad2 className="h-8 w-8 mb-1" />
+              <span className="font-fredoka text-xl">5+</span>
+              <span className="text-xs font-nunito opacity-90">Games</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <Trophy className="h-8 w-8 mb-1" />
+              <span className="font-fredoka text-xl">11</span>
+              <span className="text-xs font-nunito opacity-90">Badges</span>
+            </div>
           </div>
         </div>
-      </section>
-
-      {/* Role Selection Modal */}
-      <RoleSelectionModal open={showRoleModal} />
+      </div>
     </div>
   );
 }

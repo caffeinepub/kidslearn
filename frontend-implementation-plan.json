@@ -1,66 +1,274 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove teacher login and add UPI QR code to donation section",
+  "title": "Kids Learning App – Maths, Science & History with Telugu/Hindi/English Support",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Remove the Teacher role entirely from the system, keeping only Parent and Admin roles functional",
+      "summary": "Apply a vibrant, kid-friendly color palette throughout the entire app using bright, high-contrast colors (sunshine yellow, grass green, sky blue, coral, tangerine) with rounded shapes, large playful fonts (Fredoka One, Nunito), and oversized touch targets appropriate for ages 3–12. Remove any muted or adult-oriented color tones.",
       "acceptanceCriteria": [
-        "The role selection modal does not show a Teacher option",
-        "No teacher-specific navigation links appear in Header or Footer",
-        "The /teacher-dashboard route is removed or redirects away",
-        "Parent and Admin logins continue to work normally",
-        "No backend calls reference or assign the Teacher role"
+        "All pages use the bright kid-friendly color palette from tailwind.config.js (sunshine, grass, sky, coral, tangerine, cherry, lavender, mint scales)",
+        "No muted grays or dark corporate tones used as primary UI colors",
+        "Fonts are large, rounded, and legible for young children",
+        "Buttons and interactive elements have large, finger-friendly touch targets"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/RoleSelectionModal.tsx",
+          "path": "frontend/tailwind.config.js",
           "operation": "modify",
-          "description": "Remove the Teacher role option from the role selection modal. Keep only the Parent role option (Admin role assignment happens via backend). Update the UserRole enum usage to reflect that only 'parent' is selectable by users during onboarding."
+          "description": "Verify and enhance the existing kid-friendly color scales (sunshine, grass, sky, coral, tangerine, cherry, lavender, mint) to ensure they use bright, high-contrast OKLCH values. Ensure Fredoka One and Nunito are already configured in the fontFamily section."
         },
         {
-          "path": "frontend/src/components/layout/Header.tsx",
+          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Remove any teacher-specific navigation logic and dashboard shortcuts. Ensure the header only shows Parent and Admin dashboard shortcuts based on the user's role. Remove conditional rendering for teacher role."
-        },
-        {
-          "path": "frontend/src/components/layout/Footer.tsx",
-          "operation": "modify",
-          "description": "Remove teacher-specific navigation links from the footer. Ensure only Parent and Admin dashboard links are conditionally rendered based on user role."
+          "description": "Update global CSS custom properties and utility classes to use the bright kid-friendly palette defined in tailwind.config.js. Remove any muted gray or dark corporate tones from base styling. Ensure utility classes support large touch targets (min-h-14, min-w-14, p-4) and rounded shapes (rounded-2xl, rounded-full). Apply large, playful fonts (text-2xl, text-3xl) for headings and labels."
         },
         {
           "path": "frontend/src/pages/Home.tsx",
           "operation": "modify",
-          "description": "Remove any teacher-specific routing logic or role checks from the home page. Ensure role selection modal and navigation only handle Parent and Admin roles."
+          "description": "Update the hero banner and navigation grid to use the bright kid-friendly color palette (bg-sunshine-400, bg-grass-500, bg-sky-400, bg-coral-400, bg-tangerine-400). Apply large rounded buttons (rounded-2xl, min-h-16) and playful fonts (font-fredoka, text-3xl). Remove any muted gray backgrounds."
         },
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/pages/SubjectSelection.tsx",
           "operation": "modify",
-          "description": "Remove or comment out the /teacher-dashboard route registration. Ensure routing configuration only includes parent-dashboard and any admin routes. Remove TeacherDashboard import if no longer needed."
+          "description": "Update subject cards to use vibrant colors from the kid-friendly palette (sunshine, grass, sky, coral, tangerine, cherry). Ensure large touch targets (min-h-20, min-w-20) and rounded shapes (rounded-2xl). Apply playful fonts (font-fredoka, text-2xl) for subject names."
         },
         {
-          "path": "frontend/src/pages/TeacherDashboard.tsx",
+          "path": "frontend/src/pages/AgeGroupSelection.tsx",
           "operation": "modify",
-          "description": "Add a redirect to the home page at the top of the component to ensure this route is inaccessible. Alternatively, display an 'Access Denied' or 'Page Not Found' message. Keep the file in place to avoid breaking existing imports, but render it non-functional."
+          "description": "Update age group cards to use bright colors (bg-sunshine-400, bg-grass-500, bg-sky-400) with large rounded shapes (rounded-3xl) and playful fonts (font-fredoka, text-3xl). Ensure touch targets are large (min-h-24)."
+        },
+        {
+          "path": "frontend/src/components/layout/Header.tsx",
+          "operation": "modify",
+          "description": "Update the header to use bright kid-friendly colors (bg-sky-400 or bg-sunshine-400) with rounded elements. Ensure buttons have large touch targets (min-h-12, min-w-12, p-3) and use playful fonts (font-nunito, text-xl)."
+        },
+        {
+          "path": "frontend/src/components/layout/Footer.tsx",
+          "operation": "modify",
+          "description": "Update the footer to use bright colors (bg-grass-400 or bg-lavender-400) with rounded elements and large touch targets for links (min-h-12, text-lg). Use playful fonts (font-nunito)."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Display the uploaded Paytm UPI QR code image directly in the Donation page with UPI ID and scanning instructions",
+      "summary": "Restrict age group selection to only 3–12 years old (remove any age groups outside this range such as toddlers under 3 or teens over 12). Update AgeGroupSelection.tsx to show only age-appropriate tiers within 3–12 (e.g., 3–5, 6–8, 9–12).",
       "acceptanceCriteria": [
-        "The Donation page displays the actual Paytm UPI QR code image (not a placeholder)",
-        "The UPI ID 'kamerarajendra098@ptyes' is shown below the QR code",
-        "A label instructs users to scan with any UPI app",
-        "The QR code image is served from frontend/public/assets/generated/",
-        "The image is clearly visible and appropriately sized for scanning"
+        "AgeGroupSelection page shows only age groups within the 3–12 range",
+        "No age group below 3 or above 12 is selectable",
+        "Age group cards use kid-friendly labels and illustrations"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/Donation.tsx",
+          "path": "frontend/src/pages/AgeGroupSelection.tsx",
           "operation": "modify",
-          "description": "Replace the placeholder UPI QR code image reference with the actual generated QR code at frontend/public/assets/generated/upi-qr.dim_300x300.png. Update the img src to use '/assets/generated/upi-qr.dim_300x300.png'. Display the UPI ID 'kamerarajendra098@ptyes' in a text element directly below the QR code image. Add a label or instruction text such as 'Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)' above or below the QR code. Ensure the image has appropriate sizing (e.g., max-width for mobile responsiveness) and alt text for accessibility."
+          "description": "Replace the current age group options (Toddlers, Early Learners, Older Kids) with three new age-appropriate tiers: 3–5 years, 6–8 years, and 9–12 years. Update the cards to display these age ranges with kid-friendly labels (e.g., 'Little Learners (3–5)', 'Young Explorers (6–8)', 'Big Kids (9–12)'). Retain the vibrant colors and rounded shapes. Update navigation to pass the selected age group to SubjectSelection as a search parameter."
+        },
+        {
+          "path": "frontend/src/pages/ProfileSetup.tsx",
+          "operation": "modify",
+          "description": "Update the age input field to accept only ages between 3 and 12. Add validation to reject ages outside this range with a user-friendly error message (e.g., 'Age must be between 3 and 12'). Ensure the UI clearly indicates the allowed age range (placeholder text: 'Enter age (3–12)')."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Expand the Maths section to include: (a) number recognition cards for numbers 1–100 in Telugu, Hindi, and English; (b) interactive counting activities; and (c) basic addition exercises (single-digit and double-digit) with visual aids (e.g., fruit/animal icons). All content must be displayed in the currently selected language.",
+      "acceptanceCriteria": [
+        "Number cards 1–100 are displayed with the numeral and word in the selected language (Telugu, Hindi, or English)",
+        "A counting activity lets kids tap objects to count them",
+        "Addition exercises show two numbers with visual icons and ask kids to find the sum",
+        "Language switch updates all Maths content immediately"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/Numbers100Lesson.tsx",
+          "operation": "modify",
+          "description": "Enhance the existing Numbers100Lesson page to display numbers 1–100 with their words in Telugu, Hindi, and English (remove Tamil). Use the useLanguageState hook to get the current language. Fetch number words from languageData.ts. Ensure each number card shows the numeral and the word in the selected language, with text-to-speech playback on tap. Apply bright kid-friendly colors and large touch targets."
+        },
+        {
+          "path": "frontend/src/pages/CountingActivity.tsx",
+          "operation": "create",
+          "description": "Create a new CountingActivity page that displays a random set of colorful objects (e.g., apples, stars, animals) between 1 and 20. Kids tap each object to count them. Display the current count in large numbers with the word in the selected language (Telugu, Hindi, or English). Use the useLanguageState hook. Show a celebration animation when the correct count is reached. Apply bright colors (sunshine, grass, coral) and large touch targets. Wire this page into the Maths section in SubjectSelection."
+        },
+        {
+          "path": "frontend/src/pages/AdditionExercise.tsx",
+          "operation": "create",
+          "description": "Create a new AdditionExercise page that displays basic addition problems (single-digit and double-digit). Fetch addition problems from the backend via getLearningContentPackage(). Display the problem in the selected language (Telugu, Hindi, or English) using the useLanguageState hook. Show visual aids (e.g., fruit or animal icons) representing the two numbers. Provide answer buttons for kids to select the sum. Show celebration animation on correct answer and allow retry on wrong answer. Apply bright colors and large touch targets. Wire this page into the Maths section in SubjectSelection."
+        },
+        {
+          "path": "frontend/src/pages/SubjectSelection.tsx",
+          "operation": "modify",
+          "description": "Add new activity buttons for Maths subject: 'Counting' navigating to /counting-activity and 'Addition' navigating to /addition-exercise. Ensure the Maths subject card is prominently displayed with a distinct icon (use the existing frontend/public/assets/generated/maths-subject-card.dim_400x300.png). Apply bright colors and large touch targets."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Register two new routes in the TanStack Router: /counting-activity pointing to CountingActivity.tsx and /addition-exercise pointing to AdditionExercise.tsx. Ensure these routes are accessible from SubjectSelection."
+        },
+        {
+          "path": "frontend/src/data/languageData.ts",
+          "operation": "modify",
+          "description": "Ensure number words for 1–100 exist for English, Telugu, and Hindi (remove Tamil entries). Verify that addition problem text (e.g., 'plus', 'equals') is available in all three languages. Expand the numbers section to include all 100 numbers with their words in each language."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Build a Science section with three sub-sections: (a) Body Parts — illustrated human body diagram with labelled parts in Telugu, Hindi, and English; (b) Animals — flashcard-style cards showing animal images with names in all three languages; (c) Plants — flashcard-style cards showing common plants/flowers with names in all three languages. Each card should include a text-to-speech button.",
+      "acceptanceCriteria": [
+        "Science section has three clearly labelled sub-sections: Body Parts, Animals, Plants",
+        "Body parts page shows an illustrated body with at least 10 labelled parts in the selected language",
+        "Animals page shows at least 15 animal cards with name in selected language",
+        "Plants page shows at least 10 plant/flower cards with name in selected language",
+        "Each card has a speak button that pronounces the word in the selected language",
+        "Language switch updates all labels immediately"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/BodyPartsLesson.tsx",
+          "operation": "create",
+          "description": "Create a new BodyPartsLesson page displaying the generated body diagram image (frontend/public/assets/generated/body-parts-diagram.dim_600x800.png). Fetch body part data from the backend via getLearningContentPackage(). Display at least 10 labelled body parts in the selected language (Telugu, Hindi, or English) using the useLanguageState hook. Each label should have a speak button that uses the Web Speech API to pronounce the body part name in the selected language. Apply bright kid-friendly colors and large touch targets. Wire this page into the Science section in SubjectSelection."
+        },
+        {
+          "path": "frontend/src/pages/AnimalsLesson.tsx",
+          "operation": "create",
+          "description": "Create a new AnimalsLesson page displaying at least 15 animal flashcards. Fetch animal data from the backend via getLearningContentPackage(). Each card shows an animal image, name in the selected language (Telugu, Hindi, or English), and a speak button that uses the Web Speech API. Use the useLanguageState hook. Apply bright colors (grass, sky, coral) and large touch targets. Wire this page into the Science section in SubjectSelection."
+        },
+        {
+          "path": "frontend/src/pages/PlantsLesson.tsx",
+          "operation": "create",
+          "description": "Create a new PlantsLesson page displaying at least 10 plant/flower flashcards. Fetch plant data from the backend via getLearningContentPackage(). Each card shows a plant image, name in the selected language (Telugu, Hindi, or English), and a speak button that uses the Web Speech API. Use the useLanguageState hook. Apply bright colors (mint, grass, lavender) and large touch targets. Wire this page into the Science section in SubjectSelection."
+        },
+        {
+          "path": "frontend/src/pages/SubjectSelection.tsx",
+          "operation": "modify",
+          "description": "Add a Science subject card to the grid with three activity buttons: 'Body Parts' navigating to /body-parts, 'Animals' navigating to /animals, and 'Plants' navigating to /plants. Use the generated science subject card image (frontend/public/assets/generated/science-subject-card.dim_400x300.png). Apply bright colors and large touch targets."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Register three new routes in the TanStack Router: /body-parts pointing to BodyPartsLesson.tsx, /animals pointing to AnimalsLesson.tsx, and /plants pointing to PlantsLesson.tsx. Ensure these routes are accessible from SubjectSelection."
+        },
+        {
+          "path": "frontend/src/data/languageData.ts",
+          "operation": "modify",
+          "description": "Add translations for at least 10 body part names, 15 animal names, and 10 plant/flower names in English, Telugu, and Hindi (remove Tamil). Ensure each entry includes the name in all three languages."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Build a History section featuring an interactive map of India. Display all 28 states and 8 union territories with their names and capitals in Telugu, Hindi, and English. Each state should be tappable to show a detail card with the state name, capital, and a relevant emoji or icon. Language switch must update all state names and capitals.",
+      "acceptanceCriteria": [
+        "History section has an India map page listing all 28 states and 8 union territories",
+        "Each state entry shows name and capital in the selected language (Telugu, Hindi, English)",
+        "Tapping a state reveals a detail card with name, capital, and emoji",
+        "Language switch updates all state and capital names",
+        "Content is sourced from updated languageData.ts or equivalent data file"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/IndiaMap.tsx",
+          "operation": "modify",
+          "description": "Enhance the existing IndiaMap page to display all 28 states and 8 union territories with their names and capitals in Telugu, Hindi, and English (remove Tamil). Fetch state data from the backend via getLearningContentPackage(). Use the useLanguageState hook to get the current language. Display the generated India map image (frontend/public/assets/generated/india-map-kids.dim_800x900.png) as a reference. Each state entry should be tappable, showing a detail card with state name, capital, and emoji. Apply bright kid-friendly colors and large touch targets."
+        },
+        {
+          "path": "frontend/src/pages/SubjectSelection.tsx",
+          "operation": "modify",
+          "description": "Add a History subject card to the grid with an activity button 'India Map' navigating to /india-map. Use the generated history subject card image (frontend/public/assets/generated/history-subject-card.dim_400x300.png). Apply bright colors and large touch targets."
+        },
+        {
+          "path": "frontend/src/data/languageData.ts",
+          "operation": "modify",
+          "description": "Add translations for all 28 Indian state names and 8 union territory names, along with their capitals, in English, Telugu, and Hindi (remove Tamil). Ensure each state entry includes name, capital, and emoji in all three languages."
+        }
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "summary": "Add a persistent language switcher (Telugu / Hindi / English) accessible from the app header and/or subject pages. Remove Tamil as a selectable language option since only Telugu, Hindi, and English are required. Persist the selected language in sessionStorage via the existing useLanguageState hook.",
+      "acceptanceCriteria": [
+        "Language switcher shows exactly three options: Telugu, Hindi, English",
+        "Tamil is removed from all language selection UI",
+        "Selected language persists across page navigation within the session",
+        "All content pages (Maths, Science, History, Numbers, Alphabet) respond to language change"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useLanguageState.ts",
+          "operation": "modify",
+          "description": "Update the useLanguageState hook to support only three languages: 'english', 'telugu', and 'hindi'. Remove 'tamil' from the Language type and default language logic. Ensure the selected language persists in sessionStorage under the key 'kidslearn_language'."
+        },
+        {
+          "path": "frontend/src/components/LanguageSwitcher.tsx",
+          "operation": "create",
+          "description": "Create a new LanguageSwitcher component that displays three language buttons: Telugu, Hindi, and English. Use the useLanguageState hook to get and set the current language. Apply bright kid-friendly colors for each button (e.g., bg-sunshine-400 for Telugu, bg-grass-500 for Hindi, bg-sky-400 for English) with large touch targets (min-h-12, min-w-20) and playful fonts (font-nunito, text-lg). Highlight the currently selected language with a border or background change."
+        },
+        {
+          "path": "frontend/src/components/layout/Header.tsx",
+          "operation": "modify",
+          "description": "Import and render the new LanguageSwitcher component in the header, positioning it prominently (e.g., top-right corner or next to the profile icon). Ensure it is accessible on all pages."
+        },
+        {
+          "path": "frontend/src/pages/SubjectSelection.tsx",
+          "operation": "modify",
+          "description": "Import and render the LanguageSwitcher component at the top of the SubjectSelection page to allow language switching directly from the subject grid. Apply consistent styling."
+        },
+        {
+          "path": "frontend/src/pages/Numbers100Lesson.tsx",
+          "operation": "modify",
+          "description": "Ensure the Numbers100Lesson page reads the current language from useLanguageState and updates number words immediately when the language changes. Remove any Tamil language logic."
+        },
+        {
+          "path": "frontend/src/pages/AlphabetLesson.tsx",
+          "operation": "modify",
+          "description": "Update AlphabetLesson to support only Telugu, Hindi, and English. Remove Tamil from the language selection dropdown. Ensure the page updates alphabet cards immediately when the language changes via useLanguageState."
+        },
+        {
+          "path": "frontend/src/pages/IndiaMap.tsx",
+          "operation": "modify",
+          "description": "Remove Tamil language option from the IndiaMap page. Ensure state and capital names update immediately when the language changes via useLanguageState."
+        },
+        {
+          "path": "frontend/src/data/languageData.ts",
+          "operation": "modify",
+          "description": "Remove all Tamil entries from languageData.ts. Ensure all data structures (alphabets, numbers, vocabulary, poems, quizzes, flashcards) include only English, Telugu, and Hindi."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Update the SubjectSelection page to show exactly three primary subjects: Maths, Science, and History, each with its own dedicated section and appropriate kid-friendly icon/illustration. Each subject card should navigate to its own sub-section page. Remove or demote subjects not part of this core set from the primary grid.",
+      "acceptanceCriteria": [
+        "SubjectSelection page prominently shows Maths, Science, and History as the three main subjects",
+        "Each subject card has a distinct color, icon, and label",
+        "Tapping a subject navigates to the correct subject section",
+        "Subject sections are clearly separated and not mixed together"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/SubjectSelection.tsx",
+          "operation": "modify",
+          "description": "Restructure the SubjectSelection page to display exactly three primary subject cards: Maths, Science, and History. Use the generated subject card images (frontend/public/assets/generated/maths-subject-card.dim_400x300.png, frontend/public/assets/generated/science-subject-card.dim_400x300.png, frontend/public/assets/generated/history-subject-card.dim_400x300.png). Each card should have a distinct color (e.g., Maths: bg-tangerine-400, Science: bg-grass-500, History: bg-coral-400) and large touch targets. Each card should expand to show activity buttons (Lessons, Flashcards, Quiz, Mini-Game) specific to that subject. Remove or move other subjects (Alphabet, Telugu, Hindi, English) to a secondary section or separate navigation if needed. Apply kid-friendly fonts and rounded shapes."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Expand languageData.ts to include Telugu and Hindi translations for: numbers 1–100 (words), body part names (at least 10), animal names (at least 15), plant/flower names (at least 10), and all Indian state names and capitals. English entries must also be complete for all these categories.",
+      "acceptanceCriteria": [
+        "languageData.ts exports number words 1–100 in English, Telugu, and Hindi",
+        "Body part translations exist in all three languages for at least 10 parts",
+        "Animal name translations exist in all three languages for at least 15 animals",
+        "Plant name translations exist in all three languages for at least 10 plants",
+        "All Indian state and capital names are available in English, Telugu, and Hindi"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/data/languageData.ts",
+          "operation": "modify",
+          "description": "Expand languageData.ts to include complete translations for: (a) number words 1–100 in English, Telugu, and Hindi; (b) at least 10 body part names (e.g., head, hand, foot, eye, ear, nose, mouth, leg, arm, stomach) in all three languages; (c) at least 15 animal names (e.g., elephant, lion, tiger, dog, cat, cow, horse, bird, fish, rabbit, deer, bear, monkey, snake, frog) in all three languages; (d) at least 10 plant/flower names (e.g., rose, lotus, sunflower, tulip, jasmine, mango tree, neem tree, banana tree, coconut tree, tulsi) in all three languages; (e) all 28 Indian state names and 8 union territory names with their capitals in English, Telugu, and Hindi. Remove all Tamil entries. Ensure each entry includes the word in all three languages and is accessible via a structured export (e.g., numbers, bodyParts, animals, plants, states)."
         }
       ]
     }

@@ -5,6 +5,7 @@ import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import CelebrationAnimation from '../components/CelebrationAnimation';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RotateCcw, Trophy } from 'lucide-react';
+import { Principal } from '@dfinity/principal';
 
 // ---- Toddler: Matching Pairs Memory Game ----
 const TODDLER_PAIRS = [
@@ -364,82 +365,84 @@ function OlderKidsGame({ onWin }: { onWin: () => void }) {
 export default function MiniGame() {
   const search = useSearch({ strict: false }) as { ageGroup?: string; subject?: string };
   const ageGroup = search.ageGroup || 'early-learner';
-
-  const [hasWon, setHasWon] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [badgeAwarded, setBadgeAwarded] = useState(false);
-
   const { identity } = useInternetIdentity();
-  const awardBadgeMutation = useAwardBadge();
+  const { data: _miniGameContent, isLoading } = useGetMiniGameContent();
+  const awardBadge = useAwardBadge();
 
-  // useGetMiniGameContent is kept for potential future use
-  useGetMiniGameContent();
+  const [gameWon, setGameWon] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   const handleWin = async () => {
-    setHasWon(true);
+    setGameWon(true);
     setShowCelebration(true);
-    if (!badgeAwarded && identity) {
+    if (identity) {
+      const principal = Principal.fromText(identity.getPrincipal().toString());
+      const badgeId =
+        ageGroup === 'toddler' ? 'toddler-minigame-badge' :
+        ageGroup === 'early-learner' ? 'early-learner-minigame-badge' :
+        'older-kids-minigame-badge';
       try {
-        await awardBadgeMutation.mutateAsync({
-          targetPrincipal: identity.getPrincipal().toString(),
-          badgeId: `${ageGroup}-minigame-badge`,
-        });
-        setBadgeAwarded(true);
+        await awardBadge.mutateAsync({ targetPrincipal: principal, badgeId });
       } catch { /* ignore duplicate */ }
     }
   };
 
-  const handleRestart = () => {
-    setHasWon(false);
+  const handleReset = () => {
+    setGameWon(false);
     setShowCelebration(false);
-    setBadgeAwarded(false);
   };
 
   const gameTitle =
     ageGroup === 'toddler' ? '🎴 Memory Match' :
     ageGroup === 'early-learner' ? '🔤 Letter Match' :
     '🔀 Word Scramble';
-  const ageLabel =
-    ageGroup === 'toddler' ? 'Toddlers' :
-    ageGroup === 'early-learner' ? 'Early Learners' :
-    'Older Kids';
 
-  return (
-    <div className="animate-fade-slide-in max-w-lg mx-auto px-4 py-8">
-      <CelebrationAnimation active={showCelebration} onComplete={() => setShowCelebration(false)} />
-
-      <div className="text-center mb-6">
-        <h1 className="font-fredoka text-3xl text-foreground">{gameTitle}</h1>
-        <p className="font-nunito text-muted-foreground font-semibold">{ageLabel} Mini-Game</p>
+  if (isLoading) {
+    return (
+      <div className="max-w-lg mx-auto px-4 py-8 space-y-4">
+        <Skeleton className="h-10 w-48 mx-auto rounded-2xl" />
+        <Skeleton className="h-64 w-full rounded-3xl" />
       </div>
+    );
+  }
 
-      {hasWon ? (
-        <div className="animate-bounce-in text-center">
-          <div className="bg-sunshine-400 border-4 border-sunshine-600 rounded-3xl p-8 mb-6">
-            <div className="text-6xl mb-4">🏆</div>
-            <h2 className="font-fredoka text-3xl text-foreground mb-2">You Won!</h2>
-            <p className="font-nunito font-bold text-foreground/80">Amazing work! You completed the game!</p>
-          </div>
-
-          {badgeAwarded && (
-            <div className="bg-grass-500 border-4 border-grass-700 rounded-3xl p-4 mb-6 flex items-center gap-3">
-              <Trophy className="w-8 h-8 text-white" />
-              <div className="text-left">
-                <p className="font-fredoka text-white text-lg">Badge Earned! 🎖️</p>
-                <p className="font-nunito text-white/80 text-sm">Keep playing to earn more badges!</p>
-              </div>
+  if (gameWon) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-sunshine-100 via-grass-100 to-sky-100 flex items-center justify-center p-4">
+        <CelebrationAnimation active={showCelebration} />
+        <div className="bg-white border-4 border-sunshine-400 rounded-4xl p-8 max-w-md w-full text-center shadow-fun-xl">
+          <div className="text-7xl mb-4">🏆</div>
+          <h2 className="font-fredoka text-4xl text-sunshine-600 mb-2">You Won!</h2>
+          <p className="font-nunito text-muted-foreground mb-6">Amazing job! You completed the game!</p>
+          {identity && (
+            <div className="bg-sunshine-100 border-4 border-sunshine-400 rounded-2xl p-4 mb-4">
+              <p className="font-fredoka text-xl text-sunshine-700 flex items-center justify-center gap-2">
+                <Trophy size={24} /> Badge Earned!
+              </p>
             </div>
           )}
-
           <button
-            onClick={handleRestart}
-            className="w-full py-4 rounded-3xl bg-tangerine-400 border-4 border-tangerine-600 text-white font-fredoka text-2xl shadow-fun hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3"
+            onClick={handleReset}
+            className="kid-btn bg-sky-400 hover:bg-sky-500 text-white px-8 py-3 text-xl border-4 border-sky-600 flex items-center gap-2 mx-auto"
           >
-            <RotateCcw size={24} /> Play Again
+            <RotateCcw size={22} /> Play Again
           </button>
         </div>
-      ) : (
-        <div className="bg-card rounded-3xl border-4 border-sunshine-400 shadow-card p-6">
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-tangerine-100 via-sunshine-100 to-grass-100 py-6 px-4">
+      <div className="max-w-lg mx-auto">
+        <div className="text-center mb-6">
+          <h1 className="font-fredoka text-4xl text-tangerine-600 drop-shadow-md mb-1">{gameTitle}</h1>
+          <p className="font-nunito text-muted-foreground font-semibold capitalize">
+            {ageGroup.replace('-', ' ')} Level
+          </p>
+        </div>
+
+        <div className="bg-white border-4 border-tangerine-400 rounded-4xl p-6 shadow-fun-xl">
           {ageGroup === 'toddler' && <ToddlerGame onWin={handleWin} />}
           {ageGroup === 'early-learner' && <EarlyLearnerGame onWin={handleWin} />}
           {ageGroup === 'older-kids' && <OlderKidsGame onWin={handleWin} />}
@@ -447,7 +450,7 @@ export default function MiniGame() {
             <EarlyLearnerGame onWin={handleWin} />
           )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -50,6 +50,7 @@ export default function Lessons() {
   );
 
   const { data: backendLessons, isLoading } = useGetLessons();
+  // Pass null to use the currently authenticated user's principal (resolved inside the hook)
   const { data: sessionProgress } = useGetSessionProgress();
   const completeLessonMutation = useCompleteLesson();
 
