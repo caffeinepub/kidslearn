@@ -5,7 +5,6 @@ import { useAwardBadge, useRecordQuizResult } from "../hooks/useQueries";
 import CelebrationAnimation from "../components/CelebrationAnimation";
 import { getQuizQuestions } from "../data/languageData";
 import type { Language } from "../data/languageData";
-import { Principal } from "@dfinity/principal";
 
 const LANGUAGE_CONFIG: Record<Language, { label: string; btnClass: string }> = {
   english: { label: "English", btnClass: "bg-sky-400 hover:bg-sky-500 text-white border-sky-600" },
@@ -54,9 +53,10 @@ export default function Quiz() {
         setShowCelebration(true);
       }
       if (identity) {
-        const principal = Principal.fromText(identity.getPrincipal().toString());
+        // targetPrincipal must be a string
+        const principalStr = identity.getPrincipal().toString();
         try {
-          await awardBadge.mutateAsync({ targetPrincipal: principal, badgeId: `quiz-${language}` });
+          await awardBadge.mutateAsync({ targetPrincipal: principalStr, badgeId: `quiz-${language}` });
         } catch { /* ignore duplicate */ }
         try {
           await recordQuizResult.mutateAsync({ subject: language, score: BigInt(finalScore), total: BigInt(questions.length) });

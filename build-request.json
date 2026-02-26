@@ -1,198 +1,66 @@
 {
   "kind": "build_request",
-  "title": "Kids Learning App – Maths, Science & History with Telugu/Hindi/English Support",
-  "projectName": "KidsLearn India",
+  "title": "Remove teacher login and add UPI QR code to donation section",
+  "projectName": "KidsLearn",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Apply a vibrant, kid-friendly color palette throughout the entire app using bright, high-contrast colors (e.g., sunshine yellow, grass green, sky blue, coral, tangerine) with rounded shapes, large playful fonts (Fredoka One, Nunito), and oversized touch targets appropriate for ages 3–12. Remove any muted or adult-oriented color tones.",
-      "target": "frontend",
+      "text": "Remove the Teacher role entirely from the system. This includes: removing the Teacher option from the RoleSelectionModal, removing teacher-specific role checks and routing in Header, Footer, Home, and App, removing or hiding the TeacherDashboard route, and ensuring only Parent and Admin roles remain functional throughout the application.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-6",
+          "msg-8"
         ],
         "quotes": [
-          "Make kids friendly colours",
-          "Only 3-12 age group"
+          "remove the teacher logins",
+          "Teacher role/login will be completely removed, keeping only parent and admin logins"
         ]
       },
       "acceptanceCriteria": [
-        "All pages use the bright kid-friendly color palette from tailwind.config.js (sunshine, grass, sky, coral, tangerine, cherry, lavender, mint scales)",
-        "No muted grays or dark corporate tones used as primary UI colors",
-        "Fonts are large, rounded, and legible for young children",
-        "Buttons and interactive elements have large, finger-friendly touch targets"
+        "The role selection modal does not show a Teacher option",
+        "No teacher-specific navigation links appear in Header or Footer",
+        "The /teacher-dashboard route is removed or redirects away",
+        "Parent and Admin logins continue to work normally",
+        "No backend calls reference or assign the Teacher role"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Restrict age group selection to only 3–12 years old (remove any age groups outside this range such as toddlers under 3 or teens over 12). Update AgeGroupSelection.tsx to show only age-appropriate tiers within 3–12 (e.g., 3–5, 6–8, 9–12).",
+      "text": "Display the uploaded Paytm UPI QR code image (kamerarajendra098@ptyes, Kamera Rajendraprasad) directly in the Donation page. Replace the existing UPI QR code placeholder with the actual QR code image stored as a static asset. Show the UPI ID 'kamerarajendra098@ptyes' below the QR code, and include a label such as 'Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)'.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-4"
+          "msg-6",
+          "msg-8"
         ],
         "quotes": [
-          "Only 3-12 age group"
+          "use the QR code image",
+          "UPI QR code image (kamerarajendra098@ptyes) will be displayed directly in the donation section so users can scan it"
         ]
       },
       "acceptanceCriteria": [
-        "AgeGroupSelection page shows only age groups within the 3–12 range",
-        "No age group below 3 or above 12 is selectable",
-        "Age group cards use kid-friendly labels and illustrations"
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Expand the Maths section to include: (a) number recognition cards for numbers 1–100 in Telugu, Hindi, and English; (b) interactive counting activities; and (c) basic addition exercises (single-digit and double-digit) with visual aids (e.g., fruit/animal icons). All content must be displayed in the currently selected language.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-4",
-          "msg-6"
-        ],
-        "quotes": [
-          "add more Number, words in Telugu,,Hindi and English",
-          "Number addition"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Number cards 1–100 are displayed with the numeral and word in the selected language (Telugu, Hindi, or English)",
-        "A counting activity lets kids tap objects to count them",
-        "Addition exercises show two numbers with visual icons and ask kids to find the sum",
-        "Language switch updates all Maths content immediately"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Build a Science section with three sub-sections: (a) Body Parts — illustrated human body diagram with labelled parts in Telugu, Hindi, and English; (b) Animals — flashcard-style cards showing animal images with names in all three languages; (c) Plants — flashcard-style cards showing common plants/flowers with names in all three languages. Each card should include a text-to-speech button.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-4",
-          "msg-6"
-        ],
-        "quotes": [
-          "Science",
-          "Body parts animalt and plant",
-          "add more Number, words in Telugu,,Hindi and English"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Science section has three clearly labelled sub-sections: Body Parts, Animals, Plants",
-        "Body parts page shows an illustrated body with at least 10 labelled parts in the selected language",
-        "Animals page shows at least 15 animal cards with name in selected language",
-        "Plants page shows at least 10 plant/flower cards with name in selected language",
-        "Each card has a speak button that pronounces the word in the selected language",
-        "Language switch updates all labels immediately"
-      ]
-    },
-    {
-      "id": "REQ-5",
-      "text": "Build a History section featuring an interactive map of India. Display all 28 states and 8 union territories with their names and capitals in Telugu, Hindi, and English. Each state should be tappable to show a detail card with the state name, capital, and a relevant emoji or icon. Language switch must update all state names and capitals.",
-      "target": "both",
-      "source": {
-        "messageIds": [
-          "msg-4",
-          "msg-6"
-        ],
-        "quotes": [
-          "History",
-          "map and name of state",
-          "add more Number, words in Telugu,,Hindi and English"
-        ]
-      },
-      "acceptanceCriteria": [
-        "History section has an India map page listing all 28 states and 8 union territories",
-        "Each state entry shows name and capital in the selected language (Telugu, Hindi, English)",
-        "Tapping a state reveals a detail card with name, capital, and emoji",
-        "Language switch updates all state and capital names",
-        "Content is sourced from updated languageData.ts or equivalent data file"
-      ]
-    },
-    {
-      "id": "REQ-6",
-      "text": "Add a persistent language switcher (Telugu / Hindi / English) accessible from the app header and/or subject pages. Remove Tamil as a selectable language option since only Telugu, Hindi, and English are required. Persist the selected language in sessionStorage via the existing useLanguageState hook.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-5",
-          "msg-6"
-        ],
-        "quotes": [
-          "Telugu, Hindi, English — should kids be able to switch between languages"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Language switcher shows exactly three options: Telugu, Hindi, English",
-        "Tamil is removed from all language selection UI",
-        "Selected language persists across page navigation within the session",
-        "All content pages (Maths, Science, History, Numbers, Alphabet) respond to language change"
-      ]
-    },
-    {
-      "id": "REQ-7",
-      "text": "Update the SubjectSelection page to show exactly three primary subjects: Maths, Science, and History, each with its own dedicated section and appropriate kid-friendly icon/illustration. Each subject card should navigate to its own sub-section page. Remove or demote subjects not part of this core set from the primary grid.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-5"
-        ],
-        "quotes": [
-          "Maths, Science, History — should each subject have its own section"
-        ]
-      },
-      "acceptanceCriteria": [
-        "SubjectSelection page prominently shows Maths, Science, and History as the three main subjects",
-        "Each subject card has a distinct color, icon, and label",
-        "Tapping a subject navigates to the correct subject section",
-        "Subject sections are clearly separated and not mixed together"
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "text": "Expand languageData.ts to include Telugu and Hindi translations for: numbers 1–100 (words), body part names (at least 10), animal names (at least 15), plant/flower names (at least 10), and all Indian state names and capitals. English entries must also be complete for all these categories.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-4",
-          "msg-6"
-        ],
-        "quotes": [
-          "add more Number, words in Telugu,,Hindi and English"
-        ]
-      },
-      "acceptanceCriteria": [
-        "languageData.ts exports number words 1–100 in English, Telugu, and Hindi",
-        "Body part translations exist in all three languages for at least 10 parts",
-        "Animal name translations exist in all three languages for at least 15 animals",
-        "Plant name translations exist in all three languages for at least 10 plants",
-        "All Indian state and capital names are available in English, Telugu, and Hindi"
+        "The Donation page displays the actual Paytm UPI QR code image (not a placeholder)",
+        "The UPI ID 'kamerarajendra098@ptyes' is shown below the QR code",
+        "A label instructs users to scan with any UPI app",
+        "The QR code image is served from frontend/public/assets/generated/",
+        "The image is clearly visible and appropriately sized for scanning"
       ]
     }
   ],
   "constraints": [
-    "Only support Telugu, Hindi, and English — do not add or retain Tamil as a language option",
-    "Age group must be restricted to 3–12 years only",
-    "All three subjects (Maths, Science, History) must have their own dedicated section",
-    "Do not edit files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui"
+    "Do not remove or modify the Admin role or admin login flow",
+    "Do not remove or modify the Parent role or parent login flow",
+    "The UPI QR code image must be served as a static frontend asset, not stored in the backend"
   ],
   "nonGoals": [
-    "No support for Tamil language",
-    "No age groups below 3 or above 12",
-    "No mixing of subjects into a single activity pool",
-    "No external map API or geolocation features — use static India map data only",
-    "No real-time features or multiplayer games",
-    "No authentication changes beyond existing Internet Identity setup"
+    "Adding any new payment processing or integration",
+    "Modifying the backend data schema for user roles beyond removing teacher references",
+    "Changing the overall visual theme or layout of the app"
   ],
   "imageRequirements": {
-    "required": [
-      "Colorful illustrated human body diagram for kids showing front-facing child figure with labeled zones, bright flat cartoon style (body-parts-diagram.dim_600x800.png)",
-      "Cheerful cartoon India map outline illustration with state boundary lines, bright colors, flat style for kids (india-map-kids.dim_800x900.png)",
-      "Bright kids science subject card illustration with microscope, leaf, and animal icons on colorful background (science-subject-card.dim_400x300.png)",
-      "Bright kids maths subject card illustration with numbers, plus signs, and colorful blocks (maths-subject-card.dim_400x300.png)",
-      "Bright kids history subject card illustration with a globe, flag, and monument icons (history-subject-card.dim_400x300.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }

@@ -19,16 +19,10 @@ export const _CaffeineStorageRefillResult = IDL.Record({
   'success' : IDL.Opt(IDL.Bool),
   'topped_up_amount' : IDL.Opt(IDL.Nat),
 });
-export const UserRole = IDL.Variant({
+export const UserRole__1 = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
-});
-export const KidsProfile = IDL.Record({
-  'age' : IDL.Nat,
-  'pin' : IDL.Text,
-  'name' : IDL.Text,
-  'avatar' : IDL.Text,
 });
 export const QuizResult = IDL.Record({
   'total' : IDL.Nat,
@@ -40,11 +34,11 @@ export const SessionProgress = IDL.Record({
   'completedLessons' : IDL.Vec(IDL.Nat),
   'quizResults' : IDL.Vec(QuizResult),
 });
-export const UserProfile = IDL.Record({
-  'name' : IDL.Text,
-  'email' : IDL.Text,
-  'avatarUrl' : IDL.Text,
+export const UserRole = IDL.Variant({
+  'student' : IDL.Null,
+  'parent' : IDL.Null,
 });
+export const UserProfile = IDL.Record({ 'name' : IDL.Text, 'role' : UserRole });
 export const Flashcard = IDL.Record({
   'id' : IDL.Nat,
   'front' : IDL.Text,
@@ -57,60 +51,6 @@ export const GameType = IDL.Variant({
   'puzzle' : IDL.Null,
   'timedChallenge' : IDL.Null,
 });
-export const AnimalCard = IDL.Record({
-  'nameHindi' : IDL.Text,
-  'nameTelugu' : IDL.Text,
-  'nameEnglish' : IDL.Text,
-  'audioUrl' : IDL.Text,
-  'imageUrl' : IDL.Text,
-});
-export const StateInfo = IDL.Record({
-  'nameHindi' : IDL.Text,
-  'stateId' : IDL.Nat,
-  'capitalEnglish' : IDL.Text,
-  'nameTelugu' : IDL.Text,
-  'nameEnglish' : IDL.Text,
-  'emoji' : IDL.Text,
-  'capitalHindi' : IDL.Text,
-  'capitalTelugu' : IDL.Text,
-});
-export const AdditionProblem = IDL.Record({
-  'hindi' : IDL.Text,
-  'answer' : IDL.Nat,
-  'firstNumber' : IDL.Nat,
-  'telugu' : IDL.Text,
-  'secondNumber' : IDL.Nat,
-  'english' : IDL.Text,
-});
-export const BodyPart = IDL.Record({
-  'nameHindi' : IDL.Text,
-  'nameTelugu' : IDL.Text,
-  'nameEnglish' : IDL.Text,
-  'audioUrl' : IDL.Text,
-  'imageUrl' : IDL.Text,
-});
-export const NumberCard = IDL.Record({
-  'hindi' : IDL.Text,
-  'audioUrl' : IDL.Text,
-  'number' : IDL.Nat,
-  'telugu' : IDL.Text,
-  'english' : IDL.Text,
-});
-export const PlantCard = IDL.Record({
-  'nameHindi' : IDL.Text,
-  'nameTelugu' : IDL.Text,
-  'nameEnglish' : IDL.Text,
-  'audioUrl' : IDL.Text,
-  'imageUrl' : IDL.Text,
-});
-export const LearningContentPackage = IDL.Record({
-  'animalCards' : IDL.Vec(AnimalCard),
-  'stateInfos' : IDL.Vec(StateInfo),
-  'additionProblems' : IDL.Vec(AdditionProblem),
-  'bodyParts' : IDL.Vec(BodyPart),
-  'numberCards' : IDL.Vec(NumberCard),
-  'plantCards' : IDL.Vec(PlantCard),
-});
 export const Lesson = IDL.Record({
   'id' : IDL.Nat,
   'title' : IDL.Text,
@@ -120,10 +60,6 @@ export const Lesson = IDL.Record({
 export const MiniGameContent = IDL.Record({
   'id' : IDL.Nat,
   'pairs' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text)),
-});
-export const ParentalControls = IDL.Record({
-  'gamesAllowed' : IDL.Vec(IDL.Nat),
-  'contentRestrictions' : IDL.Vec(IDL.Text),
 });
 export const QuizQuestion = IDL.Record({
   'id' : IDL.Nat,
@@ -175,18 +111,18 @@ export const idlService = IDL.Service({
     ),
   '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole__1], [], []),
   'awardBadge' : IDL.Func([IDL.Principal, IDL.Text], [], []),
   'completeLesson' : IDL.Func([IDL.Nat], [], []),
-  'createKidsProfile' : IDL.Func([KidsProfile], [], []),
   'getAllSessionsProgress' : IDL.Func(
       [],
       [IDL.Vec(IDL.Tuple(IDL.Text, SessionProgress))],
       ['query'],
     ),
+  'getCallerRole' : IDL.Func([], [UserRole], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-  'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-  'getDisplayName' : IDL.Func([], [IDL.Opt(IDL.Text)], ['query']),
+  'getCallerUserRole' : IDL.Func([], [UserRole__1], ['query']),
+  'getDisplayName' : IDL.Func([IDL.Principal], [IDL.Opt(IDL.Text)], ['query']),
   'getFlashcards' : IDL.Func([], [IDL.Vec(Flashcard)], ['query']),
   'getGameTypeAverage' : IDL.Func(
       [GameType],
@@ -197,15 +133,8 @@ export const idlService = IDL.Service({
       ],
       ['query'],
     ),
-  'getKidsProfile' : IDL.Func([], [IDL.Opt(KidsProfile)], ['query']),
-  'getLearningContentPackage' : IDL.Func(
-      [],
-      [LearningContentPackage],
-      ['query'],
-    ),
   'getLessons' : IDL.Func([], [IDL.Vec(Lesson)], ['query']),
   'getMiniGameContent' : IDL.Func([], [IDL.Vec(MiniGameContent)], ['query']),
-  'getParentalControls' : IDL.Func([], [IDL.Opt(ParentalControls)], ['query']),
   'getQuizQuestions' : IDL.Func([], [IDL.Vec(QuizQuestion)], ['query']),
   'getSessionProgress' : IDL.Func(
       [IDL.Principal],
@@ -227,6 +156,7 @@ export const idlService = IDL.Service({
       [IDL.Opt(UserProfile)],
       ['query'],
     ),
+  'getUserRole' : IDL.Func([IDL.Principal], [UserRole], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
   'recordGameSession' : IDL.Func(
       [GameType, IDL.Text, IDL.Nat, IDL.Nat],
@@ -235,13 +165,9 @@ export const idlService = IDL.Service({
     ),
   'recordQuizResult' : IDL.Func([IDL.Text, IDL.Nat, IDL.Nat], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+  'setCallerRole' : IDL.Func([UserRole], [], []),
   'setDisplayName' : IDL.Func([IDL.Text], [], []),
-  'setParentalControls' : IDL.Func([ParentalControls], [], []),
   'setupContent' : IDL.Func([], [], []),
-  'setupLearningContent' : IDL.Func([], [], []),
-  'updateKidsPin' : IDL.Func([IDL.Text], [], []),
-  'updateKidsProfile' : IDL.Func([KidsProfile], [], []),
-  'verifyKidsPin' : IDL.Func([IDL.Text], [IDL.Bool], []),
 });
 
 export const idlInitArgs = [];
@@ -258,16 +184,10 @@ export const idlFactory = ({ IDL }) => {
     'success' : IDL.Opt(IDL.Bool),
     'topped_up_amount' : IDL.Opt(IDL.Nat),
   });
-  const UserRole = IDL.Variant({
+  const UserRole__1 = IDL.Variant({
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
-  });
-  const KidsProfile = IDL.Record({
-    'age' : IDL.Nat,
-    'pin' : IDL.Text,
-    'name' : IDL.Text,
-    'avatar' : IDL.Text,
   });
   const QuizResult = IDL.Record({
     'total' : IDL.Nat,
@@ -279,11 +199,8 @@ export const idlFactory = ({ IDL }) => {
     'completedLessons' : IDL.Vec(IDL.Nat),
     'quizResults' : IDL.Vec(QuizResult),
   });
-  const UserProfile = IDL.Record({
-    'name' : IDL.Text,
-    'email' : IDL.Text,
-    'avatarUrl' : IDL.Text,
-  });
+  const UserRole = IDL.Variant({ 'student' : IDL.Null, 'parent' : IDL.Null });
+  const UserProfile = IDL.Record({ 'name' : IDL.Text, 'role' : UserRole });
   const Flashcard = IDL.Record({
     'id' : IDL.Nat,
     'front' : IDL.Text,
@@ -296,60 +213,6 @@ export const idlFactory = ({ IDL }) => {
     'puzzle' : IDL.Null,
     'timedChallenge' : IDL.Null,
   });
-  const AnimalCard = IDL.Record({
-    'nameHindi' : IDL.Text,
-    'nameTelugu' : IDL.Text,
-    'nameEnglish' : IDL.Text,
-    'audioUrl' : IDL.Text,
-    'imageUrl' : IDL.Text,
-  });
-  const StateInfo = IDL.Record({
-    'nameHindi' : IDL.Text,
-    'stateId' : IDL.Nat,
-    'capitalEnglish' : IDL.Text,
-    'nameTelugu' : IDL.Text,
-    'nameEnglish' : IDL.Text,
-    'emoji' : IDL.Text,
-    'capitalHindi' : IDL.Text,
-    'capitalTelugu' : IDL.Text,
-  });
-  const AdditionProblem = IDL.Record({
-    'hindi' : IDL.Text,
-    'answer' : IDL.Nat,
-    'firstNumber' : IDL.Nat,
-    'telugu' : IDL.Text,
-    'secondNumber' : IDL.Nat,
-    'english' : IDL.Text,
-  });
-  const BodyPart = IDL.Record({
-    'nameHindi' : IDL.Text,
-    'nameTelugu' : IDL.Text,
-    'nameEnglish' : IDL.Text,
-    'audioUrl' : IDL.Text,
-    'imageUrl' : IDL.Text,
-  });
-  const NumberCard = IDL.Record({
-    'hindi' : IDL.Text,
-    'audioUrl' : IDL.Text,
-    'number' : IDL.Nat,
-    'telugu' : IDL.Text,
-    'english' : IDL.Text,
-  });
-  const PlantCard = IDL.Record({
-    'nameHindi' : IDL.Text,
-    'nameTelugu' : IDL.Text,
-    'nameEnglish' : IDL.Text,
-    'audioUrl' : IDL.Text,
-    'imageUrl' : IDL.Text,
-  });
-  const LearningContentPackage = IDL.Record({
-    'animalCards' : IDL.Vec(AnimalCard),
-    'stateInfos' : IDL.Vec(StateInfo),
-    'additionProblems' : IDL.Vec(AdditionProblem),
-    'bodyParts' : IDL.Vec(BodyPart),
-    'numberCards' : IDL.Vec(NumberCard),
-    'plantCards' : IDL.Vec(PlantCard),
-  });
   const Lesson = IDL.Record({
     'id' : IDL.Nat,
     'title' : IDL.Text,
@@ -359,10 +222,6 @@ export const idlFactory = ({ IDL }) => {
   const MiniGameContent = IDL.Record({
     'id' : IDL.Nat,
     'pairs' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text)),
-  });
-  const ParentalControls = IDL.Record({
-    'gamesAllowed' : IDL.Vec(IDL.Nat),
-    'contentRestrictions' : IDL.Vec(IDL.Text),
   });
   const QuizQuestion = IDL.Record({
     'id' : IDL.Nat,
@@ -414,18 +273,22 @@ export const idlFactory = ({ IDL }) => {
       ),
     '_caffeineStorageUpdateGatewayPrincipals' : IDL.Func([], [], []),
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole__1], [], []),
     'awardBadge' : IDL.Func([IDL.Principal, IDL.Text], [], []),
     'completeLesson' : IDL.Func([IDL.Nat], [], []),
-    'createKidsProfile' : IDL.Func([KidsProfile], [], []),
     'getAllSessionsProgress' : IDL.Func(
         [],
         [IDL.Vec(IDL.Tuple(IDL.Text, SessionProgress))],
         ['query'],
       ),
+    'getCallerRole' : IDL.Func([], [UserRole], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
-    'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
-    'getDisplayName' : IDL.Func([], [IDL.Opt(IDL.Text)], ['query']),
+    'getCallerUserRole' : IDL.Func([], [UserRole__1], ['query']),
+    'getDisplayName' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(IDL.Text)],
+        ['query'],
+      ),
     'getFlashcards' : IDL.Func([], [IDL.Vec(Flashcard)], ['query']),
     'getGameTypeAverage' : IDL.Func(
         [GameType],
@@ -436,19 +299,8 @@ export const idlFactory = ({ IDL }) => {
         ],
         ['query'],
       ),
-    'getKidsProfile' : IDL.Func([], [IDL.Opt(KidsProfile)], ['query']),
-    'getLearningContentPackage' : IDL.Func(
-        [],
-        [LearningContentPackage],
-        ['query'],
-      ),
     'getLessons' : IDL.Func([], [IDL.Vec(Lesson)], ['query']),
     'getMiniGameContent' : IDL.Func([], [IDL.Vec(MiniGameContent)], ['query']),
-    'getParentalControls' : IDL.Func(
-        [],
-        [IDL.Opt(ParentalControls)],
-        ['query'],
-      ),
     'getQuizQuestions' : IDL.Func([], [IDL.Vec(QuizQuestion)], ['query']),
     'getSessionProgress' : IDL.Func(
         [IDL.Principal],
@@ -470,6 +322,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(UserProfile)],
         ['query'],
       ),
+    'getUserRole' : IDL.Func([IDL.Principal], [UserRole], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
     'recordGameSession' : IDL.Func(
         [GameType, IDL.Text, IDL.Nat, IDL.Nat],
@@ -478,13 +331,9 @@ export const idlFactory = ({ IDL }) => {
       ),
     'recordQuizResult' : IDL.Func([IDL.Text, IDL.Nat, IDL.Nat], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
+    'setCallerRole' : IDL.Func([UserRole], [], []),
     'setDisplayName' : IDL.Func([IDL.Text], [], []),
-    'setParentalControls' : IDL.Func([ParentalControls], [], []),
     'setupContent' : IDL.Func([], [], []),
-    'setupLearningContent' : IDL.Func([], [], []),
-    'updateKidsPin' : IDL.Func([IDL.Text], [], []),
-    'updateKidsProfile' : IDL.Func([KidsProfile], [], []),
-    'verifyKidsPin' : IDL.Func([IDL.Text], [IDL.Bool], []),
   });
 };
 

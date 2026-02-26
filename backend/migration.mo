@@ -1,136 +1,88 @@
 import Map "mo:core/Map";
-import List "mo:core/List";
-import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
-import Text "mo:core/Text";
-import Array "mo:core/Array";
+import List "mo:core/List";
 
 module {
-  // Persistent Types
-  type KidsProfile = {
+  type OldRole = {
+    #teacher;
+    #parent;
+    #student;
+  };
+
+  type UserProfile = {
     name : Text;
-    avatar : Text;
-    age : Nat;
-    pin : Text;
+    role : OldRole;
   };
 
-  type ParentalControls = {
-    contentRestrictions : [Text];
-    gamesAllowed : [Nat];
-  };
-
-  type Lesson = {
-    id : Nat;
-    title : Text;
-    body : Text;
-    image : Text;
-  };
-
-  type Flashcard = {
-    id : Nat;
-    front : Text;
-    back : Text;
-    image : Text;
-  };
-
-  type QuizQuestion = {
-    id : Nat;
-    question : Text;
-    options : [Text];
-    correctIndex : Nat;
-  };
-
-  type MiniGameContent = {
-    id : Nat;
-    pairs : [(Text, Text)];
-  };
-
-  type QuizResult = {
-    subject : Text;
-    score : Nat;
-    total : Nat;
-  };
-
-  type InternalSessionProgress = {
-    completedLessons : List.List<Nat>;
-    quizResults : List.List<QuizResult>;
-    earnedBadges : List.List<Text>;
-  };
-
-  type GameType = {
-    #timedChallenge;
-    #matchingGame;
-    #puzzle;
-    #quiz;
-  };
-
-  type GameSession = {
-    userId : Principal.Principal;
-    gameType : GameType;
-    language : Text;
-    score : Nat;
-    totalQuestions : Nat;
-    timestamp : Int;
-  };
-
-  type GameStatistics = {
-    bestScore : Nat;
-    totalSessions : Nat;
-    totalScore : Nat;
-    averageScore : Nat;
-  };
-
-  // Old and New Actor Types
   type OldActor = {
-    kidsProfiles : Map.Map<Principal.Principal, KidsProfile>;
-    parentalControls : Map.Map<Principal.Principal, ParentalControls>;
-    displayNames : Map.Map<Principal.Principal, Text>;
-    lessons : List.List<Lesson>;
-    flashcards : List.List<Flashcard>;
-    quizQuestions : List.List<QuizQuestion>;
-    miniGameContents : List.List<MiniGameContent>;
-    sessionProgress : Map.Map<Text, InternalSessionProgress>;
-    gameSessions : List.List<GameSession>;
-    perUserGameStats : Map.Map<Principal.Principal, Map.Map<GameType, GameStatistics>>;
+    userRoles : Map.Map<Principal, OldRole>;
+    userProfiles : Map.Map<Principal, UserProfile>;
+    // All other fields remain unchanged
+  };
+
+  type NewRole = {
+    #parent;
+    #student;
+  };
+
+  type NewUserProfile = {
+    name : Text;
+    role : NewRole;
   };
 
   type NewActor = {
-    kidsProfiles : Map.Map<Principal.Principal, KidsProfile>;
-    parentalControls : Map.Map<Principal.Principal, ParentalControls>;
-    displayNames : Map.Map<Principal.Principal, Text>;
-    lessons : List.List<Lesson>;
-    flashcards : List.List<Flashcard>;
-    quizQuestions : List.List<QuizQuestion>;
-    miniGameContents : List.List<MiniGameContent>;
-    sessionProgress : Map.Map<Text, InternalSessionProgress>;
-    gameSessions : List.List<GameSession>;
-    perUserGameStats : Map.Map<Principal.Principal, Map.Map<GameType, GameStatistics>>;
-    numberCards : List.List<{ number : Nat; telugu : Text; hindi : Text; english : Text; audioUrl : Text }>;
-    additionProblems : List.List<{ firstNumber : Nat; secondNumber : Nat; answer : Nat; telugu : Text; hindi : Text; english : Text }>;
-    bodyParts : List.List<{ nameTelugu : Text; nameHindi : Text; nameEnglish : Text; imageUrl : Text; audioUrl : Text }>;
-    animalCards : List.List<{ nameTelugu : Text; nameHindi : Text; nameEnglish : Text; imageUrl : Text; audioUrl : Text }>;
-    plantCards : List.List<{ nameTelugu : Text; nameHindi : Text; nameEnglish : Text; imageUrl : Text; audioUrl : Text }>;
-    stateInfos : List.List<{ nameTelugu : Text; nameHindi : Text; nameEnglish : Text; capitalTelugu : Text; capitalHindi : Text; capitalEnglish : Text; emoji : Text; stateId : Nat }>;
+    userRoles : Map.Map<Principal, NewRole>;
+    userProfiles : Map.Map<Principal, NewUserProfile>;
+    // All other fields remain unchanged
   };
 
-  public func run(old : OldActor) : NewActor {
-    // Initialize new fields with empty lists or default values
-    let numberCards = List.empty<{ number : Nat; telugu : Text; hindi : Text; english : Text; audioUrl : Text }>();
-    let additionProblems = List.empty<{ firstNumber : Nat; secondNumber : Nat; answer : Nat; telugu : Text; hindi : Text; english : Text }>();
-    let bodyParts = List.empty<{ nameTelugu : Text; nameHindi : Text; nameEnglish : Text; imageUrl : Text; audioUrl : Text }>();
-    let animalCards = List.empty<{ nameTelugu : Text; nameHindi : Text; nameEnglish : Text; imageUrl : Text; audioUrl : Text }>();
-    let plantCards = List.empty<{ nameTelugu : Text; nameHindi : Text; nameEnglish : Text; imageUrl : Text; audioUrl : Text }>();
-    let stateInfos = List.empty<{ nameTelugu : Text; nameHindi : Text; nameEnglish : Text; capitalTelugu : Text; capitalHindi : Text; capitalEnglish : Text; emoji : Text; stateId : Nat }>();
+  public func run(old : OldActor) : {
+    userRoles : Map.Map<Principal, NewRole>;
+    userProfiles : Map.Map<Principal, NewUserProfile>;
+    // Return all other fields unchanged
+  } {
+    // Remove teacher roles from userRoles map
+    let filteredUserRoles = old.userRoles.filter(
+      func(_p, role) {
+        switch (role) {
+          case (#teacher) { false };
+          case (_) { true };
+        };
+      }
+    ).map<Principal, OldRole, NewRole>(
+      func(_p, r) {
+        switch (r) {
+          case (#parent) { #parent };
+          case (#student) { #student };
+          // Default conversion for any unexpected role values
+          case (_) { #student };
+        };
+      }
+    );
 
-    // Return the new actor state
+    let filteredUserProfiles = old.userProfiles.filter(
+      func(_p, profile) {
+        switch (profile.role) {
+          case (#teacher) { false };
+          case (_) { true };
+        };
+      }
+    ).map<Principal, UserProfile, NewUserProfile>(
+      func(_p, oldProfile) {
+        {
+          oldProfile with
+          role = switch (oldProfile.role) {
+            case (#parent) { #parent };
+            // Default conversion for any unexpected role values
+            case (_) { #student };
+          };
+        };
+      }
+    );
+
     {
-      old with
-      numberCards;
-      additionProblems;
-      bodyParts;
-      animalCards;
-      plantCards;
-      stateInfos;
+      userRoles = filteredUserRoles;
+      userProfiles = filteredUserProfiles;
     };
   };
 };
