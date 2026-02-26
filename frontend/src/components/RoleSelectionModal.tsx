@@ -23,11 +23,7 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ open }) => {
     setSelecting(role);
     try {
       await setCallerRole.mutateAsync(role);
-      if (role === UserRole.teacher) {
-        navigate({ to: '/teacher-dashboard' });
-      } else {
-        navigate({ to: '/parent-dashboard' });
-      }
+      navigate({ to: '/parent-dashboard' });
     } catch (err) {
       console.error('Failed to set role:', err);
       setSelecting(null);
@@ -51,26 +47,6 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ open }) => {
         </DialogHeader>
 
         <div className="flex flex-col gap-4 mt-6">
-          <button
-            onClick={() => handleSelectRole(UserRole.teacher)}
-            disabled={!!selecting}
-            className={`
-              w-full py-5 rounded-2xl border-4 border-grass-300 bg-grass-50
-              flex flex-col items-center gap-2
-              hover:bg-grass-100 hover:border-grass-500 hover:scale-105
-              transition-all duration-200 font-nunito
-              disabled:opacity-60 disabled:cursor-not-allowed
-              ${selecting === UserRole.teacher ? 'scale-95 opacity-80' : ''}
-            `}
-          >
-            <span className="text-5xl">👩‍🏫</span>
-            <span className="text-xl font-bold text-grass-700">I am a Teacher</span>
-            <span className="text-sm text-grass-500">View all students' progress</span>
-            {selecting === UserRole.teacher && (
-              <span className="text-xs text-grass-600 animate-pulse">Setting up...</span>
-            )}
-          </button>
-
           <button
             onClick={() => handleSelectRole(UserRole.parent)}
             disabled={!!selecting}

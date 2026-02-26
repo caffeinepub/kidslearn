@@ -250,6 +250,52 @@ export function useGetCallerUserProfile() {
   };
 }
 
+// ─── Display Name ─────────────────────────────────────────────────────────────
+
+export function useGetDisplayName(principalText?: string) {
+  const { actor, isFetching: actorFetching } = useActor();
+  const { identity } = useInternetIdentity();
+  const isAuthenticated = !!identity;
+
+  const query = useQuery<string | null>({
+    queryKey: ['displayName', principalText],
+    queryFn: async () => {
+      if (!actor || !principalText) return null;
+      try {
+        const { Principal } = await import('@dfinity/principal');
+        return await actor.getDisplayName(Principal.fromText(principalText));
+      } catch {
+        return null;
+      }
+    },
+    enabled: !!actor && !actorFetching && isAuthenticated && !!principalText,
+    retry: false,
+  });
+
+  return {
+    ...query,
+    isLoading: actorFetching || query.isLoading,
+    isFetched: !!actor && query.isFetched,
+  };
+}
+
+export function useSetDisplayName() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  const { identity } = useInternetIdentity();
+
+  return useMutation({
+    mutationFn: async (name: string) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.setDisplayName(name);
+    },
+    onSuccess: () => {
+      const principalText = identity?.getPrincipal().toString();
+      queryClient.invalidateQueries({ queryKey: ['displayName', principalText] });
+    },
+  });
+}
+
 // ─── Guest Session Storage Fallback ──────────────────────────────────────────
 
 const GUEST_SESSIONS_KEY = 'kidslearn_game_sessions';

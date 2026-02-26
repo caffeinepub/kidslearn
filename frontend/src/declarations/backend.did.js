@@ -35,7 +35,6 @@ export const SessionProgress = IDL.Record({
   'quizResults' : IDL.Vec(QuizResult),
 });
 export const UserRole = IDL.Variant({
-  'teacher' : IDL.Null,
   'student' : IDL.Null,
   'parent' : IDL.Null,
 });
@@ -123,6 +122,7 @@ export const idlService = IDL.Service({
   'getCallerRole' : IDL.Func([], [UserRole], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole__1], ['query']),
+  'getDisplayName' : IDL.Func([IDL.Principal], [IDL.Opt(IDL.Text)], ['query']),
   'getFlashcards' : IDL.Func([], [IDL.Vec(Flashcard)], ['query']),
   'getGameTypeAverage' : IDL.Func(
       [GameType],
@@ -166,6 +166,7 @@ export const idlService = IDL.Service({
   'recordQuizResult' : IDL.Func([IDL.Text, IDL.Nat, IDL.Nat], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   'setCallerRole' : IDL.Func([UserRole], [], []),
+  'setDisplayName' : IDL.Func([IDL.Text], [], []),
   'setupContent' : IDL.Func([], [], []),
 });
 
@@ -198,11 +199,7 @@ export const idlFactory = ({ IDL }) => {
     'completedLessons' : IDL.Vec(IDL.Nat),
     'quizResults' : IDL.Vec(QuizResult),
   });
-  const UserRole = IDL.Variant({
-    'teacher' : IDL.Null,
-    'student' : IDL.Null,
-    'parent' : IDL.Null,
-  });
+  const UserRole = IDL.Variant({ 'student' : IDL.Null, 'parent' : IDL.Null });
   const UserProfile = IDL.Record({ 'name' : IDL.Text, 'role' : UserRole });
   const Flashcard = IDL.Record({
     'id' : IDL.Nat,
@@ -287,6 +284,11 @@ export const idlFactory = ({ IDL }) => {
     'getCallerRole' : IDL.Func([], [UserRole], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole__1], ['query']),
+    'getDisplayName' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Opt(IDL.Text)],
+        ['query'],
+      ),
     'getFlashcards' : IDL.Func([], [IDL.Vec(Flashcard)], ['query']),
     'getGameTypeAverage' : IDL.Func(
         [GameType],
@@ -330,6 +332,7 @@ export const idlFactory = ({ IDL }) => {
     'recordQuizResult' : IDL.Func([IDL.Text, IDL.Nat, IDL.Nat], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
     'setCallerRole' : IDL.Func([UserRole], [], []),
+    'setDisplayName' : IDL.Func([IDL.Text], [], []),
     'setupContent' : IDL.Func([], [], []),
   });
 };

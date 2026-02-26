@@ -8,12 +8,20 @@ import { UserRole } from "../backend";
 
 const NAV_CARDS = [
   {
+    title: "Alphabet A–Z",
+    emoji: "🔡",
+    description: "Full-screen A to Z with pictures!",
+    path: "/alphabet-fullscreen",
+    bgClass: "bg-sky-200 border-sky-500 hover:bg-sky-300",
+    textClass: "text-sky-700",
+  },
+  {
     title: "Alphabet",
     emoji: "🔤",
     description: "Learn A to Z in 4 languages!",
     path: "/alphabet",
-    bgClass: "bg-sky-200 border-sky-500 hover:bg-sky-300",
-    textClass: "text-sky-700",
+    bgClass: "bg-sky-100 border-sky-400 hover:bg-sky-200",
+    textClass: "text-sky-600",
   },
   {
     title: "Numbers 1–10",
@@ -38,6 +46,14 @@ const NAV_CARDS = [
     path: "/vocabulary",
     bgClass: "bg-grass-200 border-grass-500 hover:bg-grass-300",
     textClass: "text-grass-700",
+  },
+  {
+    title: "Picture Learning",
+    emoji: "🖼️",
+    description: "See pictures, learn words!",
+    path: "/picture-learning",
+    bgClass: "bg-tangerine-100 border-tangerine-400 hover:bg-tangerine-200",
+    textClass: "text-tangerine-700",
   },
   {
     title: "Poems",
@@ -103,6 +119,22 @@ const NAV_CARDS = [
     bgClass: "bg-grass-300 border-grass-600 hover:bg-grass-400",
     textClass: "text-grass-800",
   },
+  {
+    title: "My Profile",
+    emoji: "👤",
+    description: "View your profile!",
+    path: "/profile",
+    bgClass: "bg-lavender-200 border-lavender-500 hover:bg-lavender-300",
+    textClass: "text-lavender-700",
+  },
+  {
+    title: "Support Us",
+    emoji: "💝",
+    description: "Donate & help us grow!",
+    path: "/donate",
+    bgClass: "bg-cherry-100 border-cherry-400 hover:bg-cherry-200",
+    textClass: "text-cherry-700",
+  },
 ];
 
 export default function Home() {
@@ -116,12 +148,7 @@ export default function Home() {
   // Show role modal when authenticated but no profile yet
   const showRoleModal = isAuthenticated && !profileLoading && profileFetched && userProfile === null;
 
-  const dashboardPath =
-    callerRole === UserRole.teacher
-      ? "/teacher-dashboard"
-      : callerRole === UserRole.parent
-      ? "/parent-dashboard"
-      : null;
+  const dashboardPath = callerRole === UserRole.parent ? "/parent-dashboard" : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sunshine-100 via-sky-100 to-lavender-100">
@@ -155,10 +182,30 @@ export default function Home() {
               >
                 🚀 Start Learning!
               </button>
+              <button
+                onClick={() => navigate({ to: "/alphabet-fullscreen" })}
+                className="kid-btn bg-white hover:bg-gray-100 text-sky-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
+              >
+                🔡 A–Z Full Screen
+              </button>
+              <button
+                onClick={() => navigate({ to: "/picture-learning" })}
+                className="kid-btn bg-white/90 hover:bg-white text-tangerine-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
+              >
+                🖼️ Picture Learning
+              </button>
+              {isAuthenticated && (
+                <button
+                  onClick={() => navigate({ to: "/profile" })}
+                  className="kid-btn bg-white/80 hover:bg-white text-lavender-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
+                >
+                  👤 My Profile
+                </button>
+              )}
               {isAuthenticated && dashboardPath && (
                 <button
                   onClick={() => navigate({ to: dashboardPath })}
-                  className="kid-btn bg-white hover:bg-gray-100 text-sky-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
+                  className="kid-btn bg-white/80 hover:bg-white text-sky-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
                 >
                   <LayoutDashboard size={22} /> Dashboard
                 </button>
@@ -214,7 +261,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Role Selection Modal — only accepts `open` prop */}
+      {/* Role Selection Modal */}
       <RoleSelectionModal open={showRoleModal} />
     </div>
   );

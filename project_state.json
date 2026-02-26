@@ -1,25 +1,25 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Children's multilingual learning app (Telugu, Hindi, English, Tamil) featuring alphabet matching cards, numbers, words/pictures, and Teacher/Parent login. Focused on making the UI child-friendly with vibrant colors and larger alphabet/number cards.",
+  "summary": "Project involves a web app with login (parent and admin roles), profile pages, and a donation section. Teacher login is being removed. UPI QR code (Kamera Rajendraprasad, kamerarajendra098@ptyes) is being added to the donation section.",
   "architectural_notes": [
-    "App is a children's multilingual learning app supporting Telugu, Hindi, English, and Tamil",
-    "Includes alphabet matching cards, numbers, words/pictures sections, and Teacher/Parent login"
+    "Authentication system supports two roles: parent and admin (teacher role removed)",
+    "Donation section uses a static UPI QR code image (Paytm, kamerarajendra098@ptyes)"
   ],
   "known_issues": [],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-apply-a-bright-vibrant-child-friendly-color-scheme-throughout-the-entire-app-use-bold-saturated-colors-for-backgrounds-buttons-cards-navigation-and-interactive-elements-replace-any-muted-or-adult-oriented-palette-with-playful-high-contrast-colors-that-are-visually-engaging-for-young-children-ensure-the-theme-is-consistent-across-all-pages-including-home-alphabetlesson-numberslesson-numbers100lesson-minigame-matchinggame-quiz-vocabularylesson-poemslesson-puzzlegame-timedchallenge-and-all-other-pages",
-      "title": "Apply a bright, vibrant, child-friendly color scheme throughout the entire app. Use bold, saturated colors for backgrounds, buttons, cards, navigation, and interactive elements. Replace any muted or adult-oriented palette with playful, high-contrast colors that are visually engaging for young children. Ensure the theme is consistent across all pages including Home, AlphabetLesson, NumbersLesson, Numbers100Lesson, MiniGame, MatchingGame, Quiz, VocabularyLesson, PoemsLesson, PuzzleGame, TimedChallenge, and all other pages.",
+      "id": "feature-remove-the-teacher-role-entirely-from-the-system-this-includes-removing-the-teacher-option-from-the-roleselectionmodal-removing-teacher-specific-role-checks-and-routing-in-header-footer-home-and-app-removing-or-hiding-the-teacherdashboard-route-and-ensuring-only-parent-and-admin-roles-remain-functional-throughout-the-application",
+      "title": "Remove the Teacher role entirely from the system. This includes: removing the Teacher option from the RoleSelectionModal, removing teacher-specific role checks and routing in Header, Footer, Home, and App, removing or hiding the TeacherDashboard route, and ensuring only Parent and Admin roles remain functional throughout the application.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-increase-the-display-size-of-alphabet-letters-and-number-digits-across-all-relevant-pages-in-alphabetlesson-tsx-significantly-increase-the-font-size-of-the-letter-displayed-on-each-card-in-numberslesson-tsx-and-numbers100lesson-tsx-significantly-increase-the-font-size-of-the-number-on-each-card-cards-themselves-should-also-be-larger-and-more-tappable-the-enlarged-size-should-make-letters-and-numbers-immediately-readable-and-prominent-for-young-children",
-      "title": "Increase the display size of alphabet letters and number digits across all relevant pages. In AlphabetLesson.tsx, significantly increase the font size of the letter displayed on each card. In NumbersLesson.tsx and Numbers100Lesson.tsx, significantly increase the font size of the number on each card. Cards themselves should also be larger and more tappable. The enlarged size should make letters and numbers immediately readable and prominent for young children.",
+      "id": "feature-display-the-uploaded-paytm-upi-qr-code-image-kamerarajendra098-ptyes-kamera-rajendraprasad-directly-in-the-donation-page-replace-the-existing-upi-qr-code-placeholder-with-the-actual-qr-code-image-stored-as-a-static-asset-show-the-upi-id-kamerarajendra098-ptyes-below-the-qr-code-and-include-a-label-such-as-scan-with-any-upi-app-paytm-phonepe-bhim-google-pay",
+      "title": "Display the uploaded Paytm UPI QR code image (kamerarajendra098@ptyes, Kamera Rajendraprasad) directly in the Donation page. Replace the existing UPI QR code placeholder with the actual QR code image stored as a static asset. Show the UPI ID 'kamerarajendra098@ptyes' below the QR code, and include a label such as 'Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)'.",
       "reqIds": [
         "REQ-2"
       ],
@@ -29,13 +29,13 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Apply bright, child-friendly colors throughout the app",
+      "summary": "Remove teacher login/role from the system, keeping only parent and admin logins",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Increase the size of alphabet and number cards/fonts for easier readability",
+      "summary": "Display UPI QR code image (Kamera Rajendraprasad, kamerarajendra098@ptyes) directly in the donation section for users to scan",
       "reqIds": [],
       "status": "pending"
     }

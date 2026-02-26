@@ -12,9 +12,9 @@ import MixinAuthorization "authorization/MixinAuthorization";
 import MixinStorage "blob-storage/Mixin";
 import AccessControl "authorization/access-control";
 import Storage "blob-storage/Storage";
+import Migration "migration";
 
-
-
+(with migration = Migration.run)
 actor {
   // Access control state
   let accessControlState = AccessControl.initState();
@@ -22,7 +22,6 @@ actor {
   include MixinStorage();
 
   public type UserRole = {
-    #teacher;
     #parent;
     #student;
   };
@@ -34,6 +33,7 @@ actor {
 
   let userProfiles = Map.empty<Principal, UserProfile>();
   let userRoles = Map.empty<Principal, UserRole>();
+  let displayNames = Map.empty<Principal, Text>();
 
   type Lesson = {
     id : Nat;
@@ -133,14 +133,6 @@ actor {
     };
   };
 
-  // Helper: check if a principal has the teacher role
-  func isTeacher(principal : Principal) : Bool {
-    switch (userRoles.get(principal)) {
-      case (?#teacher) { true };
-      case (_) { false };
-    };
-  };
-
   // Helper: check if a principal has the parent role
   func isParent(principal : Principal) : Bool {
     switch (userRoles.get(principal)) {
@@ -171,6 +163,21 @@ actor {
     };
     userProfiles.add(caller, profile);
     userRoles.add(caller, profile.role);
+  };
+
+  // Backend function to store display name
+  public shared ({ caller }) func setDisplayName(name : Text) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can set display name");
+    };
+    displayNames.add(caller, name);
+  };
+
+  public query ({ caller }) func getDisplayName(user : Principal) : async ?Text {
+    if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Can only view your own display name");
+    };
+    displayNames.get(user);
   };
 
   // ── Role functions ─────────────────────────────────────────────────────────
@@ -360,7 +367,6 @@ actor {
   // Viewing progress:
   //   - A user can always view their own progress.
   //   - Admins can view any user's progress.
-  //   - Teachers can view any user's progress (needed for Teacher Dashboard).
   //   - Parents can view any user's progress (needed for Parent Dashboard).
   //   - Unauthenticated callers (guests/students) cannot call this endpoint.
   public query ({ caller }) func getSessionProgress(targetPrincipal : Principal) : async SessionProgress {
@@ -369,9 +375,8 @@ actor {
     };
     let callerIsOwner = caller == targetPrincipal;
     let callerIsAdmin = AccessControl.isAdmin(accessControlState, caller);
-    let callerIsTeacher = isTeacher(caller);
     let callerIsParent = isParent(caller);
-    if (not callerIsOwner and not callerIsAdmin and not callerIsTeacher and not callerIsParent) {
+    if (not callerIsOwner and not callerIsAdmin and not callerIsParent) {
       Runtime.trap("Unauthorized: Can only view your own progress");
     };
     let sessionId = targetPrincipal.toText();
@@ -444,16 +449,15 @@ actor {
 
   // Viewing individual game sessions:
   //   - A user can view their own sessions.
-  //   - Admins and teachers can view any user's sessions.
+  //   - Admins can view any user's sessions.
   public query ({ caller }) func getUserGameSessions(userId : Principal) : async [GameSession] {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can view game sessions");
     };
     let callerIsOwner = caller == userId;
     let callerIsAdmin = AccessControl.isAdmin(accessControlState, caller);
-    let callerIsTeacher = isTeacher(caller);
     let callerIsParent = isParent(caller);
-    if (not callerIsOwner and not callerIsAdmin and not callerIsTeacher and not callerIsParent) {
+    if (not callerIsOwner and not callerIsAdmin and not callerIsParent) {
       Runtime.trap("Unauthorized: Can only view your own game sessions");
     };
 
@@ -466,16 +470,15 @@ actor {
 
   // Viewing per-user game statistics:
   //   - A user can view their own statistics.
-  //   - Admins and teachers can view any user's statistics.
+  //   - Admins can view any user's statistics.
   public query ({ caller }) func getUserGameStatistics(userId : Principal, gameType : GameType) : async ?GameStatistics {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can view game statistics");
     };
     let callerIsOwner = caller == userId;
     let callerIsAdmin = AccessControl.isAdmin(accessControlState, caller);
-    let callerIsTeacher = isTeacher(caller);
     let callerIsParent = isParent(caller);
-    if (not callerIsOwner and not callerIsAdmin and not callerIsTeacher and not callerIsParent) {
+    if (not callerIsOwner and not callerIsAdmin and not callerIsParent) {
       Runtime.trap("Unauthorized: Can only view your own game statistics");
     };
 
@@ -488,7 +491,6 @@ actor {
   };
 
   // Aggregated statistics across all users — accessible to authenticated users
-  // (teachers use this for the Teacher Dashboard overview).
   public query ({ caller }) func getGameTypeAverage(gameType : GameType) : async ?{ totalSessions : Nat; averageScore : Nat } {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can view aggregated statistics");
@@ -514,14 +516,13 @@ actor {
     };
   };
 
-  // Returns aggregated progress data across all tracked sessions — intended for
-  // the Teacher Dashboard.  Only teachers and admins may call this.
+  // Returns aggregated progress data across all tracked sessions — for admins only.
   public query ({ caller }) func getAllSessionsProgress() : async [(Text, SessionProgress)] {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can view all progress");
     };
-    if (not AccessControl.isAdmin(accessControlState, caller) and not isTeacher(caller)) {
-      Runtime.trap("Unauthorized: Only teachers and admins can view all progress");
+    if (not AccessControl.isAdmin(accessControlState, caller)) {
+      Runtime.trap("Unauthorized: Only admins can view all progress");
     };
     let result = List.empty<(Text, SessionProgress)>();
     for ((sessionId, progress) in sessionProgress.entries()) {

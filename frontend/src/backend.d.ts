@@ -65,7 +65,6 @@ export enum GameType {
     timedChallenge = "timedChallenge"
 }
 export enum UserRole {
-    teacher = "teacher",
     student = "student",
     parent = "parent"
 }
@@ -82,6 +81,7 @@ export interface backendInterface {
     getCallerRole(): Promise<UserRole>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole__1>;
+    getDisplayName(user: Principal): Promise<string | null>;
     getFlashcards(): Promise<Array<Flashcard>>;
     getGameTypeAverage(gameType: GameType): Promise<{
         totalSessions: bigint;
@@ -100,5 +100,6 @@ export interface backendInterface {
     recordQuizResult(subject: string, score: bigint, total: bigint): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     setCallerRole(role: UserRole): Promise<void>;
+    setDisplayName(name: string): Promise<void>;
     setupContent(): Promise<void>;
 }

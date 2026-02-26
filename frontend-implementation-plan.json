@@ -1,161 +1,66 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Child-friendly colors and larger alphabet/number cards",
+  "title": "Remove teacher login and add UPI QR code to donation section",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Apply a bright, vibrant, child-friendly color scheme throughout the entire app with bold, saturated colors for backgrounds, buttons, cards, navigation, and interactive elements",
+      "summary": "Remove the Teacher role entirely from the system, keeping only Parent and Admin roles functional",
       "acceptanceCriteria": [
-        "All pages use bright, saturated, playful colors instead of muted tones",
-        "Buttons, cards, and interactive elements are visually distinct and colorful",
-        "Color contrast is sufficient for readability",
-        "The theme is consistent across all pages and components",
-        "Colors feel appropriate and engaging for children aged 2–8"
+        "The role selection modal does not show a Teacher option",
+        "No teacher-specific navigation links appear in Header or Footer",
+        "The /teacher-dashboard route is removed or redirects away",
+        "Parent and Admin logins continue to work normally",
+        "No backend calls reference or assign the Teacher role"
       ],
       "file_operations": [
         {
-          "path": "frontend/tailwind.config.js",
+          "path": "frontend/src/components/RoleSelectionModal.tsx",
           "operation": "modify",
-          "description": "Enhance the existing custom color palettes (sunshine, grass, tangerine, cherry, sky, lavender) with brighter, more saturated OKLCH values. Increase saturation and ensure bold, vibrant primary colors for buttons, cards, and interactive elements. Maintain existing palette structure while making all colors more child-friendly and visually engaging."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Update CSS custom properties for light theme color tokens to use the new bright, saturated color values from Tailwind config. Ensure background, foreground, primary, accent, card, and interactive element colors are bold and child-friendly. Adjust dark theme tokens if present to maintain consistency. Update any global styles to reflect the vibrant color scheme."
-        },
-        {
-          "path": "frontend/src/pages/Home.tsx",
-          "operation": "modify",
-          "description": "Apply bright, saturated colors to the hero banner section and navigation grid cards. Use the enhanced Tailwind color classes (sunshine, tangerine, cherry, sky, lavender, grass) for card backgrounds, borders, and hover states. Ensure all interactive elements are visually distinct with bold colors."
-        },
-        {
-          "path": "frontend/src/pages/AlphabetLesson.tsx",
-          "operation": "modify",
-          "description": "Update letter card styling to use bright, saturated background colors from the enhanced Tailwind palette. Apply vibrant colors to card containers, borders, and interactive states. Ensure language selector buttons use bold, child-friendly colors. Maintain text contrast for readability."
-        },
-        {
-          "path": "frontend/src/pages/NumbersLesson.tsx",
-          "operation": "modify",
-          "description": "Apply bright, saturated colors to number cards using the enhanced Tailwind palette. Update card backgrounds, borders, and hover states with bold, child-friendly colors. Ensure language selector uses vibrant colors. Maintain the existing language-themed color logic while making colors more saturated and playful."
-        },
-        {
-          "path": "frontend/src/pages/Numbers100Lesson.tsx",
-          "operation": "modify",
-          "description": "Update the number grid styling with bright, saturated colors for card backgrounds and borders. Apply vibrant language-themed colors that are bolder and more engaging than the current implementation. Ensure the language selector uses child-friendly button colors."
-        },
-        {
-          "path": "frontend/src/pages/VocabularyLesson.tsx",
-          "operation": "modify",
-          "description": "Apply bright, saturated colors to vocabulary cards, category selector buttons, and language tabs. Use the enhanced Tailwind color palette for card backgrounds, borders, and interactive states. Ensure all buttons and selectable elements are visually distinct with bold colors."
-        },
-        {
-          "path": "frontend/src/pages/PoemsLesson.tsx",
-          "operation": "modify",
-          "description": "Update poem display card and navigation controls with bright, saturated colors. Apply vibrant backgrounds and button colors using the enhanced Tailwind palette. Ensure language selector and navigation arrows use bold, child-friendly colors."
-        },
-        {
-          "path": "frontend/src/pages/Quiz.tsx",
-          "operation": "modify",
-          "description": "Apply bright, saturated colors to quiz cards, answer buttons, and navigation controls. Use the enhanced Tailwind color palette for option buttons, correct/incorrect feedback states, and progress indicators. Ensure all interactive elements are visually distinct with bold colors."
-        },
-        {
-          "path": "frontend/src/pages/MatchingGame.tsx",
-          "operation": "modify",
-          "description": "Update game card styling with bright, saturated colors for card backgrounds, borders, and matched states. Apply vibrant colors to the language selector and game controls using the enhanced Tailwind palette. Ensure flipped and matched card states use bold, engaging colors."
-        },
-        {
-          "path": "frontend/src/pages/MiniGame.tsx",
-          "operation": "modify",
-          "description": "Apply bright, saturated colors to game selection cards and interactive game elements. Use the enhanced Tailwind color palette for card backgrounds, borders, draggable items, and drop zones. Ensure all game components use bold, child-friendly colors."
-        },
-        {
-          "path": "frontend/src/pages/PuzzleGame.tsx",
-          "operation": "modify",
-          "description": "Update puzzle game styling with bright, saturated colors for letter tiles, input fields, and buttons. Apply vibrant colors from the enhanced Tailwind palette to interactive elements, success states, and language selector."
-        },
-        {
-          "path": "frontend/src/pages/TimedChallenge.tsx",
-          "operation": "modify",
-          "description": "Apply bright, saturated colors to quiz question cards, answer buttons, timer display, and score indicators. Use the enhanced Tailwind color palette for all interactive elements and feedback states."
-        },
-        {
-          "path": "frontend/src/pages/Flashcards.tsx",
-          "operation": "modify",
-          "description": "Update flashcard styling with bright, saturated colors for card backgrounds, flip animations, and navigation controls. Apply vibrant colors from the enhanced Tailwind palette to card fronts, backs, and interactive buttons."
-        },
-        {
-          "path": "frontend/src/pages/Lessons.tsx",
-          "operation": "modify",
-          "description": "Apply bright, saturated colors to lesson cards, subject selector buttons, and navigation controls. Use the enhanced Tailwind color palette for card backgrounds, borders, and interactive states."
-        },
-        {
-          "path": "frontend/src/pages/AgeGroupSelection.tsx",
-          "operation": "modify",
-          "description": "Update age group selection cards with bright, saturated colors using the enhanced Tailwind palette. Apply vibrant backgrounds, borders, and hover states to make cards visually engaging for children."
-        },
-        {
-          "path": "frontend/src/pages/SubjectSelection.tsx",
-          "operation": "modify",
-          "description": "Apply bright, saturated colors to subject selection cards using the enhanced Tailwind color palette. Ensure all subject cards use bold, child-friendly backgrounds and borders with distinct hover states."
-        },
-        {
-          "path": "frontend/src/pages/Progress.tsx",
-          "operation": "modify",
-          "description": "Update progress display elements with bright, saturated colors for badges, lesson completion indicators, and quiz result cards. Apply vibrant colors from the enhanced Tailwind palette to all visual elements."
-        },
-        {
-          "path": "frontend/src/pages/ParentDashboard.tsx",
-          "operation": "modify",
-          "description": "Apply bright, saturated colors to dashboard cards, statistics displays, and data visualization elements using the enhanced Tailwind color palette. Ensure all components use bold, child-friendly colors."
-        },
-        {
-          "path": "frontend/src/pages/TeacherDashboard.tsx",
-          "operation": "modify",
-          "description": "Update dashboard elements with bright, saturated colors for statistics cards, data displays, and navigation controls using the enhanced Tailwind palette."
+          "description": "Remove the Teacher role option from the role selection modal. Keep only the Parent role option (Admin role assignment happens via backend). Update the UserRole enum usage to reflect that only 'parent' is selectable by users during onboarding."
         },
         {
           "path": "frontend/src/components/layout/Header.tsx",
           "operation": "modify",
-          "description": "Apply bright, saturated colors to the header background, navigation buttons, and login button using the enhanced Tailwind color palette. Ensure all interactive header elements use bold, child-friendly colors."
+          "description": "Remove any teacher-specific navigation logic and dashboard shortcuts. Ensure the header only shows Parent and Admin dashboard shortcuts based on the user's role. Remove conditional rendering for teacher role."
         },
         {
           "path": "frontend/src/components/layout/Footer.tsx",
           "operation": "modify",
-          "description": "Update footer styling with bright, saturated background colors and vibrant link colors using the enhanced Tailwind palette."
+          "description": "Remove teacher-specific navigation links from the footer. Ensure only Parent and Admin dashboard links are conditionally rendered based on user role."
         },
         {
-          "path": "frontend/src/components/RoleSelectionModal.tsx",
+          "path": "frontend/src/pages/Home.tsx",
           "operation": "modify",
-          "description": "Apply bright, saturated colors to modal background, role selection buttons, and interactive elements using the enhanced Tailwind color palette. Ensure buttons use bold, child-friendly colors."
+          "description": "Remove any teacher-specific routing logic or role checks from the home page. Ensure role selection modal and navigation only handle Parent and Admin roles."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Remove or comment out the /teacher-dashboard route registration. Ensure routing configuration only includes parent-dashboard and any admin routes. Remove TeacherDashboard import if no longer needed."
+        },
+        {
+          "path": "frontend/src/pages/TeacherDashboard.tsx",
+          "operation": "modify",
+          "description": "Add a redirect to the home page at the top of the component to ensure this route is inaccessible. Alternatively, display an 'Access Denied' or 'Page Not Found' message. Keep the file in place to avoid breaking existing imports, but render it non-functional."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Increase the display size of alphabet letters and number digits across AlphabetLesson, NumbersLesson, and Numbers100Lesson pages with larger, more tappable cards",
+      "summary": "Display the uploaded Paytm UPI QR code image directly in the Donation page with UPI ID and scanning instructions",
       "acceptanceCriteria": [
-        "Alphabet letter characters on cards are noticeably larger than before (e.g., at least 4xl–6xl or equivalent)",
-        "Number digits on cards in NumbersLesson and Numbers100Lesson are noticeably larger than before",
-        "Cards are large enough to be easily tapped/clicked by young children",
-        "Text remains fully visible and not clipped within card boundaries",
-        "Changes apply consistently for all supported languages (English, Telugu, Hindi, Tamil)"
+        "The Donation page displays the actual Paytm UPI QR code image (not a placeholder)",
+        "The UPI ID 'kamerarajendra098@ptyes' is shown below the QR code",
+        "A label instructs users to scan with any UPI app",
+        "The QR code image is served from frontend/public/assets/generated/",
+        "The image is clearly visible and appropriately sized for scanning"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/AlphabetLesson.tsx",
+          "path": "frontend/src/pages/Donation.tsx",
           "operation": "modify",
-          "description": "Significantly increase the font size of letter characters displayed on each alphabet card to at least text-6xl or text-7xl (or larger custom size). Increase card dimensions (min-w, min-h) to accommodate the larger text and make cards more tappable for young children. Ensure padding and spacing are adjusted so letters remain fully visible without clipping. Apply changes consistently across all language modes (English, Telugu, Hindi, Tamil)."
-        },
-        {
-          "path": "frontend/src/pages/NumbersLesson.tsx",
-          "operation": "modify",
-          "description": "Significantly increase the font size of number digits on each number card to at least text-6xl or text-7xl. Increase card dimensions to make them larger and more tappable for young children. Adjust padding and spacing to ensure numbers are fully visible and not clipped within card boundaries. Apply changes consistently for all supported languages (English, Telugu, Hindi, Tamil)."
-        },
-        {
-          "path": "frontend/src/pages/Numbers100Lesson.tsx",
-          "operation": "modify",
-          "description": "Increase the font size of number digits in the 1-100 grid to at least text-4xl or text-5xl. Increase individual card/cell dimensions to accommodate larger numbers and improve tappability. Adjust grid layout spacing and card padding to ensure all numbers remain fully visible across all languages (English, Telugu, Hindi, Tamil). Balance card size with grid layout to maintain a usable view of all 100 numbers."
+          "description": "Replace the placeholder UPI QR code image reference with the actual generated QR code at frontend/public/assets/generated/upi-qr.dim_300x300.png. Update the img src to use '/assets/generated/upi-qr.dim_300x300.png'. Display the UPI ID 'kamerarajendra098@ptyes' in a text element directly below the QR code image. Add a label or instruction text such as 'Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)' above or below the QR code. Ensure the image has appropriate sizing (e.g., max-width for mobile responsiveness) and alt text for accessibility."
         }
       ]
     }

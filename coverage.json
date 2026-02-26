@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T09:58:18.027Z",
+  "generatedAt": "2026-02-25T17:19:53.261Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -12,84 +12,57 @@
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Apply a bright, vibrant, child-friendly color scheme throughout the entire app. Use bold, saturated colors for backgrounds, buttons, cards, navigation, and interactive elements. Replace any muted or adult-oriented palette with playful, high-contrast colors that are visually engaging for young children. Ensure the theme is consistent across all pages including Home, AlphabetLesson, NumbersLesson, Numbers100Lesson, MiniGame, MatchingGame, Quiz, VocabularyLesson, PoemsLesson, PuzzleGame, TimedChallenge, and all other pages.",
+        "summary": "Remove the Teacher role entirely from the system. This includes: removing the Teacher option from the RoleSelectionModal, removing teacher-specific role checks and routing in Header, Footer, Home, and App, removing or hiding the TeacherDashboard route, and ensuring only Parent and Admin roles remain functional throughout the application.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/tailwind.config.js",
-          "frontend/src/index.css",
-          "frontend/src/pages/Home.tsx",
-          "frontend/src/pages/AlphabetLesson.tsx",
-          "frontend/src/pages/NumbersLesson.tsx",
-          "frontend/src/pages/Numbers100Lesson.tsx",
-          "frontend/src/pages/VocabularyLesson.tsx",
-          "frontend/src/pages/PoemsLesson.tsx",
-          "frontend/src/pages/Quiz.tsx",
-          "frontend/src/pages/MatchingGame.tsx",
-          "frontend/src/pages/MiniGame.tsx",
-          "frontend/src/pages/PuzzleGame.tsx",
-          "frontend/src/pages/TimedChallenge.tsx",
-          "frontend/src/pages/Flashcards.tsx",
-          "frontend/src/pages/Lessons.tsx",
-          "frontend/src/pages/AgeGroupSelection.tsx",
-          "frontend/src/pages/SubjectSelection.tsx",
-          "frontend/src/pages/Progress.tsx",
-          "frontend/src/pages/ParentDashboard.tsx",
-          "frontend/src/pages/TeacherDashboard.tsx",
+          "frontend/src/components/RoleSelectionModal.tsx",
           "frontend/src/components/layout/Header.tsx",
           "frontend/src/components/layout/Footer.tsx",
-          "frontend/src/components/RoleSelectionModal.tsx"
+          "frontend/src/pages/Home.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/pages/TeacherDashboard.tsx"
         ],
         "matchedFiles": [
-          "frontend/tailwind.config.js",
-          "frontend/src/index.css",
+          "frontend/src/components/RoleSelectionModal.tsx",
+          "frontend/src/components/layout/Header.tsx",
+          "frontend/src/components/layout/Footer.tsx",
           "frontend/src/pages/Home.tsx",
-          "frontend/src/pages/AlphabetLesson.tsx",
-          "frontend/src/pages/NumbersLesson.tsx",
-          "frontend/src/pages/Numbers100Lesson.tsx",
-          "frontend/src/pages/VocabularyLesson.tsx",
-          "frontend/src/pages/PoemsLesson.tsx",
-          "frontend/src/pages/Quiz.tsx",
-          "frontend/src/pages/MatchingGame.tsx",
-          "frontend/src/pages/PuzzleGame.tsx",
-          "frontend/src/pages/TimedChallenge.tsx",
-          "frontend/src/pages/Flashcards.tsx"
+          "frontend/src/App.tsx",
+          "frontend/src/pages/TeacherDashboard.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Increase the display size of alphabet letters and number digits across all relevant pages. In AlphabetLesson.tsx, significantly increase the font size of the letter displayed on each card. In NumbersLesson.tsx and Numbers100Lesson.tsx, significantly increase the font size of the number on each card. Cards themselves should also be larger and more tappable. The enlarged size should make letters and numbers immediately readable and prominent for young children.",
+        "summary": "Display the uploaded Paytm UPI QR code image (kamerarajendra098@ptyes, Kamera Rajendraprasad) directly in the Donation page. Replace the existing UPI QR code placeholder with the actual QR code image stored as a static asset. Show the UPI ID 'kamerarajendra098@ptyes' below the QR code, and include a label such as 'Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)'.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/AlphabetLesson.tsx",
-          "frontend/src/pages/NumbersLesson.tsx",
-          "frontend/src/pages/Numbers100Lesson.tsx"
+          "frontend/src/pages/Donation.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/AlphabetLesson.tsx",
-          "frontend/src/pages/NumbersLesson.tsx",
-          "frontend/src/pages/Numbers100Lesson.tsx"
+          "frontend/src/pages/Donation.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
+    "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/data/languageData.ts",
-    "frontend/src/index.css",
-    "frontend/src/pages/AlphabetLesson.tsx",
-    "frontend/src/pages/Flashcards.tsx",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/RoleSelectionModal.tsx",
+    "frontend/src/components/layout/Footer.tsx",
+    "frontend/src/components/layout/Header.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/pages/Donation.tsx",
     "frontend/src/pages/Home.tsx",
-    "frontend/src/pages/MatchingGame.tsx",
-    "frontend/src/pages/Numbers100Lesson.tsx",
-    "frontend/src/pages/NumbersLesson.tsx",
-    "frontend/src/pages/PoemsLesson.tsx",
-    "frontend/src/pages/PuzzleGame.tsx",
-    "frontend/src/pages/Quiz.tsx",
-    "frontend/src/pages/TimedChallenge.tsx",
-    "frontend/src/pages/VocabularyLesson.tsx",
-    "frontend/tailwind.config.js",
+    "frontend/src/pages/Profile.tsx",
+    "frontend/src/pages/TeacherDashboard.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -62,8 +62,7 @@ export interface SessionProgress {
 }
 export type Time = bigint;
 export interface UserProfile { 'name' : string, 'role' : UserRole }
-export type UserRole = { 'teacher' : null } |
-  { 'student' : null } |
+export type UserRole = { 'student' : null } |
   { 'parent' : null };
 export type UserRole__1 = { 'admin' : null } |
   { 'user' : null } |
@@ -103,6 +102,7 @@ export interface _SERVICE {
   'getCallerRole' : ActorMethod<[], UserRole>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole__1>,
+  'getDisplayName' : ActorMethod<[Principal], [] | [string]>,
   'getFlashcards' : ActorMethod<[], Array<Flashcard>>,
   'getGameTypeAverage' : ActorMethod<
     [GameType],
@@ -127,6 +127,7 @@ export interface _SERVICE {
   'recordQuizResult' : ActorMethod<[string, bigint, bigint], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'setCallerRole' : ActorMethod<[UserRole], undefined>,
+  'setDisplayName' : ActorMethod<[string], undefined>,
   'setupContent' : ActorMethod<[], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;

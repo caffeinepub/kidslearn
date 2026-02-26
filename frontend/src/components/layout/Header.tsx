@@ -1,38 +1,31 @@
 import React from 'react';
-import { useNavigate, useLocation } from '@tanstack/react-router';
-import { Trophy, ArrowLeft, LogIn, LogOut, GraduationCap, Users } from 'lucide-react';
+import { useNavigate, useRouter } from '@tanstack/react-router';
+import { ArrowLeft, LayoutDashboard, User } from 'lucide-react';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import { useQueryClient } from '@tanstack/react-query';
 import { useGetCallerRole } from '../../hooks/useQueries';
+import { useQueryClient } from '@tanstack/react-query';
 import { UserRole } from '../../backend';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { login, clear, loginStatus, identity } = useInternetIdentity();
+  const router = useRouter();
+  const { identity, login, clear, loginStatus } = useInternetIdentity();
   const queryClient = useQueryClient();
   const isAuthenticated = !!identity;
+  const { data: role } = useGetCallerRole();
+
   const isLoggingIn = loginStatus === 'logging-in';
-
-  const { data: role, isLoading: roleLoading } = useGetCallerRole();
-
-  const isHome = location.pathname === '/';
-
-  const handleBack = () => {
-    navigate({ to: '/' });
-  };
 
   const handleAuth = async () => {
     if (isAuthenticated) {
       await clear();
       queryClient.clear();
-      navigate({ to: '/' });
     } else {
       try {
         await login();
-      } catch (error: unknown) {
-        const err = error as Error;
-        if (err?.message === 'User is already authenticated') {
+      } catch (error: any) {
+        console.error('Login error:', error);
+        if (error.message === 'User is already authenticated') {
           await clear();
           setTimeout(() => login(), 300);
         }
@@ -40,30 +33,22 @@ const Header: React.FC = () => {
     }
   };
 
-  const handleDashboard = () => {
-    if (role === UserRole.teacher) {
-      navigate({ to: '/teacher-dashboard' });
-    } else if (role === UserRole.parent) {
-      navigate({ to: '/parent-dashboard' });
-    }
-  };
+  const canGoBack = router.history.length > 1;
 
-  const handleProgress = () => {
-    navigate({ to: '/progress' });
-  };
+  const dashboardPath = role === UserRole.parent ? '/parent-dashboard' : null;
 
   return (
-    <header className="sticky top-0 z-50 bg-sunshine-400 shadow-fun">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Left: Back or Logo */}
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b-4 border-sunshine-300 shadow-fun">
+      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+        {/* Left: Back + Logo */}
         <div className="flex items-center gap-2">
-          {!isHome && (
+          {canGoBack && (
             <button
-              onClick={handleBack}
-              className="p-2 rounded-full bg-white/20 hover:bg-white/40 transition-colors text-white"
+              onClick={() => router.history.back()}
+              className="p-2 rounded-xl hover:bg-sunshine-100 transition-colors text-sunshine-600"
               aria-label="Go back"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={22} />
             </button>
           )}
           <button
@@ -73,72 +58,45 @@ const Header: React.FC = () => {
             <img
               src="/assets/generated/kidslearn-logo.dim_256x256.png"
               alt="KidsLearn"
-              className="w-9 h-9 rounded-xl object-cover"
+              className="w-10 h-10 rounded-xl border-2 border-sunshine-300"
             />
-            <span className="text-white font-fredoka text-xl font-bold hidden sm:block">
-              KidsLearn
-            </span>
+            <span className="font-fredoka text-xl text-sunshine-600 hidden sm:block">KidsLearn</span>
           </button>
         </div>
 
-        {/* Right: Actions */}
+        {/* Right: Dashboard + Profile + Auth */}
         <div className="flex items-center gap-2">
-          {/* Dashboard link for teacher/parent */}
-          {isAuthenticated && !roleLoading && role && role !== UserRole.student && (
+          {isAuthenticated && dashboardPath && (
             <button
-              onClick={handleDashboard}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/40 transition-colors text-white text-sm font-nunito font-bold"
+              onClick={() => navigate({ to: dashboardPath })}
+              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-grass-100 hover:bg-grass-200 text-grass-700 font-nunito text-sm font-bold transition-colors border-2 border-grass-300"
               aria-label="Dashboard"
             >
-              {role === UserRole.teacher ? (
-                <>
-                  <GraduationCap size={16} />
-                  <span className="hidden sm:inline">Teacher</span>
-                </>
-              ) : (
-                <>
-                  <Users size={16} />
-                  <span className="hidden sm:inline">Parent</span>
-                </>
-              )}
+              <LayoutDashboard size={18} />
+              <span className="hidden sm:inline">Dashboard</span>
             </button>
           )}
 
-          {/* Progress button */}
-          <button
-            onClick={handleProgress}
-            className="p-2 rounded-full bg-white/20 hover:bg-white/40 transition-colors text-white"
-            aria-label="View progress"
-          >
-            <Trophy size={20} />
-          </button>
+          {isAuthenticated && (
+            <button
+              onClick={() => navigate({ to: '/profile' })}
+              className="p-2 rounded-xl bg-lavender-100 hover:bg-lavender-200 text-lavender-700 transition-colors border-2 border-lavender-300"
+              aria-label="My Profile"
+            >
+              <User size={20} />
+            </button>
+          )}
 
-          {/* Login/Logout */}
           <button
             onClick={handleAuth}
             disabled={isLoggingIn}
-            className={`
-              flex items-center gap-1.5 px-3 py-1.5 rounded-full font-nunito font-bold text-sm transition-all
-              ${isAuthenticated
-                ? 'bg-white/20 hover:bg-white/40 text-white'
-                : 'bg-white text-sunshine-600 hover:bg-sunshine-50'
-              }
-              disabled:opacity-60
-            `}
+            className={`px-4 py-2 rounded-xl font-bold font-nunito text-sm transition-colors border-2 disabled:opacity-50 ${
+              isAuthenticated
+                ? 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300'
+                : 'bg-sunshine-400 hover:bg-sunshine-500 text-white border-sunshine-500'
+            }`}
           >
-            {isLoggingIn ? (
-              <span className="animate-pulse">Logging in...</span>
-            ) : isAuthenticated ? (
-              <>
-                <LogOut size={16} />
-                <span className="hidden sm:inline">Logout</span>
-              </>
-            ) : (
-              <>
-                <LogIn size={16} />
-                <span className="hidden sm:inline">Login</span>
-              </>
-            )}
+            {isLoggingIn ? 'Logging in...' : isAuthenticated ? 'Logout' : 'Login'}
           </button>
         </div>
       </div>

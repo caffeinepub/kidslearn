@@ -1,24 +1,20 @@
 import React, { useState } from "react";
 import { Volume2 } from "lucide-react";
-import { getVocabulary } from "../data/languageData";
+import { vocabularyByCategory } from "../data/languageData";
+import type { Language, VocabCategory } from "../data/languageData";
 
-type Language = "english" | "telugu" | "hindi" | "tamil";
-type Category = "animals" | "fruits" | "colors" | "body" | "food" | "nature";
-
-const LANGUAGE_CONFIG: Record<Language, { label: string; voice: string; btnClass: string }> = {
-  english: { label: "English", voice: "en-US", btnClass: "bg-sky-400 hover:bg-sky-500 text-white border-sky-600" },
-  telugu: { label: "తెలుగు", voice: "te-IN", btnClass: "bg-grass-400 hover:bg-grass-500 text-white border-grass-600" },
-  hindi: { label: "हिंदी", voice: "hi-IN", btnClass: "bg-tangerine-400 hover:bg-tangerine-500 text-white border-tangerine-600" },
-  tamil: { label: "தமிழ்", voice: "ta-IN", btnClass: "bg-lavender-400 hover:bg-lavender-500 text-white border-lavender-600" },
+const LANGUAGE_CONFIG: Record<Language, { label: string; voice: string; btnClass: string; headerClass: string }> = {
+  english: { label: "English", voice: "en-US", btnClass: "bg-sky-400 hover:bg-sky-500 text-white border-sky-600", headerClass: "text-sky-600" },
+  telugu: { label: "తెలుగు", voice: "te-IN", btnClass: "bg-grass-400 hover:bg-grass-500 text-white border-grass-600", headerClass: "text-grass-600" },
+  hindi: { label: "हिंदी", voice: "hi-IN", btnClass: "bg-tangerine-400 hover:bg-tangerine-500 text-white border-tangerine-600", headerClass: "text-tangerine-600" },
+  tamil: { label: "தமிழ்", voice: "ta-IN", btnClass: "bg-lavender-400 hover:bg-lavender-500 text-white border-lavender-600", headerClass: "text-lavender-600" },
 };
 
-const CATEGORIES: { key: Category; label: string; emoji: string; bgClass: string }[] = [
-  { key: "animals", label: "Animals", emoji: "🐾", bgClass: "bg-grass-200 border-grass-500" },
-  { key: "fruits", label: "Fruits", emoji: "🍎", bgClass: "bg-cherry-200 border-cherry-500" },
-  { key: "colors", label: "Colors", emoji: "🎨", bgClass: "bg-lavender-200 border-lavender-500" },
-  { key: "body", label: "Body Parts", emoji: "👁️", bgClass: "bg-sky-200 border-sky-500" },
-  { key: "food", label: "Food", emoji: "🍽️", bgClass: "bg-tangerine-200 border-tangerine-500" },
-  { key: "nature", label: "Nature", emoji: "🌿", bgClass: "bg-mint-200 border-mint-500" },
+const ALL_CATEGORIES: { key: VocabCategory; label: string; emoji: string; bgClass: string; headerBg: string }[] = [
+  { key: "animals", label: "Animals", emoji: "🐾", bgClass: "bg-grass-200 border-grass-500", headerBg: "bg-grass-300" },
+  { key: "food", label: "Food & Fruits", emoji: "🍎", bgClass: "bg-cherry-200 border-cherry-500", headerBg: "bg-cherry-300" },
+  { key: "colors", label: "Colors", emoji: "🎨", bgClass: "bg-lavender-200 border-lavender-500", headerBg: "bg-lavender-300" },
+  { key: "bodyParts", label: "Body Parts", emoji: "👁️", bgClass: "bg-sky-200 border-sky-500", headerBg: "bg-sky-300" },
 ];
 
 const CARD_COLORS = [
@@ -43,14 +39,12 @@ function speak(text: string, lang: string) {
 
 export default function VocabularyLesson() {
   const [language, setLanguage] = useState<Language>("english");
-  const [category, setCategory] = useState<Category>("animals");
 
-  const vocab = getVocabulary(language, category);
   const config = LANGUAGE_CONFIG[language];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-lavender-100 via-sky-100 to-mint-100 py-6 px-4">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="font-heading text-5xl md:text-6xl text-lavender-600 drop-shadow-md mb-2">
@@ -62,7 +56,7 @@ export default function VocabularyLesson() {
         </div>
 
         {/* Language Selector */}
-        <div className="flex flex-wrap justify-center gap-3 mb-6">
+        <div className="flex flex-wrap justify-center gap-3 mb-10">
           {(Object.keys(LANGUAGE_CONFIG) as Language[]).map((lang) => (
             <button
               key={lang}
@@ -78,53 +72,62 @@ export default function VocabularyLesson() {
           ))}
         </div>
 
-        {/* Category Selector */}
-        <div className="flex flex-wrap justify-center gap-3 mb-8">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat.key}
-              onClick={() => setCategory(cat.key)}
-              className={`kid-btn px-5 py-2.5 text-base font-heading border-4 flex items-center gap-2 ${
-                category === cat.key
-                  ? cat.bgClass + " scale-110 shadow-fun-lg text-gray-800"
-                  : "bg-white border-gray-300 text-gray-600 hover:scale-105"
-              }`}
-            >
-              <span>{cat.emoji}</span> {cat.label}
-            </button>
-          ))}
-        </div>
+        {/* All Categories — fully expanded */}
+        <div className="space-y-12">
+          {ALL_CATEGORIES.map((cat) => {
+            const entries = vocabularyByCategory[language]?.[cat.key] ?? vocabularyByCategory.english[cat.key] ?? [];
+            if (!entries.length) return null;
 
-        {/* Vocabulary Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {vocab.map((item, idx) => {
-            const colorClass = CARD_COLORS[idx % CARD_COLORS.length];
             return (
-              <div
-                key={`${language}-${category}-${idx}`}
-                className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 animate-card-entrance card-delay-${Math.min(idx + 1, 6)} flex flex-col overflow-hidden`}
-                style={{ height: "220px" }}
-                onClick={() => speak(item.word, config.voice)}
-              >
-                {/* Emoji area */}
-                <div className="flex-1 flex items-center justify-center bg-white/20">
-                  <span className="text-6xl">{item.emoji}</span>
+              <section key={cat.key}>
+                {/* Category Header */}
+                <div className={`flex items-center gap-3 mb-5 px-5 py-3 rounded-3xl border-4 ${cat.bgClass} inline-flex`}>
+                  <span className="text-3xl">{cat.emoji}</span>
+                  <h2 className="font-heading text-2xl md:text-3xl text-gray-800">
+                    {cat.label}
+                  </h2>
+                  <span className="font-body text-base text-gray-600 ml-1">
+                    ({entries.length} words)
+                  </span>
                 </div>
-                {/* Word area */}
-                <div className="flex items-center justify-between px-3 py-2 bg-white/30">
-                  <span className="font-heading text-lg text-gray-800 truncate flex-1">{item.word}</span>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); speak(item.word, config.voice); }}
-                    className={`kid-btn p-1.5 rounded-xl border-2 border-white ${config.btnClass} shrink-0 ml-1`}
-                    aria-label="Speak"
-                  >
-                    <Volume2 size={16} />
-                  </button>
+
+                {/* Word Cards Grid — all words, no truncation */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                  {entries.map((item, idx) => {
+                    const colorClass = CARD_COLORS[idx % CARD_COLORS.length];
+                    return (
+                      <div
+                        key={`${language}-${cat.key}-${idx}`}
+                        className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 flex flex-col overflow-hidden`}
+                        style={{ minHeight: "200px" }}
+                        onClick={() => speak(item.word, config.voice)}
+                      >
+                        {/* Emoji area */}
+                        <div className="flex-1 flex items-center justify-center bg-white/20 py-4">
+                          <span className="text-6xl">{item.emoji}</span>
+                        </div>
+                        {/* Word area */}
+                        <div className="flex items-center justify-between px-3 py-2 bg-white/30">
+                          <span className="font-heading text-lg text-gray-800 truncate flex-1">{item.word}</span>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); speak(item.word, config.voice); }}
+                            className={`kid-btn p-1.5 rounded-xl border-2 border-white ${config.btnClass} shrink-0 ml-1`}
+                            aria-label="Speak"
+                          >
+                            <Volume2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              </div>
+              </section>
             );
           })}
         </div>
+
+        {/* Bottom spacer */}
+        <div className="h-12" />
       </div>
     </div>
   );

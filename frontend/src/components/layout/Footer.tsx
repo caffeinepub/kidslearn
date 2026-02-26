@@ -39,22 +39,15 @@ const Footer: React.FC = () => {
               Parent Dashboard
             </button>
           )}
-          {isAuthenticated && role === UserRole.teacher && (
-            <button onClick={() => navigate({ to: '/teacher-dashboard' })} className="hover:text-sunshine-100 transition-colors">
-              Teacher Dashboard
-            </button>
-          )}
           <button onClick={() => navigate({ to: '/donate' })} className="hover:text-sunshine-100 transition-colors">
-            Donate
+            Support Us
           </button>
         </div>
 
         {/* Attribution */}
-        <div className="text-center text-sm font-nunito text-sunshine-100">
-          <p>
-            Built with{' '}
-            <Heart size={14} className="inline text-cherry-300 fill-cherry-300" />{' '}
-            using{' '}
+        <div className="text-center text-xs font-nunito text-white/80 space-y-1">
+          <p className="flex items-center justify-center gap-1">
+            Built with <Heart size={12} className="fill-cherry-400 text-cherry-400" /> using{' '}
             <a
               href={caffeineUrl}
               target="_blank"
@@ -64,9 +57,7 @@ const Footer: React.FC = () => {
               caffeine.ai
             </a>
           </p>
-          <p className="mt-1 text-xs text-sunshine-200">
-            © {new Date().getFullYear()} KidsLearn — Learning made fun for every child 🌟
-          </p>
+          <p>© {new Date().getFullYear()} KidsLearn. All rights reserved.</p>
         </div>
       </div>
     </footer>

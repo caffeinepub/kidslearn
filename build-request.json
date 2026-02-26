@@ -1,60 +1,63 @@
 {
   "kind": "build_request",
-  "title": "Child-friendly colors and larger alphabet/number cards",
+  "title": "Remove teacher login and add UPI QR code to donation section",
   "projectName": "KidsLearn",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Apply a bright, vibrant, child-friendly color scheme throughout the entire app. Use bold, saturated colors for backgrounds, buttons, cards, navigation, and interactive elements. Replace any muted or adult-oriented palette with playful, high-contrast colors that are visually engaging for young children. Ensure the theme is consistent across all pages including Home, AlphabetLesson, NumbersLesson, Numbers100Lesson, MiniGame, MatchingGame, Quiz, VocabularyLesson, PoemsLesson, PuzzleGame, TimedChallenge, and all other pages.",
-      "target": "frontend",
+      "text": "Remove the Teacher role entirely from the system. This includes: removing the Teacher option from the RoleSelectionModal, removing teacher-specific role checks and routing in Header, Footer, Home, and App, removing or hiding the TeacherDashboard route, and ensuring only Parent and Admin roles remain functional throughout the application.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-recent-1"
+          "msg-6",
+          "msg-8"
         ],
         "quotes": [
-          "Make good colour and children friendly"
+          "remove the teacher logins",
+          "Teacher role/login will be completely removed, keeping only parent and admin logins"
         ]
       },
       "acceptanceCriteria": [
-        "All pages use bright, saturated, playful colors instead of muted tones",
-        "Buttons, cards, and interactive elements are visually distinct and colorful",
-        "Color contrast is sufficient for readability",
-        "The theme is consistent across all pages and components",
-        "Colors feel appropriate and engaging for children aged 2–8"
+        "The role selection modal does not show a Teacher option",
+        "No teacher-specific navigation links appear in Header or Footer",
+        "The /teacher-dashboard route is removed or redirects away",
+        "Parent and Admin logins continue to work normally",
+        "No backend calls reference or assign the Teacher role"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Increase the display size of alphabet letters and number digits across all relevant pages. In AlphabetLesson.tsx, significantly increase the font size of the letter displayed on each card. In NumbersLesson.tsx and Numbers100Lesson.tsx, significantly increase the font size of the number on each card. Cards themselves should also be larger and more tappable. The enlarged size should make letters and numbers immediately readable and prominent for young children.",
+      "text": "Display the uploaded Paytm UPI QR code image (kamerarajendra098@ptyes, Kamera Rajendraprasad) directly in the Donation page. Replace the existing UPI QR code placeholder with the actual QR code image stored as a static asset. Show the UPI ID 'kamerarajendra098@ptyes' below the QR code, and include a label such as 'Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)'.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-recent-1"
+          "msg-6",
+          "msg-8"
         ],
         "quotes": [
-          "alphabet and Number increase the size of it"
+          "use the QR code image",
+          "UPI QR code image (kamerarajendra098@ptyes) will be displayed directly in the donation section so users can scan it"
         ]
       },
       "acceptanceCriteria": [
-        "Alphabet letter characters on cards are noticeably larger than before (e.g., at least 4xl–6xl or equivalent)",
-        "Number digits on cards in NumbersLesson and Numbers100Lesson are noticeably larger than before",
-        "Cards are large enough to be easily tapped/clicked by young children",
-        "Text remains fully visible and not clipped within card boundaries",
-        "Changes apply consistently for all supported languages (English, Telugu, Hindi, Tamil)"
+        "The Donation page displays the actual Paytm UPI QR code image (not a placeholder)",
+        "The UPI ID 'kamerarajendra098@ptyes' is shown below the QR code",
+        "A label instructs users to scan with any UPI app",
+        "The QR code image is served from frontend/public/assets/generated/",
+        "The image is clearly visible and appropriately sized for scanning"
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
-    "Do not change backend logic or data models",
-    "Do not remove or break any existing features (alphabet matching, number lessons, quiz, teacher/parent login, etc.)"
+    "Do not remove or modify the Admin role or admin login flow",
+    "Do not remove or modify the Parent role or parent login flow",
+    "The UPI QR code image must be served as a static frontend asset, not stored in the backend"
   ],
   "nonGoals": [
-    "Adding payment, donation, or Stripe integration",
-    "Adding new content or subjects",
-    "Changing app routing or navigation structure",
-    "Modifying backend actor or data schemas"
+    "Adding any new payment processing or integration",
+    "Modifying the backend data schema for user roles beyond removing teacher references",
+    "Changing the overall visual theme or layout of the app"
   ],
   "imageRequirements": {
     "required": [],

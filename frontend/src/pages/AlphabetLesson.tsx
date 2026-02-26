@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
-import { Volume2, ArrowLeft, ArrowRight } from "lucide-react";
+import { Volume2 } from "lucide-react";
 import { getAlphabetCards } from "../data/languageData";
 
 type Language = "english" | "telugu" | "hindi" | "tamil";
@@ -57,15 +56,9 @@ function speak(text: string, lang: string) {
 }
 
 export default function AlphabetLesson() {
-  const navigate = useNavigate();
   const [language, setLanguage] = useState<Language>("english");
-  const [currentPage, setCurrentPage] = useState(0);
 
   const cards = getAlphabetCards(language);
-  const CARDS_PER_PAGE = 6;
-  const totalPages = Math.ceil(cards.length / CARDS_PER_PAGE);
-  const pageCards = cards.slice(currentPage * CARDS_PER_PAGE, (currentPage + 1) * CARDS_PER_PAGE);
-
   const config = LANGUAGE_CONFIG[language];
 
   const getImageSrc = (letter: string, lang: Language): string | null => {
@@ -93,7 +86,7 @@ export default function AlphabetLesson() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-100 via-sunshine-100 to-lavender-100 py-6 px-4">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="font-heading text-5xl md:text-6xl text-sky-600 drop-shadow-md mb-2">
@@ -109,7 +102,7 @@ export default function AlphabetLesson() {
           {(Object.keys(LANGUAGE_CONFIG) as Language[]).map((lang) => (
             <button
               key={lang}
-              onClick={() => { setLanguage(lang); setCurrentPage(0); }}
+              onClick={() => setLanguage(lang)}
               className={`kid-btn px-6 py-3 text-lg font-heading border-4 ${
                 language === lang
                   ? LANGUAGE_CONFIG[lang].btnClass + " scale-110 shadow-fun-lg border-white"
@@ -123,23 +116,23 @@ export default function AlphabetLesson() {
 
         {/* Info Banner */}
         <div className={`mx-auto max-w-xl mb-8 p-4 rounded-3xl border-4 text-center font-heading text-lg ${config.bgClass}`}>
-          Showing {language.charAt(0).toUpperCase() + language.slice(1)} alphabet — Page {currentPage + 1} of {totalPages}
+          {language.charAt(0).toUpperCase() + language.slice(1)} Alphabet — {cards.length} characters
         </div>
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 mb-8">
-          {pageCards.map((card, idx) => {
+        {/* Full Cards Grid — all characters, no pagination */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+          {cards.map((card, idx) => {
             const colorClass = CARD_COLORS[idx % CARD_COLORS.length];
             const imgSrc = getImageSrc(card.letter, language);
             return (
               <div
                 key={`${language}-${card.letter}-${idx}`}
-                className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 animate-card-entrance card-delay-${Math.min(idx + 1, 6)} flex flex-col items-center justify-between p-4 min-h-[280px]`}
+                className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 flex flex-col items-center justify-between p-4 min-h-[280px]`}
                 onClick={() => speak(`${card.letter}. ${card.word}`, config.voice)}
               >
                 {/* Letter - VERY LARGE */}
                 <div className="flex-1 flex items-center justify-center w-full">
-                  <span className="font-heading text-8xl md:text-9xl leading-none drop-shadow-md select-none">
+                  <span className="font-heading text-7xl md:text-8xl leading-none drop-shadow-md select-none">
                     {card.letter}
                   </span>
                 </div>
@@ -159,7 +152,7 @@ export default function AlphabetLesson() {
 
                 {/* Word + Speak Button */}
                 <div className="w-full flex items-center justify-between gap-2 mt-1">
-                  <span className="font-heading text-xl text-gray-700 truncate flex-1">
+                  <span className="font-heading text-lg text-gray-700 truncate flex-1">
                     {card.word}
                   </span>
                   <button
@@ -175,38 +168,8 @@ export default function AlphabetLesson() {
           })}
         </div>
 
-        {/* Pagination */}
-        <div className="flex justify-center items-center gap-4">
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
-            disabled={currentPage === 0}
-            className="kid-btn bg-sky-400 hover:bg-sky-500 text-white px-6 py-3 text-lg border-4 border-sky-600 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            <ArrowLeft size={22} /> Prev
-          </button>
-          <div className="flex gap-2">
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i)}
-                className={`w-10 h-10 rounded-full font-heading text-lg border-4 transition-all ${
-                  i === currentPage
-                    ? "bg-sunshine-400 border-sunshine-600 text-white scale-110"
-                    : "bg-white border-gray-300 text-gray-600 hover:scale-105"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={() => setCurrentPage((p) => Math.min(totalPages - 1, p + 1))}
-            disabled={currentPage === totalPages - 1}
-            className="kid-btn bg-sky-400 hover:bg-sky-500 text-white px-6 py-3 text-lg border-4 border-sky-600 disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            Next <ArrowRight size={22} />
-          </button>
-        </div>
+        {/* Bottom spacer */}
+        <div className="h-10" />
       </div>
     </div>
   );
