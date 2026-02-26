@@ -24,6 +24,18 @@ export const UserRole__1 = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
+export const TaskInput = IDL.Record({
+  'title' : IDL.Text,
+  'description' : IDL.Text,
+  'points' : IDL.Nat,
+});
+export const Task = IDL.Record({
+  'id' : IDL.Nat,
+  'title' : IDL.Text,
+  'isCompleted' : IDL.Bool,
+  'description' : IDL.Text,
+  'points' : IDL.Nat,
+});
 export const QuizResult = IDL.Record({
   'total' : IDL.Nat,
   'subject' : IDL.Text,
@@ -38,7 +50,11 @@ export const UserRole = IDL.Variant({
   'student' : IDL.Null,
   'parent' : IDL.Null,
 });
-export const UserProfile = IDL.Record({ 'name' : IDL.Text, 'role' : UserRole });
+export const UserProfile = IDL.Record({
+  'name' : IDL.Text,
+  'role' : UserRole,
+  'avatarId' : IDL.Text,
+});
 export const Flashcard = IDL.Record({
   'id' : IDL.Nat,
   'front' : IDL.Text,
@@ -82,6 +98,11 @@ export const GameStatistics = IDL.Record({
   'totalSessions' : IDL.Nat,
   'averageScore' : IDL.Nat,
 });
+export const TaskUpdate = IDL.Record({
+  'title' : IDL.Text,
+  'description' : IDL.Text,
+  'points' : IDL.Nat,
+});
 
 export const idlService = IDL.Service({
   '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -114,6 +135,7 @@ export const idlService = IDL.Service({
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole__1], [], []),
   'awardBadge' : IDL.Func([IDL.Principal, IDL.Text], [], []),
   'completeLesson' : IDL.Func([IDL.Nat], [], []),
+  'createTask' : IDL.Func([TaskInput], [Task], []),
   'getAllSessionsProgress' : IDL.Func(
       [],
       [IDL.Vec(IDL.Tuple(IDL.Text, SessionProgress))],
@@ -141,6 +163,7 @@ export const idlService = IDL.Service({
       [SessionProgress],
       ['query'],
     ),
+  'getTasks' : IDL.Func([], [IDL.Vec(Task)], ['query']),
   'getUserGameSessions' : IDL.Func(
       [IDL.Principal],
       [IDL.Vec(GameSession)],
@@ -158,6 +181,7 @@ export const idlService = IDL.Service({
     ),
   'getUserRole' : IDL.Func([IDL.Principal], [UserRole], ['query']),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'markTaskComplete' : IDL.Func([IDL.Nat], [IDL.Opt(Task)], []),
   'recordGameSession' : IDL.Func(
       [GameType, IDL.Text, IDL.Nat, IDL.Nat],
       [],
@@ -168,6 +192,7 @@ export const idlService = IDL.Service({
   'setCallerRole' : IDL.Func([UserRole], [], []),
   'setDisplayName' : IDL.Func([IDL.Text], [], []),
   'setupContent' : IDL.Func([], [], []),
+  'updateTask' : IDL.Func([IDL.Nat, TaskUpdate], [IDL.Opt(Task)], []),
 });
 
 export const idlInitArgs = [];
@@ -189,6 +214,18 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
+  const TaskInput = IDL.Record({
+    'title' : IDL.Text,
+    'description' : IDL.Text,
+    'points' : IDL.Nat,
+  });
+  const Task = IDL.Record({
+    'id' : IDL.Nat,
+    'title' : IDL.Text,
+    'isCompleted' : IDL.Bool,
+    'description' : IDL.Text,
+    'points' : IDL.Nat,
+  });
   const QuizResult = IDL.Record({
     'total' : IDL.Nat,
     'subject' : IDL.Text,
@@ -200,7 +237,11 @@ export const idlFactory = ({ IDL }) => {
     'quizResults' : IDL.Vec(QuizResult),
   });
   const UserRole = IDL.Variant({ 'student' : IDL.Null, 'parent' : IDL.Null });
-  const UserProfile = IDL.Record({ 'name' : IDL.Text, 'role' : UserRole });
+  const UserProfile = IDL.Record({
+    'name' : IDL.Text,
+    'role' : UserRole,
+    'avatarId' : IDL.Text,
+  });
   const Flashcard = IDL.Record({
     'id' : IDL.Nat,
     'front' : IDL.Text,
@@ -244,6 +285,11 @@ export const idlFactory = ({ IDL }) => {
     'totalSessions' : IDL.Nat,
     'averageScore' : IDL.Nat,
   });
+  const TaskUpdate = IDL.Record({
+    'title' : IDL.Text,
+    'description' : IDL.Text,
+    'points' : IDL.Nat,
+  });
   
   return IDL.Service({
     '_caffeineStorageBlobIsLive' : IDL.Func(
@@ -276,6 +322,7 @@ export const idlFactory = ({ IDL }) => {
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole__1], [], []),
     'awardBadge' : IDL.Func([IDL.Principal, IDL.Text], [], []),
     'completeLesson' : IDL.Func([IDL.Nat], [], []),
+    'createTask' : IDL.Func([TaskInput], [Task], []),
     'getAllSessionsProgress' : IDL.Func(
         [],
         [IDL.Vec(IDL.Tuple(IDL.Text, SessionProgress))],
@@ -307,6 +354,7 @@ export const idlFactory = ({ IDL }) => {
         [SessionProgress],
         ['query'],
       ),
+    'getTasks' : IDL.Func([], [IDL.Vec(Task)], ['query']),
     'getUserGameSessions' : IDL.Func(
         [IDL.Principal],
         [IDL.Vec(GameSession)],
@@ -324,6 +372,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getUserRole' : IDL.Func([IDL.Principal], [UserRole], ['query']),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'markTaskComplete' : IDL.Func([IDL.Nat], [IDL.Opt(Task)], []),
     'recordGameSession' : IDL.Func(
         [GameType, IDL.Text, IDL.Nat, IDL.Nat],
         [],
@@ -334,6 +383,7 @@ export const idlFactory = ({ IDL }) => {
     'setCallerRole' : IDL.Func([UserRole], [], []),
     'setDisplayName' : IDL.Func([IDL.Text], [], []),
     'setupContent' : IDL.Func([], [], []),
+    'updateTask' : IDL.Func([IDL.Nat, TaskUpdate], [IDL.Opt(Task)], []),
   });
 };
 

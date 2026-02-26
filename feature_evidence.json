@@ -2,15 +2,13 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-remove-the-teacher-role-entirely-from-the-system-this-includes-removing-the-teacher-option-from-the-roleselectionmodal-removing-teacher-specific-role-checks-and-routing-in-header-footer-home-and-app-removing-or-hiding-the-teacherdashboard-route-and-ensuring-only-parent-and-admin-roles-remain-functional-throughout-the-application",
-      "featureTitle": "Remove the Teacher role entirely from the system. This includes: removing the Teacher option from the RoleSelectionModal, removing teacher-specific role checks and routing in Header, Footer, Home, and App, removing or hiding the TeacherDashboard route, and ensuring only Parent and Admin roles remain functional throughout the application.",
+      "featureId": "feature-create-a-post-login-profile-screen-that-displays-the-kid-s-avatar-selectable-from-a-set-of-fun-kid-friendly-emoji-illustration-options-editable-display-name-current-level-earned-badges-grid-and-progress-stats-lessons-completed-quizzes-taken-points-earned-the-screen-must-appear-immediately-after-a-successful-internet-identity-login-before-navigating-to-the-learning-dashboard",
+      "featureTitle": "Create a post-login profile screen that displays the kid's avatar (selectable from a set of fun kid-friendly emoji/illustration options), editable display name, current level, earned badges grid, and progress stats (lessons completed, quizzes taken, points earned). The screen must appear immediately after a successful Internet Identity login before navigating to the learning dashboard.",
       "files": [
         "frontend/src/App.tsx",
         "frontend/src/components/RoleSelectionModal.tsx",
-        "frontend/src/components/layout/Footer.tsx",
-        "frontend/src/components/layout/Header.tsx",
-        "frontend/src/pages/Home.tsx",
-        "frontend/src/pages/TeacherDashboard.tsx"
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/PostLoginProfile.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -27,10 +25,11 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-display-the-uploaded-paytm-upi-qr-code-image-kamerarajendra098-ptyes-kamera-rajendraprasad-directly-in-the-donation-page-replace-the-existing-upi-qr-code-placeholder-with-the-actual-qr-code-image-stored-as-a-static-asset-show-the-upi-id-kamerarajendra098-ptyes-below-the-qr-code-and-include-a-label-such-as-scan-with-any-upi-app-paytm-phonepe-bhim-google-pay",
-      "featureTitle": "Display the uploaded Paytm UPI QR code image (kamerarajendra098@ptyes, Kamera Rajendraprasad) directly in the Donation page. Replace the existing UPI QR code placeholder with the actual QR code image stored as a static asset. Show the UPI ID 'kamerarajendra098@ptyes' below the QR code, and include a label such as 'Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)'.",
+      "featureId": "feature-after-the-profile-screen-is-viewed-automatically-launch-the-kids-learning-dashboard-if-the-kid-has-previous-lesson-progress-resume-from-where-they-left-off-and-highlight-the-next-recommended-lesson-if-no-prior-progress-exists-show-a-recommended-starting-lesson-the-transition-should-be-smooth-and-kid-friendly-e-g-a-brief-animated-transition",
+      "featureTitle": "After the profile screen is viewed, automatically launch the kids' learning dashboard. If the kid has previous lesson progress, resume from where they left off and highlight the next recommended lesson. If no prior progress exists, show a recommended starting lesson. The transition should be smooth and kid-friendly (e.g., a brief animated transition).",
       "files": [
-        "frontend/src/pages/Donation.tsx"
+        "frontend/src/pages/KidsDashboard.tsx",
+        "frontend/src/pages/PostLoginProfile.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -43,6 +42,27 @@
       ],
       "testIds": [
         "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-optimise-the-kidsdashboard-page-for-fast-initial-load-by-lazy-loading-non-critical-sections-games-list-tasks-rewards-and-showing-skeleton-loaders-while-data-is-being-fetched-priority-load-the-progress-stats-and-recommended-lesson-card-first-so-the-kid-sees-actionable-content-immediately",
+      "featureTitle": "Optimise the KidsDashboard page for fast initial load by lazy-loading non-critical sections (games list, tasks, rewards) and showing skeleton loaders while data is being fetched. Priority-load the progress stats and recommended lesson card first so the kid sees actionable content immediately.",
+      "files": [
+        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/pages/KidsDashboard.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "blob-storage@4.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
       ],
       "confidence": "high"
     }

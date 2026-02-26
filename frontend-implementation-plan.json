@@ -1,66 +1,87 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Remove teacher login and add UPI QR code to donation section",
+  "title": "Post-Login Profile Screen & Learning Dashboard Auto-Launch",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Remove the Teacher role entirely from the system, keeping only Parent and Admin roles functional",
+      "summary": "Create a post-login profile screen that displays the kid's avatar (selectable from a set of fun kid-friendly emoji/illustration options), editable display name, current level, earned badges grid, and progress stats (lessons completed, quizzes taken, points earned). The screen must appear immediately after a successful Internet Identity login before navigating to the learning dashboard.",
       "acceptanceCriteria": [
-        "The role selection modal does not show a Teacher option",
-        "No teacher-specific navigation links appear in Header or Footer",
-        "The /teacher-dashboard route is removed or redirects away",
-        "Parent and Admin logins continue to work normally",
-        "No backend calls reference or assign the Teacher role"
+        "After login, the user is routed to the profile screen before any other page",
+        "Avatar selector shows at least 8 kid-friendly emoji/character options and saves selection to backend profile",
+        "Display name is editable inline with a save button; changes persist to the backend",
+        "Current level, total points, badges earned, lessons completed, and quizzes taken are all visible",
+        "A 'Start Learning' or 'Continue' button navigates to the learning dashboard"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/RoleSelectionModal.tsx",
-          "operation": "modify",
-          "description": "Remove the Teacher role option from the role selection modal. Keep only the Parent role option (Admin role assignment happens via backend). Update the UserRole enum usage to reflect that only 'parent' is selectable by users during onboarding."
-        },
-        {
-          "path": "frontend/src/components/layout/Header.tsx",
-          "operation": "modify",
-          "description": "Remove any teacher-specific navigation logic and dashboard shortcuts. Ensure the header only shows Parent and Admin dashboard shortcuts based on the user's role. Remove conditional rendering for teacher role."
-        },
-        {
-          "path": "frontend/src/components/layout/Footer.tsx",
-          "operation": "modify",
-          "description": "Remove teacher-specific navigation links from the footer. Ensure only Parent and Admin dashboard links are conditionally rendered based on user role."
-        },
-        {
-          "path": "frontend/src/pages/Home.tsx",
-          "operation": "modify",
-          "description": "Remove any teacher-specific routing logic or role checks from the home page. Ensure role selection modal and navigation only handle Parent and Admin roles."
+          "path": "frontend/src/pages/PostLoginProfile.tsx",
+          "operation": "create",
+          "description": "Create a new PostLoginProfile page component that displays the user's avatar selector (8+ emoji options like 🦁🐼🦊🐸🐙🦄🐻🐨), editable display name with inline save button, current level calculation based on points, earned badges in a grid layout, and progress stats (lessons completed, quizzes taken, total points). Include a prominent 'Start Learning' button that navigates to /kids-dashboard. Use the authorization component's getCallerUserProfile and saveCallerUserProfile backend methods to fetch and persist avatar and name. Use the existing useGetSessionProgress hook for progress stats and badges. Implement avatar selection as a grid of clickable emoji buttons that update the UserProfile.avatarId field."
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Remove or comment out the /teacher-dashboard route registration. Ensure routing configuration only includes parent-dashboard and any admin routes. Remove TeacherDashboard import if no longer needed."
+          "description": "Add a new route for /post-login-profile that renders the PostLoginProfile page. Ensure this route is defined before the /kids-dashboard route in the routing configuration. Wire the route into the existing RouterProvider setup using TanStack Router's route definition pattern consistent with other pages in the app."
         },
         {
-          "path": "frontend/src/pages/TeacherDashboard.tsx",
+          "path": "frontend/src/components/RoleSelectionModal.tsx",
           "operation": "modify",
-          "description": "Add a redirect to the home page at the top of the component to ensure this route is inaccessible. Alternatively, display an 'Access Denied' or 'Page Not Found' message. Keep the file in place to avoid breaking existing imports, but render it non-functional."
+          "description": "Update the RoleSelectionModal component to check if the user has completed their profile setup (has avatarId and name in UserProfile). If profile is incomplete, navigate to /post-login-profile instead of directly to /kids-dashboard. Use the useGetCallerUserProfile hook to check profile completeness. If profile exists and is complete (has avatarId field), navigate to /kids-dashboard as before."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Add or update the useGetCallerUserProfile hook to ensure it properly fetches the current user's profile including the new avatarId field from the backend. Add a useSaveCallerUserProfile mutation hook that calls actor.saveCallerUserProfile(profile) and invalidates the 'currentUserProfile' query key on success. Ensure both hooks follow the existing pattern with proper actor dependency checks and React Query configuration."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Display the uploaded Paytm UPI QR code image directly in the Donation page with UPI ID and scanning instructions",
+      "summary": "After the profile screen is viewed, automatically launch the kids' learning dashboard. If the kid has previous lesson progress, resume from where they left off and highlight the next recommended lesson. If no prior progress exists, show a recommended starting lesson. The transition should be smooth and kid-friendly (e.g., a brief animated transition).",
       "acceptanceCriteria": [
-        "The Donation page displays the actual Paytm UPI QR code image (not a placeholder)",
-        "The UPI ID 'kamerarajendra098@ptyes' is shown below the QR code",
-        "A label instructs users to scan with any UPI app",
-        "The QR code image is served from frontend/public/assets/generated/",
-        "The image is clearly visible and appropriately sized for scanning"
+        "After clicking 'Start Learning' or after a short auto-advance delay on the profile screen, the kids dashboard loads",
+        "If the user has completed lessons, the dashboard highlights the next incomplete lesson as recommended",
+        "If the user has no prior progress, a beginner-friendly first lesson is highlighted as the starting recommendation",
+        "An animated page transition plays between the profile screen and the dashboard"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/Donation.tsx",
+          "path": "frontend/src/pages/PostLoginProfile.tsx",
           "operation": "modify",
-          "description": "Replace the placeholder UPI QR code image reference with the actual generated QR code at frontend/public/assets/generated/upi-qr.dim_300x300.png. Update the img src to use '/assets/generated/upi-qr.dim_300x300.png'. Display the UPI ID 'kamerarajendra098@ptyes' in a text element directly below the QR code image. Add a label or instruction text such as 'Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)' above or below the QR code. Ensure the image has appropriate sizing (e.g., max-width for mobile responsiveness) and alt text for accessibility."
+          "description": "Add a kid-friendly animated page transition effect when navigating from PostLoginProfile to KidsDashboard. Implement a fade-out or slide-out animation using CSS transitions or Framer Motion before calling navigate('/kids-dashboard'). The 'Start Learning' button should trigger this animated transition. Consider adding a brief celebration or encouraging message during the transition (e.g., 'Let's learn together!' or 'Adventure awaits!')."
+        },
+        {
+          "path": "frontend/src/pages/KidsDashboard.tsx",
+          "operation": "modify",
+          "description": "Add logic to highlight the next recommended lesson based on the user's progress. Use the existing useGetSessionProgress hook to fetch completedLessons, then determine the next incomplete lesson ID from the available lessons list. If no lessons are completed, highlight the first beginner lesson as the recommended starting point. Add visual styling (e.g., a pulsing border, star icon, or 'Recommended for You!' badge) to the recommended lesson card to draw attention. Include a fade-in or slide-in animation when the dashboard loads to create a smooth kid-friendly transition from the profile screen."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Optimise the KidsDashboard page for fast initial load by lazy-loading non-critical sections (games list, tasks, rewards) and showing skeleton loaders while data is being fetched. Priority-load the progress stats and recommended lesson card first so the kid sees actionable content immediately.",
+      "acceptanceCriteria": [
+        "Skeleton loaders are shown for games, tasks, and rewards sections while data loads",
+        "Progress stats and recommended lesson card render before games and tasks sections",
+        "No visible layout shift after data loads",
+        "React Query caching is used so repeated visits to the dashboard do not trigger redundant backend calls"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/pages/KidsDashboard.tsx",
+          "operation": "modify",
+          "description": "Refactor the KidsDashboard to prioritize rendering progress stats and the recommended lesson card first. Use React.lazy() and Suspense to lazy-load the games list, tasks section, and rewards display components. Implement skeleton loaders (using shadcn/ui Skeleton component or custom shimmer placeholders) for each lazy-loaded section that match the expected layout dimensions to prevent layout shift. Ensure the useGetSessionProgress, useGetLessons hooks are called immediately, while games, tasks, and rewards queries use lower priority or are deferred until the critical content renders. Verify that React Query staleTime and cacheTime settings are configured to avoid redundant backend calls on repeated dashboard visits."
+        },
+        {
+          "path": "frontend/src/components/ui/Skeleton.tsx",
+          "operation": "create",
+          "description": "Create a reusable Skeleton component for loading states if one does not already exist in the shadcn/ui components directory. The Skeleton should render a placeholder with a shimmer animation effect matching the app's kid-friendly design. Export variants for card skeletons, text skeletons, and circular skeletons to be used across the dashboard sections."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Review and update React Query configurations for useGetTasks, useGetGameSessions, and rewards-related hooks to include appropriate staleTime (e.g., 5 minutes) and cacheTime settings. Ensure that queries are marked with gcTime (formerly cacheTime) to keep cached data available for repeated dashboard visits without re-fetching. Add enabled flags where appropriate to defer non-critical queries until the user interacts with those sections."
         }
       ]
     }

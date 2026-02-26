@@ -16,7 +16,6 @@ import Migration "migration";
 
 (with migration = Migration.run)
 actor {
-  // Access control state
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
   include MixinStorage();
@@ -29,6 +28,7 @@ actor {
   public type UserProfile = {
     name : Text;
     role : UserRole;
+    avatarId : Text;
   };
 
   let userProfiles = Map.empty<Principal, UserProfile>();
@@ -117,6 +117,31 @@ actor {
     earnedBadges : List.List<Text>;
   };
 
+  ///--- Tasks and Chores ---///
+  public type Task = {
+    id : Nat;
+    title : Text;
+    description : Text;
+    points : Nat;
+    isCompleted : Bool;
+  };
+
+  public type TaskInput = {
+    title : Text;
+    description : Text;
+    points : Nat;
+  };
+
+  public type TaskUpdate = {
+    title : Text;
+    description : Text;
+    points : Nat;
+  };
+
+  type InternalTask = Task;
+  let tasks = Map.empty<Nat, InternalTask>();
+  var nextTaskId = 1;
+
   let lessons : List.List<Lesson> = List.empty<Lesson>();
   let flashcards : List.List<Flashcard> = List.empty<Flashcard>();
   let quizQuestions : List.List<QuizQuestion> = List.empty<QuizQuestion>();
@@ -133,15 +158,12 @@ actor {
     };
   };
 
-  // Helper: check if a principal has the parent role
   func isParent(principal : Principal) : Bool {
     switch (userRoles.get(principal)) {
       case (?#parent) { true };
       case (_) { false };
     };
   };
-
-  // ── Profile functions ──────────────────────────────────────────────────────
 
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
@@ -165,7 +187,6 @@ actor {
     userRoles.add(caller, profile.role);
   };
 
-  // Backend function to store display name
   public shared ({ caller }) func setDisplayName(name : Text) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can set display name");
@@ -179,8 +200,6 @@ actor {
     };
     displayNames.get(user);
   };
-
-  // ── Role functions ─────────────────────────────────────────────────────────
 
   public query ({ caller }) func getCallerRole() : async UserRole {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
@@ -197,14 +216,12 @@ actor {
       Runtime.trap("Unauthorized: Only authenticated users can set their role");
     };
     userRoles.add(caller, role);
-    // Keep userProfiles in sync if a profile already exists
     switch (userProfiles.get(caller)) {
       case (?profile) { userProfiles.add(caller, { profile with role }) };
       case (null) {};
     };
   };
 
-  // Admins can query any user's role; authenticated users can query their own.
   public query ({ caller }) func getUserRole(user : Principal) : async UserRole {
     if (caller != user and not AccessControl.isAdmin(accessControlState, caller)) {
       Runtime.trap("Unauthorized: Can only view your own role");
@@ -214,8 +231,6 @@ actor {
       case (?role) { role };
     };
   };
-
-  // ── Content setup (admin only) ─────────────────────────────────────────────
 
   public shared ({ caller }) func setupContent() : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
@@ -272,8 +287,6 @@ actor {
     };
   };
 
-  // ── Public content queries (guest / student access, no auth required) ──────
-
   public query func getLessons() : async [Lesson] {
     lessons.toArray().sort();
   };
@@ -289,8 +302,6 @@ actor {
   public query func getMiniGameContent() : async [MiniGameContent] {
     miniGameContents.toArray();
   };
-
-  // ── Progress tracking ──────────────────────────────────────────────────────
 
   public shared ({ caller }) func completeLesson(lessonId : Nat) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
@@ -338,7 +349,6 @@ actor {
     sessionProgress.add(sessionId, { progress with quizResults = newQuizResults });
   };
 
-  // Only admins can award badges to arbitrary principals.
   public shared ({ caller }) func awardBadge(targetPrincipal : Principal, badgeId : Text) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can award badges");
@@ -364,11 +374,6 @@ actor {
     sessionProgress.add(sessionId, { progress with earnedBadges = newEarnedBadges });
   };
 
-  // Viewing progress:
-  //   - A user can always view their own progress.
-  //   - Admins can view any user's progress.
-  //   - Parents can view any user's progress (needed for Parent Dashboard).
-  //   - Unauthenticated callers (guests/students) cannot call this endpoint.
   public query ({ caller }) func getSessionProgress(targetPrincipal : Principal) : async SessionProgress {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can view progress");
@@ -401,8 +406,6 @@ actor {
       earnedBadges = progress.earnedBadges.toArray();
     };
   };
-
-  // ── Game sessions ──────────────────────────────────────────────────────────
 
   public shared ({ caller }) func recordGameSession(gameType : GameType, language : Text, score : Nat, totalQuestions : Nat) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
@@ -447,9 +450,6 @@ actor {
     perUserGameStats.add(caller, userStats);
   };
 
-  // Viewing individual game sessions:
-  //   - A user can view their own sessions.
-  //   - Admins can view any user's sessions.
   public query ({ caller }) func getUserGameSessions(userId : Principal) : async [GameSession] {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can view game sessions");
@@ -468,9 +468,6 @@ actor {
     filtered.toArray();
   };
 
-  // Viewing per-user game statistics:
-  //   - A user can view their own statistics.
-  //   - Admins can view any user's statistics.
   public query ({ caller }) func getUserGameStatistics(userId : Principal, gameType : GameType) : async ?GameStatistics {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can view game statistics");
@@ -490,7 +487,6 @@ actor {
     };
   };
 
-  // Aggregated statistics across all users — accessible to authenticated users
   public query ({ caller }) func getGameTypeAverage(gameType : GameType) : async ?{ totalSessions : Nat; averageScore : Nat } {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can view aggregated statistics");
@@ -516,7 +512,6 @@ actor {
     };
   };
 
-  // Returns aggregated progress data across all tracked sessions — for admins only.
   public query ({ caller }) func getAllSessionsProgress() : async [(Text, SessionProgress)] {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can view all progress");
@@ -529,5 +524,71 @@ actor {
       result.add((sessionId, toPublicSessionProgress(progress)));
     };
     result.toArray();
+  };
+
+  public query func getTasks() : async [Task] {
+    let result = List.empty<Task>();
+    for ((_, task) in tasks.entries()) {
+      result.add(task);
+    };
+    result.toArray();
+  };
+
+  public shared ({ caller }) func createTask(taskInput : TaskInput) : async Task {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can create tasks");
+    };
+    if (not AccessControl.isAdmin(accessControlState, caller) and not isParent(caller)) {
+      Runtime.trap("Unauthorized: Only admins or parents can create tasks");
+    };
+    let newTask : Task = {
+      id = nextTaskId;
+      title = taskInput.title;
+      description = taskInput.description;
+      points = taskInput.points;
+      isCompleted = false;
+    };
+    tasks.add(nextTaskId, newTask);
+    nextTaskId += 1;
+    newTask;
+  };
+
+  public shared ({ caller }) func updateTask(id : Nat, taskUpdate : TaskUpdate) : async ?Task {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can update tasks");
+    };
+    if (not AccessControl.isAdmin(accessControlState, caller) and not isParent(caller)) {
+      Runtime.trap("Unauthorized: Only admins or parents can update tasks");
+    };
+    switch (tasks.get(id)) {
+      case (null) {
+        null;
+      };
+      case (?existingTask) {
+        let updatedTask : Task = {
+          id;
+          title = taskUpdate.title;
+          description = taskUpdate.description;
+          points = taskUpdate.points;
+          isCompleted = existingTask.isCompleted;
+        };
+        tasks.add(id, updatedTask);
+        ?updatedTask;
+      };
+    };
+  };
+
+  public shared ({ caller }) func markTaskComplete(id : Nat) : async ?Task {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can mark tasks as complete");
+    };
+    switch (tasks.get(id)) {
+      case (null) { null };
+      case (?task) {
+        let completedTask : Task = { task with isCompleted = true };
+        tasks.add(id, completedTask);
+        ?completedTask;
+      };
+    };
   };
 };

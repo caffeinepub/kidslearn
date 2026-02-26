@@ -2,9 +2,7 @@ import React from 'react';
 import { useNavigate, useRouter } from '@tanstack/react-router';
 import { ArrowLeft, LayoutDashboard, User } from 'lucide-react';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import { useGetCallerRole } from '../../hooks/useQueries';
 import { useQueryClient } from '@tanstack/react-query';
-import { UserRole } from '../../backend';
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -12,7 +10,6 @@ const Header: React.FC = () => {
   const { identity, login, clear, loginStatus } = useInternetIdentity();
   const queryClient = useQueryClient();
   const isAuthenticated = !!identity;
-  const { data: role } = useGetCallerRole();
 
   const isLoggingIn = loginStatus === 'logging-in';
 
@@ -35,44 +32,42 @@ const Header: React.FC = () => {
 
   const canGoBack = router.history.length > 1;
 
-  const dashboardPath = role === UserRole.parent ? '/parent-dashboard' : null;
-
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b-4 border-sunshine-300 shadow-fun">
-      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
-        {/* Left: Back + Logo */}
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b-4 border-sunshine-300 shadow-fun">
+      <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+        {/* Left: back button + logo */}
         <div className="flex items-center gap-2">
           {canGoBack && (
             <button
               onClick={() => router.history.back()}
-              className="p-2 rounded-xl hover:bg-sunshine-100 transition-colors text-sunshine-600"
+              className="p-2 rounded-2xl bg-sunshine-100 hover:bg-sunshine-200 text-sunshine-700 transition-colors"
               aria-label="Go back"
             >
-              <ArrowLeft size={22} />
+              <ArrowLeft size={20} />
             </button>
           )}
           <button
-            onClick={() => navigate({ to: '/' })}
+            onClick={() => navigate({ to: isAuthenticated ? '/kids-dashboard' : '/' })}
             className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
             <img
               src="/assets/generated/kidslearn-logo.dim_256x256.png"
               alt="KidsLearn"
-              className="w-10 h-10 rounded-xl border-2 border-sunshine-300"
+              className="w-9 h-9 rounded-xl border-2 border-sunshine-300"
             />
-            <span className="font-fredoka text-xl text-sunshine-600 hidden sm:block">KidsLearn</span>
+            <span className="font-heading text-xl text-sunshine-600 hidden sm:block">KidsLearn</span>
           </button>
         </div>
 
-        {/* Right: Dashboard + Profile + Auth */}
+        {/* Right: dashboard shortcut + profile + login */}
         <div className="flex items-center gap-2">
-          {isAuthenticated && dashboardPath && (
+          {isAuthenticated && (
             <button
-              onClick={() => navigate({ to: dashboardPath })}
-              className="flex items-center gap-1 px-3 py-2 rounded-xl bg-grass-100 hover:bg-grass-200 text-grass-700 font-nunito text-sm font-bold transition-colors border-2 border-grass-300"
-              aria-label="Dashboard"
+              onClick={() => navigate({ to: '/kids-dashboard' })}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-sky-100 hover:bg-sky-200 text-sky-700 font-nunito font-bold text-sm transition-colors"
+              aria-label="Kids Dashboard"
             >
-              <LayoutDashboard size={18} />
+              <LayoutDashboard size={16} />
               <span className="hidden sm:inline">Dashboard</span>
             </button>
           )}
@@ -80,8 +75,8 @@ const Header: React.FC = () => {
           {isAuthenticated && (
             <button
               onClick={() => navigate({ to: '/profile' })}
-              className="p-2 rounded-xl bg-lavender-100 hover:bg-lavender-200 text-lavender-700 transition-colors border-2 border-lavender-300"
-              aria-label="My Profile"
+              className="p-2 rounded-2xl bg-lavender-100 hover:bg-lavender-200 text-lavender-700 transition-colors"
+              aria-label="Profile"
             >
               <User size={20} />
             </button>
@@ -90,11 +85,11 @@ const Header: React.FC = () => {
           <button
             onClick={handleAuth}
             disabled={isLoggingIn}
-            className={`px-4 py-2 rounded-xl font-bold font-nunito text-sm transition-colors border-2 disabled:opacity-50 ${
+            className={`px-4 py-2 rounded-2xl font-nunito font-bold text-sm transition-all ${
               isAuthenticated
-                ? 'bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-300'
-                : 'bg-sunshine-400 hover:bg-sunshine-500 text-white border-sunshine-500'
-            }`}
+                ? 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                : 'bg-sunshine-400 hover:bg-sunshine-500 text-white shadow-fun'
+            } disabled:opacity-50`}
           >
             {isLoggingIn ? 'Logging in...' : isAuthenticated ? 'Logout' : 'Login'}
           </button>

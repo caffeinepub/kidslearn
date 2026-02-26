@@ -1,45 +1,64 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T17:19:53.261Z",
+  "generatedAt": "2026-02-26T07:53:34.991Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 2,
+    "total": 4,
+    "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Remove the Teacher role entirely from the system. This includes: removing the Teacher option from the RoleSelectionModal, removing teacher-specific role checks and routing in Header, Footer, Home, and App, removing or hiding the TeacherDashboard route, and ensuring only Parent and Admin roles remain functional throughout the application.",
+        "summary": "Create a post-login profile screen that displays the kid's avatar (selectable from a set of fun kid-friendly emoji/illustration options), editable display name, current level, earned badges grid, and progress stats (lessons completed, quizzes taken, points earned). The screen must appear immediately after a successful Internet Identity login before navigating to the learning dashboard.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/RoleSelectionModal.tsx",
-          "frontend/src/components/layout/Header.tsx",
-          "frontend/src/components/layout/Footer.tsx",
-          "frontend/src/pages/Home.tsx",
+          "frontend/src/pages/PostLoginProfile.tsx",
           "frontend/src/App.tsx",
-          "frontend/src/pages/TeacherDashboard.tsx"
+          "frontend/src/components/RoleSelectionModal.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/RoleSelectionModal.tsx",
-          "frontend/src/components/layout/Header.tsx",
-          "frontend/src/components/layout/Footer.tsx",
-          "frontend/src/pages/Home.tsx",
+          "frontend/src/pages/PostLoginProfile.tsx",
           "frontend/src/App.tsx",
-          "frontend/src/pages/TeacherDashboard.tsx"
+          "frontend/src/components/RoleSelectionModal.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Display the uploaded Paytm UPI QR code image (kamerarajendra098@ptyes, Kamera Rajendraprasad) directly in the Donation page. Replace the existing UPI QR code placeholder with the actual QR code image stored as a static asset. Show the UPI ID 'kamerarajendra098@ptyes' below the QR code, and include a label such as 'Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)'.",
+        "summary": "After the profile screen is viewed, automatically launch the kids' learning dashboard. If the kid has previous lesson progress, resume from where they left off and highlight the next recommended lesson. If no prior progress exists, show a recommended starting lesson. The transition should be smooth and kid-friendly (e.g., a brief animated transition).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/Donation.tsx"
+          "frontend/src/pages/PostLoginProfile.tsx",
+          "frontend/src/pages/KidsDashboard.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/Donation.tsx"
+          "frontend/src/pages/PostLoginProfile.tsx",
+          "frontend/src/pages/KidsDashboard.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Update the backend to store and retrieve avatar selection as part of the user profile. Add or extend the existing user profile data structure to include an avatarId field (a short string identifier) that can be set and fetched via dedicated update and query calls.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Optimise the KidsDashboard page for fast initial load by lazy-loading non-critical sections (games list, tasks, rewards) and showing skeleton loaders while data is being fetched. Priority-load the progress stats and recommended lesson card first so the kid sees actionable content immediately.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/KidsDashboard.tsx",
+          "frontend/src/components/ui/Skeleton.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/KidsDashboard.tsx",
+          "frontend/src/hooks/useQueries.ts"
         ]
       }
     ]
@@ -55,14 +74,11 @@
     "frontend/src/backend.d.ts",
     "frontend/src/backend.ts",
     "frontend/src/components/RoleSelectionModal.tsx",
-    "frontend/src/components/layout/Footer.tsx",
-    "frontend/src/components/layout/Header.tsx",
     "frontend/src/declarations/backend.did.d.ts",
     "frontend/src/declarations/backend.did.js",
-    "frontend/src/pages/Donation.tsx",
-    "frontend/src/pages/Home.tsx",
-    "frontend/src/pages/Profile.tsx",
-    "frontend/src/pages/TeacherDashboard.tsx",
+    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/pages/KidsDashboard.tsx",
+    "frontend/src/pages/PostLoginProfile.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

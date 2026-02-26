@@ -1,27 +1,32 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Project involves a web app with login (parent and admin roles), profile pages, and a donation section. Teacher login is being removed. UPI QR code (Kamera Rajendraprasad, kamerarajendra098@ptyes) is being added to the donation section.",
-  "architectural_notes": [
-    "Authentication system supports two roles: parent and admin (teacher role removed)",
-    "Donation section uses a static UPI QR code image (Paytm, kamerarajendra098@ptyes)"
-  ],
+  "summary": "Kids' educational app with a post-login experience featuring a profile screen (avatar, name, progress stats, badges, level, editable fields) that auto-launches into a learning dashboard resuming progress or recommending the next lesson. Includes a fun, colorful kid-friendly UI with progress tracking, badges, and levels.",
+  "architectural_notes": [],
   "known_issues": [],
-  "isFixRequest": true,
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-remove-the-teacher-role-entirely-from-the-system-this-includes-removing-the-teacher-option-from-the-roleselectionmodal-removing-teacher-specific-role-checks-and-routing-in-header-footer-home-and-app-removing-or-hiding-the-teacherdashboard-route-and-ensuring-only-parent-and-admin-roles-remain-functional-throughout-the-application",
-      "title": "Remove the Teacher role entirely from the system. This includes: removing the Teacher option from the RoleSelectionModal, removing teacher-specific role checks and routing in Header, Footer, Home, and App, removing or hiding the TeacherDashboard route, and ensuring only Parent and Admin roles remain functional throughout the application.",
+      "id": "feature-create-a-post-login-profile-screen-that-displays-the-kid-s-avatar-selectable-from-a-set-of-fun-kid-friendly-emoji-illustration-options-editable-display-name-current-level-earned-badges-grid-and-progress-stats-lessons-completed-quizzes-taken-points-earned-the-screen-must-appear-immediately-after-a-successful-internet-identity-login-before-navigating-to-the-learning-dashboard",
+      "title": "Create a post-login profile screen that displays the kid's avatar (selectable from a set of fun kid-friendly emoji/illustration options), editable display name, current level, earned badges grid, and progress stats (lessons completed, quizzes taken, points earned). The screen must appear immediately after a successful Internet Identity login before navigating to the learning dashboard.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-display-the-uploaded-paytm-upi-qr-code-image-kamerarajendra098-ptyes-kamera-rajendraprasad-directly-in-the-donation-page-replace-the-existing-upi-qr-code-placeholder-with-the-actual-qr-code-image-stored-as-a-static-asset-show-the-upi-id-kamerarajendra098-ptyes-below-the-qr-code-and-include-a-label-such-as-scan-with-any-upi-app-paytm-phonepe-bhim-google-pay",
-      "title": "Display the uploaded Paytm UPI QR code image (kamerarajendra098@ptyes, Kamera Rajendraprasad) directly in the Donation page. Replace the existing UPI QR code placeholder with the actual QR code image stored as a static asset. Show the UPI ID 'kamerarajendra098@ptyes' below the QR code, and include a label such as 'Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)'.",
+      "id": "feature-after-the-profile-screen-is-viewed-automatically-launch-the-kids-learning-dashboard-if-the-kid-has-previous-lesson-progress-resume-from-where-they-left-off-and-highlight-the-next-recommended-lesson-if-no-prior-progress-exists-show-a-recommended-starting-lesson-the-transition-should-be-smooth-and-kid-friendly-e-g-a-brief-animated-transition",
+      "title": "After the profile screen is viewed, automatically launch the kids' learning dashboard. If the kid has previous lesson progress, resume from where they left off and highlight the next recommended lesson. If no prior progress exists, show a recommended starting lesson. The transition should be smooth and kid-friendly (e.g., a brief animated transition).",
       "reqIds": [
         "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-optimise-the-kidsdashboard-page-for-fast-initial-load-by-lazy-loading-non-critical-sections-games-list-tasks-rewards-and-showing-skeleton-loaders-while-data-is-being-fetched-priority-load-the-progress-stats-and-recommended-lesson-card-first-so-the-kid-sees-actionable-content-immediately",
+      "title": "Optimise the KidsDashboard page for fast initial load by lazy-loading non-critical sections (games list, tasks, rewards) and showing skeleton loaders while data is being fetched. Priority-load the progress stats and recommended lesson card first so the kid sees actionable content immediately.",
+      "reqIds": [
+        "REQ-4"
       ],
       "version": 1
     }
@@ -29,19 +34,33 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Remove teacher login/role from the system, keeping only parent and admin logins",
+      "summary": "Post-login profile screen with avatar (editable), name (editable), progress stats, badges, and current level",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Display UPI QR code image (Kamera Rajendraprasad, kamerarajendra098@ptyes) directly in the donation section for users to scan",
+      "summary": "Auto-launch learning dashboard after profile view, resuming where kid left off or recommending next lesson",
       "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Kid-friendly colorful UI with fast-loading content, progress tracking, badges, and levels",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Update the backend to store and retrieve avatar selection as part of the user profile. Add or extend the existing user profile data structure to include an avatarId field (a short string identifier) that can be set and fetched via dedicated update and query calls.",
+      "reqIds": [
+        "REQ-3"
+      ],
       "status": "pending"
     }
   ],
   "gameProjectType": "none",
-  "projectName": "KidsLearn",
+  "projectName": "Kids Educational App",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

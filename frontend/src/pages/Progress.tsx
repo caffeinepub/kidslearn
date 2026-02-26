@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router';
-import { Trophy, Star, BookOpen, Zap } from 'lucide-react';
+import { Trophy, Star, Zap } from 'lucide-react';
 import { useGetSessionProgress } from '../hooks/useQueries';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -33,7 +33,7 @@ export default function Progress() {
             Log in to track your progress, badges, and quiz scores!
           </p>
           <button
-            onClick={() => navigate({ to: '/parent-dashboard' })}
+            onClick={() => navigate({ to: '/kids-dashboard' })}
             className="w-full bg-sunshine-500 hover:bg-sunshine-600 border-4 border-sunshine-700 text-white font-fredoka text-xl py-3 rounded-3xl shadow-fun hover:scale-105 active:scale-95 transition-all"
           >
             Login to View Progress

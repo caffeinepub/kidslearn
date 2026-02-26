@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import {
   Dialog,
@@ -7,8 +7,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
-import { UserRole } from '../backend';
-import { useSetCallerRole } from '../hooks/useQueries';
+import { useGetCallerUserProfile } from '../hooks/useQueries';
 
 interface RoleSelectionModalProps {
   open: boolean;
@@ -16,19 +15,22 @@ interface RoleSelectionModalProps {
 
 const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ open }) => {
   const navigate = useNavigate();
-  const setCallerRole = useSetCallerRole();
-  const [selecting, setSelecting] = useState<UserRole | null>(null);
+  const { data: userProfile, isFetched: profileFetched, isLoading: profileLoading } = useGetCallerUserProfile();
 
-  const handleSelectRole = async (role: UserRole) => {
-    setSelecting(role);
-    try {
-      await setCallerRole.mutateAsync(role);
-      navigate({ to: '/parent-dashboard' });
-    } catch (err) {
-      console.error('Failed to set role:', err);
-      setSelecting(null);
+  // Navigate based on profile completeness when modal opens
+  useEffect(() => {
+    if (!open) return;
+    if (profileLoading) return;
+
+    if (profileFetched) {
+      // If profile exists and has a name, go to dashboard; otherwise go to profile setup
+      if (userProfile && userProfile.name && userProfile.name.trim() !== '') {
+        navigate({ to: '/kids-dashboard' });
+      } else {
+        navigate({ to: '/post-login-profile' });
+      }
     }
-  };
+  }, [open, profileFetched, profileLoading, userProfile, navigate]);
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
@@ -39,33 +41,14 @@ const RoleSelectionModal: React.FC<RoleSelectionModalProps> = ({ open }) => {
       >
         <DialogHeader className="text-center">
           <DialogTitle className="text-2xl font-bold font-fredoka text-sunshine-600">
-            👋 Welcome! Who are you?
+            🌟 Welcome to KidsLearn!
           </DialogTitle>
           <DialogDescription className="text-grass-700 font-nunito mt-2">
-            Please select your role to continue. This helps us show you the right dashboard.
+            {profileLoading ? 'Loading your profile...' : 'Taking you to your dashboard...'}
           </DialogDescription>
         </DialogHeader>
-
-        <div className="flex flex-col gap-4 mt-6">
-          <button
-            onClick={() => handleSelectRole(UserRole.parent)}
-            disabled={!!selecting}
-            className={`
-              w-full py-5 rounded-2xl border-4 border-tangerine-300 bg-tangerine-50
-              flex flex-col items-center gap-2
-              hover:bg-tangerine-100 hover:border-tangerine-500 hover:scale-105
-              transition-all duration-200 font-nunito
-              disabled:opacity-60 disabled:cursor-not-allowed
-              ${selecting === UserRole.parent ? 'scale-95 opacity-80' : ''}
-            `}
-          >
-            <span className="text-5xl">👨‍👩‍👧</span>
-            <span className="text-xl font-bold text-tangerine-700">I am a Parent</span>
-            <span className="text-sm text-tangerine-500">Track my child's learning</span>
-            {selecting === UserRole.parent && (
-              <span className="text-xs text-tangerine-600 animate-pulse">Setting up...</span>
-            )}
-          </button>
+        <div className="flex justify-center mt-6">
+          <span className="text-6xl animate-bounce">🚀</span>
         </div>
       </DialogContent>
     </Dialog>

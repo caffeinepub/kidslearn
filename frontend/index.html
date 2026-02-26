@@ -3,9 +3,43 @@
         <meta charset='UTF-8' />
         <meta name='viewport' content='width=device-width, initial-scale=1.0' />
         <title>KidsLearn</title>
+
+        <!-- PWA Manifest -->
+        <link rel='manifest' href='/manifest.json' />
+
+        <!-- Theme color -->
+        <meta name='theme-color' content='#ffd541' />
+
+        <!-- iOS PWA support -->
+        <meta name='apple-mobile-web-app-capable' content='yes' />
+        <meta name='apple-mobile-web-app-status-bar-style' content='default' />
+        <meta name='apple-mobile-web-app-title' content='KidsLearn' />
+        <link rel='apple-touch-icon' href='/assets/generated/icon-pwa-512.dim_512x512.png' />
+
+        <!-- MS Tile -->
+        <meta name='msapplication-TileColor' content='#ffd541' />
+        <meta name='msapplication-TileImage' content='/assets/generated/icon-pwa-192.dim_192x192.png' />
+
+        <!-- Description -->
+        <meta name='description' content='KidsLearn – Fun interactive learning for kids! Alphabets, Numbers, Science, Languages and more.' />
     </head>
     <body>
         <div id='root'></div>
         <script type='module' src='/src/main.tsx'></script>
+
+        <!-- Service Worker Registration -->
+        <script>
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function () {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then(function (registration) {
+                            console.log('SW registered:', registration.scope);
+                        })
+                        .catch(function (error) {
+                            console.log('SW registration failed:', error);
+                        });
+                });
+            }
+        </script>
     </body>
 </html>

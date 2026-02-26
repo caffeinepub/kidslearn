@@ -3,86 +3,135 @@ import Principal "mo:core/Principal";
 import List "mo:core/List";
 
 module {
-  type OldRole = {
-    #teacher;
-    #parent;
+  type OldUserRole = {
     #student;
+    #parent;
   };
 
-  type UserProfile = {
+  type OldUserProfile = {
     name : Text;
-    role : OldRole;
+    role : OldUserRole;
+  };
+
+  type GameStatistics = {
+    bestScore : Nat;
+    totalSessions : Nat;
+    totalScore : Nat;
+    averageScore : Nat;
+  };
+
+  type InternalTask = {
+    id : Nat;
+    title : Text;
+    description : Text;
+    points : Nat;
+    isCompleted : Bool;
+  };
+
+  type Lesson = {
+    id : Nat;
+    title : Text;
+    body : Text;
+    image : Text;
+  };
+
+  type Flashcard = {
+    id : Nat;
+    front : Text;
+    back : Text;
+    image : Text;
+  };
+
+  type QuizQuestion = {
+    id : Nat;
+    question : Text;
+    options : [Text];
+    correctIndex : Nat;
+  };
+
+  type MiniGameContent = {
+    id : Nat;
+    pairs : [(Text, Text)];
+  };
+
+  type QuizResult = {
+    subject : Text;
+    score : Nat;
+    total : Nat;
+  };
+
+  type InternalSessionProgress = {
+    completedLessons : List.List<Nat>;
+    quizResults : List.List<QuizResult>;
+    earnedBadges : List.List<Text>;
+  };
+
+  type GameSession = {
+    userId : Principal;
+    gameType : OldGameType;
+    language : Text;
+    score : Nat;
+    totalQuestions : Nat;
+    timestamp : Int;
   };
 
   type OldActor = {
-    userRoles : Map.Map<Principal, OldRole>;
-    userProfiles : Map.Map<Principal, UserProfile>;
-    // All other fields remain unchanged
-  };
-
-  type NewRole = {
-    #parent;
-    #student;
+    userProfiles : Map.Map<Principal, OldUserProfile>;
+    userRoles : Map.Map<Principal, OldUserRole>;
+    displayNames : Map.Map<Principal, Text>;
+    tasks : Map.Map<Nat, InternalTask>;
+    nextTaskId : Nat;
+    lessons : List.List<Lesson>;
+    flashcards : List.List<Flashcard>;
+    quizQuestions : List.List<QuizQuestion>;
+    miniGameContents : List.List<MiniGameContent>;
+    sessionProgress : Map.Map<Text, InternalSessionProgress>;
+    gameSessions : List.List<GameSession>;
+    perUserGameStats : Map.Map<Principal, Map.Map<OldGameType, GameStatistics>>;
   };
 
   type NewUserProfile = {
     name : Text;
-    role : NewRole;
+    role : OldUserRole;
+    avatarId : Text;
   };
 
   type NewActor = {
-    userRoles : Map.Map<Principal, NewRole>;
     userProfiles : Map.Map<Principal, NewUserProfile>;
-    // All other fields remain unchanged
+    userRoles : Map.Map<Principal, OldUserRole>;
+    displayNames : Map.Map<Principal, Text>;
+    tasks : Map.Map<Nat, InternalTask>;
+    nextTaskId : Nat;
+    lessons : List.List<Lesson>;
+    flashcards : List.List<Flashcard>;
+    quizQuestions : List.List<QuizQuestion>;
+    miniGameContents : List.List<MiniGameContent>;
+    sessionProgress : Map.Map<Text, InternalSessionProgress>;
+    gameSessions : List.List<GameSession>;
+    perUserGameStats : Map.Map<Principal, Map.Map<OldGameType, GameStatistics>>;
   };
 
-  public func run(old : OldActor) : {
-    userRoles : Map.Map<Principal, NewRole>;
-    userProfiles : Map.Map<Principal, NewUserProfile>;
-    // Return all other fields unchanged
-  } {
-    // Remove teacher roles from userRoles map
-    let filteredUserRoles = old.userRoles.filter(
-      func(_p, role) {
-        switch (role) {
-          case (#teacher) { false };
-          case (_) { true };
-        };
-      }
-    ).map<Principal, OldRole, NewRole>(
-      func(_p, r) {
-        switch (r) {
-          case (#parent) { #parent };
-          case (#student) { #student };
-          // Default conversion for any unexpected role values
-          case (_) { #student };
-        };
+  /*
+    Games:
+      - Matching
+      - Puzzles
+      - Study Challenges (maybe timed challenges or something for multiple attempts)
+      - Quizzes (spelling, reading, etc)
+  */
+  type OldGameType = {
+    #timedChallenge;
+    #matchingGame;
+    #puzzle;
+    #quiz;
+  };
+
+  public func run(old : OldActor) : NewActor {
+    let newUserProfiles = old.userProfiles.map<Principal, OldUserProfile, NewUserProfile>(
+      func(_id, oldProfile) {
+        { oldProfile with avatarId = oldProfile.name };
       }
     );
 
-    let filteredUserProfiles = old.userProfiles.filter(
-      func(_p, profile) {
-        switch (profile.role) {
-          case (#teacher) { false };
-          case (_) { true };
-        };
-      }
-    ).map<Principal, UserProfile, NewUserProfile>(
-      func(_p, oldProfile) {
-        {
-          oldProfile with
-          role = switch (oldProfile.role) {
-            case (#parent) { #parent };
-            // Default conversion for any unexpected role values
-            case (_) { #student };
-          };
-        };
-      }
-    );
-
-    {
-      userRoles = filteredUserRoles;
-      userProfiles = filteredUserProfiles;
-    };
+    { old with userProfiles = newUserProfiles };
   };
 };

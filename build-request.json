@@ -1,63 +1,102 @@
 {
   "kind": "build_request",
-  "title": "Remove teacher login and add UPI QR code to donation section",
+  "title": "Post-Login Profile Screen & Learning Dashboard Auto-Launch",
   "projectName": "KidsLearn",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Remove the Teacher role entirely from the system. This includes: removing the Teacher option from the RoleSelectionModal, removing teacher-specific role checks and routing in Header, Footer, Home, and App, removing or hiding the TeacherDashboard route, and ensuring only Parent and Admin roles remain functional throughout the application.",
-      "target": "both",
+      "text": "Create a post-login profile screen that displays the kid's avatar (selectable from a set of fun kid-friendly emoji/illustration options), editable display name, current level, earned badges grid, and progress stats (lessons completed, quizzes taken, points earned). The screen must appear immediately after a successful Internet Identity login before navigating to the learning dashboard.",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6",
-          "msg-8"
+          "msg-8",
+          "msg-9"
         ],
         "quotes": [
-          "remove the teacher logins",
-          "Teacher role/login will be completely removed, keeping only parent and admin logins"
+          "avatar, name, progress stats, badges, level",
+          "should users be able to edit their profile from here"
         ]
       },
       "acceptanceCriteria": [
-        "The role selection modal does not show a Teacher option",
-        "No teacher-specific navigation links appear in Header or Footer",
-        "The /teacher-dashboard route is removed or redirects away",
-        "Parent and Admin logins continue to work normally",
-        "No backend calls reference or assign the Teacher role"
+        "After login, the user is routed to the profile screen before any other page",
+        "Avatar selector shows at least 8 kid-friendly emoji/character options and saves selection to backend profile",
+        "Display name is editable inline with a save button; changes persist to the backend",
+        "Current level, total points, badges earned, lessons completed, and quizzes taken are all visible",
+        "A 'Start Learning' or 'Continue' button navigates to the learning dashboard"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Display the uploaded Paytm UPI QR code image (kamerarajendra098@ptyes, Kamera Rajendraprasad) directly in the Donation page. Replace the existing UPI QR code placeholder with the actual QR code image stored as a static asset. Show the UPI ID 'kamerarajendra098@ptyes' below the QR code, and include a label such as 'Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)'.",
+      "text": "After the profile screen is viewed, automatically launch the kids' learning dashboard. If the kid has previous lesson progress, resume from where they left off and highlight the next recommended lesson. If no prior progress exists, show a recommended starting lesson. The transition should be smooth and kid-friendly (e.g., a brief animated transition).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6",
-          "msg-8"
+          "msg-8",
+          "msg-10"
         ],
         "quotes": [
-          "use the QR code image",
-          "UPI QR code image (kamerarajendra098@ptyes) will be displayed directly in the donation section so users can scan it"
+          "after login show profile and run learning",
+          "automatically starts a lesson/activity, show a list of available lessons, or resume where the user left off"
         ]
       },
       "acceptanceCriteria": [
-        "The Donation page displays the actual Paytm UPI QR code image (not a placeholder)",
-        "The UPI ID 'kamerarajendra098@ptyes' is shown below the QR code",
-        "A label instructs users to scan with any UPI app",
-        "The QR code image is served from frontend/public/assets/generated/",
-        "The image is clearly visible and appropriately sized for scanning"
+        "After clicking 'Start Learning' or after a short auto-advance delay on the profile screen, the kids dashboard loads",
+        "If the user has completed lessons, the dashboard highlights the next incomplete lesson as recommended",
+        "If the user has no prior progress, a beginner-friendly first lesson is highlighted as the starting recommendation",
+        "An animated page transition plays between the profile screen and the dashboard"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Update the backend to store and retrieve avatar selection as part of the user profile. Add or extend the existing user profile data structure to include an avatarId field (a short string identifier) that can be set and fetched via dedicated update and query calls.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-8",
+          "msg-9"
+        ],
+        "quotes": [
+          "Avatar (with option to change it)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A new or updated Motoko function allows setting an avatarId for the authenticated caller",
+        "The getProfile or equivalent query returns the avatarId field",
+        "AvatarId persists across sessions for the same principal"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Optimise the KidsDashboard page for fast initial load by lazy-loading non-critical sections (games list, tasks, rewards) and showing skeleton loaders while data is being fetched. Priority-load the progress stats and recommended lesson card first so the kid sees actionable content immediately.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-6"
+        ],
+        "quotes": [
+          "Improve the kid's dashboard performance",
+          "after login show profile and run learning"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Skeleton loaders are shown for games, tasks, and rewards sections while data loads",
+        "Progress stats and recommended lesson card render before games and tasks sections",
+        "No visible layout shift after data loads",
+        "React Query caching is used so repeated visits to the dashboard do not trigger redundant backend calls"
       ]
     }
   ],
   "constraints": [
-    "Do not remove or modify the Admin role or admin login flow",
-    "Do not remove or modify the Parent role or parent login flow",
-    "The UPI QR code image must be served as a static frontend asset, not stored in the backend"
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
+    "Keep all Motoko logic in backend/main.mo as a single actor",
+    "Avatar options must be built-in (emoji or inline SVG) — no external image URLs"
   ],
   "nonGoals": [
-    "Adding any new payment processing or integration",
-    "Modifying the backend data schema for user roles beyond removing teacher references",
-    "Changing the overall visual theme or layout of the app"
+    "Parent or teacher dashboard changes",
+    "New lesson content or curriculum changes",
+    "Real-time multiplayer or WebSocket features",
+    "External authentication providers other than Internet Identity"
   ],
   "imageRequirements": {
     "required": [],

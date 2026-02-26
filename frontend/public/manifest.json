@@ -1,0 +1,26 @@
+{
+  "name": "KidsLearn",
+  "short_name": "KidsLearn",
+  "description": "Fun interactive learning for kids! Alphabets, Numbers, Science, Languages and more.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffd541",
+  "theme_color": "#ffd541",
+  "categories": ["education", "kids"],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/assets/generated/icon-pwa-192.dim_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/generated/icon-pwa-512.dim_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

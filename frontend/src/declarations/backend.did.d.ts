@@ -60,8 +60,29 @@ export interface SessionProgress {
   'completedLessons' : Array<bigint>,
   'quizResults' : Array<QuizResult>,
 }
+export interface Task {
+  'id' : bigint,
+  'title' : string,
+  'isCompleted' : boolean,
+  'description' : string,
+  'points' : bigint,
+}
+export interface TaskInput {
+  'title' : string,
+  'description' : string,
+  'points' : bigint,
+}
+export interface TaskUpdate {
+  'title' : string,
+  'description' : string,
+  'points' : bigint,
+}
 export type Time = bigint;
-export interface UserProfile { 'name' : string, 'role' : UserRole }
+export interface UserProfile {
+  'name' : string,
+  'role' : UserRole,
+  'avatarId' : string,
+}
 export type UserRole = { 'student' : null } |
   { 'parent' : null };
 export type UserRole__1 = { 'admin' : null } |
@@ -98,6 +119,7 @@ export interface _SERVICE {
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole__1], undefined>,
   'awardBadge' : ActorMethod<[Principal, string], undefined>,
   'completeLesson' : ActorMethod<[bigint], undefined>,
+  'createTask' : ActorMethod<[TaskInput], Task>,
   'getAllSessionsProgress' : ActorMethod<[], Array<[string, SessionProgress]>>,
   'getCallerRole' : ActorMethod<[], UserRole>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
@@ -112,6 +134,7 @@ export interface _SERVICE {
   'getMiniGameContent' : ActorMethod<[], Array<MiniGameContent>>,
   'getQuizQuestions' : ActorMethod<[], Array<QuizQuestion>>,
   'getSessionProgress' : ActorMethod<[Principal], SessionProgress>,
+  'getTasks' : ActorMethod<[], Array<Task>>,
   'getUserGameSessions' : ActorMethod<[Principal], Array<GameSession>>,
   'getUserGameStatistics' : ActorMethod<
     [Principal, GameType],
@@ -120,6 +143,7 @@ export interface _SERVICE {
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'getUserRole' : ActorMethod<[Principal], UserRole>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'markTaskComplete' : ActorMethod<[bigint], [] | [Task]>,
   'recordGameSession' : ActorMethod<
     [GameType, string, bigint, bigint],
     undefined
@@ -129,6 +153,7 @@ export interface _SERVICE {
   'setCallerRole' : ActorMethod<[UserRole], undefined>,
   'setDisplayName' : ActorMethod<[string], undefined>,
   'setupContent' : ActorMethod<[], undefined>,
+  'updateTask' : ActorMethod<[bigint, TaskUpdate], [] | [Task]>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

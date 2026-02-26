@@ -2,9 +2,8 @@ import React from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { LayoutDashboard } from "lucide-react";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
-import { useGetCallerRole, useGetCallerUserProfile } from "../hooks/useQueries";
+import { useGetCallerUserProfile } from "../hooks/useQueries";
 import RoleSelectionModal from "../components/RoleSelectionModal";
-import { UserRole } from "../backend";
 
 const NAV_CARDS = [
   {
@@ -143,12 +142,9 @@ export default function Home() {
   const isAuthenticated = !!identity;
 
   const { data: userProfile, isLoading: profileLoading, isFetched: profileFetched } = useGetCallerUserProfile();
-  const { data: callerRole } = useGetCallerRole();
 
-  // Show role modal when authenticated but no profile yet
-  const showRoleModal = isAuthenticated && !profileLoading && profileFetched && userProfile === null;
-
-  const dashboardPath = callerRole === UserRole.parent ? "/parent-dashboard" : null;
+  // Show welcome modal when authenticated but no profile yet
+  const showWelcomeModal = isAuthenticated && !profileLoading && profileFetched && userProfile === null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sunshine-100 via-sky-100 to-lavender-100">
@@ -196,18 +192,10 @@ export default function Home() {
               </button>
               {isAuthenticated && (
                 <button
-                  onClick={() => navigate({ to: "/profile" })}
-                  className="kid-btn bg-white/80 hover:bg-white text-lavender-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
-                >
-                  👤 My Profile
-                </button>
-              )}
-              {isAuthenticated && dashboardPath && (
-                <button
-                  onClick={() => navigate({ to: dashboardPath })}
+                  onClick={() => navigate({ to: "/kids-dashboard" })}
                   className="kid-btn bg-white/80 hover:bg-white text-sky-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
                 >
-                  <LayoutDashboard size={22} /> Dashboard
+                  <LayoutDashboard size={22} /> My Dashboard
                 </button>
               )}
             </div>
@@ -261,8 +249,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Role Selection Modal */}
-      <RoleSelectionModal open={showRoleModal} />
+      {/* Welcome Modal (auto-redirects to kids dashboard) */}
+      <RoleSelectionModal open={showWelcomeModal} />
     </div>
   );
 }

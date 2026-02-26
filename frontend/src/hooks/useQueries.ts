@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import { useInternetIdentity } from './useInternetIdentity';
-import { GameType, UserRole, SessionProgress } from '../backend';
-import type { GameStatistics, GameSession } from '../backend';
+import { GameType, UserRole, SessionProgress, UserProfile } from '../backend';
+import type { GameStatistics, GameSession, Task } from '../backend';
 
 // ─── Session Progress ─────────────────────────────────────────────────────────
 
@@ -16,6 +16,7 @@ export function useGetSessionProgress(targetPrincipal?: string) {
       return actor.getSessionProgress(Principal.fromText(targetPrincipal));
     },
     enabled: !!actor && !isFetching && !!targetPrincipal,
+    staleTime: 1000 * 60 * 5,
   });
 }
 
@@ -30,6 +31,7 @@ export function useGetLessons() {
       return actor.getLessons();
     },
     enabled: !!actor && !isFetching,
+    staleTime: 1000 * 60 * 10,
   });
 }
 
@@ -44,6 +46,7 @@ export function useGetFlashcards() {
       return actor.getFlashcards();
     },
     enabled: !!actor && !isFetching,
+    staleTime: 1000 * 60 * 10,
   });
 }
 
@@ -58,6 +61,7 @@ export function useGetQuizQuestions() {
       return actor.getQuizQuestions();
     },
     enabled: !!actor && !isFetching,
+    staleTime: 1000 * 60 * 10,
   });
 }
 
@@ -72,6 +76,7 @@ export function useGetMiniGameContent() {
       return actor.getMiniGameContent();
     },
     enabled: !!actor && !isFetching,
+    staleTime: 1000 * 60 * 10,
   });
 }
 
@@ -161,6 +166,7 @@ export function useGetUserGameSessions(userId?: string) {
       return actor.getUserGameSessions(Principal.fromText(userId));
     },
     enabled: !!actor && !isFetching && !!userId,
+    staleTime: 1000 * 60 * 5,
   });
 }
 
@@ -174,6 +180,7 @@ export function useGetUserGameStatistics(userId?: string, gameType?: GameType) {
       return actor.getUserGameStatistics(Principal.fromText(userId), gameType);
     },
     enabled: !!actor && !isFetching && !!userId && gameType !== undefined,
+    staleTime: 1000 * 60 * 5,
   });
 }
 
@@ -215,7 +222,7 @@ export function useSetCallerRole() {
   });
 }
 
-// ─── All Sessions Progress (Teacher) ─────────────────────────────────────────
+// ─── All Sessions Progress ────────────────────────────────────────────────────
 
 export function useGetAllSessionsProgress() {
   const { actor, isFetching } = useActor();
@@ -234,7 +241,7 @@ export function useGetAllSessionsProgress() {
 
 export function useGetCallerUserProfile() {
   const { actor, isFetching: actorFetching } = useActor();
-  const query = useQuery({
+  const query = useQuery<UserProfile | null>({
     queryKey: ['currentUserProfile'],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
@@ -248,6 +255,20 @@ export function useGetCallerUserProfile() {
     isLoading: actorFetching || query.isLoading,
     isFetched: !!actor && query.isFetched,
   };
+}
+
+export function useSaveCallerUserProfile() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (profile: UserProfile) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.saveCallerUserProfile(profile);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
+    },
+  });
 }
 
 // ─── Display Name ─────────────────────────────────────────────────────────────
@@ -292,6 +313,37 @@ export function useSetDisplayName() {
     onSuccess: () => {
       const principalText = identity?.getPrincipal().toString();
       queryClient.invalidateQueries({ queryKey: ['displayName', principalText] });
+    },
+  });
+}
+
+// ─── Tasks ────────────────────────────────────────────────────────────────────
+
+export function useGetTasks() {
+  const { actor, isFetching } = useActor();
+  return useQuery<Task[]>({
+    queryKey: ['tasks'],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getTasks();
+    },
+    enabled: !!actor && !isFetching,
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 10,
+  });
+}
+
+export function useMarkTaskComplete() {
+  const { actor } = useActor();
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: bigint) => {
+      if (!actor) throw new Error('Actor not available');
+      return actor.markTaskComplete(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['sessionProgress'] });
     },
   });
 }

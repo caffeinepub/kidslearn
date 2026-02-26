@@ -12,6 +12,8 @@ import Footer from './components/layout/Footer';
 
 // Pages
 import Home from './pages/Home';
+import KidsDashboard from './pages/KidsDashboard';
+import PostLoginProfile from './pages/PostLoginProfile';
 import AlphabetLesson from './pages/AlphabetLesson';
 import AlphabetFullScreen from './pages/AlphabetFullScreen';
 import NumbersLesson from './pages/NumbersLesson';
@@ -24,7 +26,6 @@ import MatchingGame from './pages/MatchingGame';
 import PuzzleGame from './pages/PuzzleGame';
 import TimedChallenge from './pages/TimedChallenge';
 import Progress from './pages/Progress';
-import ParentDashboard from './pages/ParentDashboard';
 import Donation from './pages/Donation';
 import AgeGroupSelection from './pages/AgeGroupSelection';
 import SubjectSelection from './pages/SubjectSelection';
@@ -57,6 +58,8 @@ const Layout: React.FC = () => (
 const rootRoute = createRootRoute({ component: Layout });
 
 const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: Home });
+const postLoginProfileRoute = createRoute({ getParentRoute: () => rootRoute, path: '/post-login-profile', component: PostLoginProfile });
+const kidsDashboardRoute = createRoute({ getParentRoute: () => rootRoute, path: '/kids-dashboard', component: KidsDashboard });
 const alphabetRoute = createRoute({ getParentRoute: () => rootRoute, path: '/alphabet', component: AlphabetLesson });
 const alphabetFullScreenRoute = createRoute({ getParentRoute: () => rootRoute, path: '/alphabet-fullscreen', component: AlphabetFullScreen });
 const numbersRoute = createRoute({ getParentRoute: () => rootRoute, path: '/numbers', component: NumbersLesson });
@@ -70,7 +73,6 @@ const matchingGameRoute = createRoute({ getParentRoute: () => rootRoute, path: '
 const puzzleRoute = createRoute({ getParentRoute: () => rootRoute, path: '/puzzle', component: PuzzleGame });
 const timedChallengeRoute = createRoute({ getParentRoute: () => rootRoute, path: '/timed-challenge', component: TimedChallenge });
 const progressRoute = createRoute({ getParentRoute: () => rootRoute, path: '/progress', component: Progress });
-const parentDashboardRoute = createRoute({ getParentRoute: () => rootRoute, path: '/parent-dashboard', component: ParentDashboard });
 const donationRoute = createRoute({ getParentRoute: () => rootRoute, path: '/donate', component: Donation });
 const ageGroupRoute = createRoute({ getParentRoute: () => rootRoute, path: '/age-group', component: AgeGroupSelection });
 const subjectsRoute = createRoute({ getParentRoute: () => rootRoute, path: '/subjects', component: SubjectSelection });
@@ -81,6 +83,8 @@ const profileRoute = createRoute({ getParentRoute: () => rootRoute, path: '/prof
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
+  postLoginProfileRoute,
+  kidsDashboardRoute,
   alphabetRoute,
   alphabetFullScreenRoute,
   numbersRoute,
@@ -94,7 +98,6 @@ const routeTree = rootRoute.addChildren([
   puzzleRoute,
   timedChallengeRoute,
   progressRoute,
-  parentDashboardRoute,
   donationRoute,
   ageGroupRoute,
   subjectsRoute,

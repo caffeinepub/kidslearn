@@ -1,14 +1,14 @@
 # Specification
 
 ## Summary
-**Goal:** Remove the Teacher role from the application and display the actual Paytm UPI QR code on the Donation page.
+**Goal:** Add a post-login profile screen with avatar selection and progress stats, auto-launch the learning dashboard after the profile screen, store avatar data in the backend, and optimise the kids dashboard for faster initial load.
 
 **Planned changes:**
-- Remove the Teacher option from the RoleSelectionModal so only Parent and Admin roles are available
-- Remove all teacher-specific navigation links, route guards, and role checks from Header, Footer, Home, and App components
-- Remove or redirect the /teacher-dashboard route
-- Replace the UPI QR code placeholder on the Donation page with the actual Paytm QR code image (from the uploaded photo)
-- Display the UPI ID "kamerarajendra098@ptyes" below the QR code
-- Add a label "Scan with any UPI app (Paytm, PhonePe, BHIM, Google Pay)" beneath the QR code
+- Create a post-login profile screen that appears immediately after Internet Identity login, showing a selectable avatar (8+ kid-friendly emoji/character options), editable display name, current level, earned badges grid, lessons completed, quizzes taken, and points earned
+- Add a "Start Learning" / "Continue" button on the profile screen that navigates to the learning dashboard with an animated kid-friendly page transition
+- If the user has prior lesson progress, the dashboard highlights the next incomplete lesson as recommended; otherwise a beginner-friendly first lesson is highlighted
+- Extend the backend Motoko profile data structure with an `avatarId` field; add update and query support for it
+- Add skeleton loaders to the kids dashboard for games, tasks, and rewards sections; priority-load progress stats and recommended lesson card first
+- Use React Query caching on the dashboard to avoid redundant backend calls on repeated visits
 
-**User-visible outcome:** Users no longer see a Teacher login option. The Donation page shows the real scannable Paytm UPI QR code with the UPI ID and instructions, so donors can complete payments directly.
+**User-visible outcome:** After logging in, kids see their profile screen with their avatar, stats, and badges, then proceed to the learning dashboard which loads quickly and highlights exactly where they should start or continue learning.

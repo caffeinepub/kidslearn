@@ -2,14 +2,11 @@ import React from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Heart } from 'lucide-react';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
-import { useGetCallerRole } from '../../hooks/useQueries';
-import { UserRole } from '../../backend';
 
 const Footer: React.FC = () => {
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
   const isAuthenticated = !!identity;
-  const { data: role } = useGetCallerRole();
 
   const appId = typeof window !== 'undefined' ? encodeURIComponent(window.location.hostname) : 'kidslearn-app';
   const caffeineUrl = `https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appId}`;
@@ -22,6 +19,11 @@ const Footer: React.FC = () => {
           <button onClick={() => navigate({ to: '/' })} className="hover:text-sunshine-100 transition-colors">
             Home
           </button>
+          {isAuthenticated && (
+            <button onClick={() => navigate({ to: '/kids-dashboard' })} className="hover:text-sunshine-100 transition-colors">
+              Dashboard
+            </button>
+          )}
           <button onClick={() => navigate({ to: '/alphabet' })} className="hover:text-sunshine-100 transition-colors">
             Alphabet
           </button>
@@ -34,11 +36,6 @@ const Footer: React.FC = () => {
           <button onClick={() => navigate({ to: '/progress' })} className="hover:text-sunshine-100 transition-colors">
             Progress
           </button>
-          {isAuthenticated && role === UserRole.parent && (
-            <button onClick={() => navigate({ to: '/parent-dashboard' })} className="hover:text-sunshine-100 transition-colors">
-              Parent Dashboard
-            </button>
-          )}
           <button onClick={() => navigate({ to: '/donate' })} className="hover:text-sunshine-100 transition-colors">
             Support Us
           </button>
