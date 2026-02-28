@@ -1,53 +1,66 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T07:53:34.988Z",
-  "summary": "The diff implements most of the four requirements. REQ-1 (post-login profile screen), REQ-3 (backend avatarId), and REQ-4 (skeleton loaders, React Query caching on KidsDashboard) are substantially addressed. REQ-2 is partially implemented: the profile screen and dashboard navigation exist, but the animated page transition between screens and the auto-advance delay are not clearly evidenced in the diff.",
+  "generatedAt": "2026-02-27T14:38:27.412Z",
+  "summary": "The diff implements most of the three requirements. REQ-1 (logo in Header) is clearly implemented. REQ-2 (font size increases) is partially implemented across several pages. REQ-3 (larger images/emojis) is partially implemented. However, the logo addition to Home.tsx hero area is not confirmed, KidsDashboard font-size increases are not evidenced, and MiniGame emoji/image size increases are not confirmed in the diff.",
   "missing_requirements": [
     {
-      "id": "REQ-2",
-      "requirement": "An animated page transition plays between the profile screen and the dashboard",
-      "reason": "The PostLoginProfile component has a fade-in on mount (setVisible), but there is no clear animated transition effect applied when navigating FROM the profile screen TO the KidsDashboard. The KidsDashboard also shows a fade-in but a cross-screen animated transition is not evidenced.",
+      "id": "REQ-1",
+      "requirement": "Add the KidsLearn logo at the top-center of the Home page hero area",
+      "reason": "The Header.tsx logo addition is confirmed, but the Home.tsx file content in the diff is truncated and does not show a logo being added to the hero area of the Home page.",
       "evidence": [
-        "frontend/src/pages/PostLoginProfile.tsx",
-        "frontend/src/pages/KidsDashboard.tsx"
+        "frontend/src/pages/Home.tsx"
       ]
     },
     {
-      "id": "REQ-4",
-      "requirement": "Skeleton loaders are shown for games, tasks, and rewards sections while data loads; progress stats and recommended lesson card render before games and tasks sections",
-      "reason": "KidsDashboard.tsx imports Skeleton and uses tasksLoading/progressLoading, but the file is truncated so it cannot be fully verified that skeleton loaders are shown specifically for games, tasks, AND rewards sections separately, and that progress stats and recommended lesson card are priority-rendered before those sections.",
+      "id": "REQ-2",
+      "requirement": "Increase dashboard stat numbers and labels in KidsDashboard",
+      "reason": "The diff does not include KidsDashboard.tsx among the modified files. ProgressWidget shows some size increases, but KidsDashboard is not touched.",
+      "evidence": []
+    },
+    {
+      "id": "REQ-2",
+      "requirement": "Increase font sizes for vocabulary and picture card labels in VocabularyLesson and PictureLesson",
+      "reason": "VocabularyLesson.tsx and PictureLesson.tsx are in the modified files but both are truncated. The visible portions of these files do not clearly show font size increases for card labels.",
       "evidence": [
-        "frontend/src/pages/KidsDashboard.tsx"
+        "frontend/src/pages/VocabularyLesson.tsx",
+        "frontend/src/pages/PictureLesson.tsx"
       ]
+    },
+    {
+      "id": "REQ-3",
+      "requirement": "Increase emoji/image sizes in MiniGame",
+      "reason": "MiniGame.tsx is not present in the modified files list, and no evidence of emoji/image size changes in MiniGame is shown in the diff.",
+      "evidence": []
     }
   ],
   "hallucinated_features": [
     {
-      "description": "backend/migration.mo module added as a separate file for data migration from OldActor to NewActor shape",
-      "reason": "The build request only asked to add avatarId to the backend profile data structure and expose it via update/query calls in backend/main.mo as a single actor. A separate migration module file was not requested.",
+      "description": "Splash screen with animated bubbles, logo entrance/bounce animations, and loading dots",
+      "reason": "The frontend-file-summaries.txt mentions new splash screen CSS in index.css and a SplashScreen component in App.tsx, but no splash screen was requested in the build request.",
       "evidence": [
-        "backend/migration.mo"
-      ]
-    },
-    {
-      "description": "RoleSelectionModal repurposed as a routing decision component redirecting to /post-login-profile or /kids-dashboard based on profile completeness",
-      "reason": "The build request did not request changes to the RoleSelectionModal component. It was repurposed as a post-login router without being specified in any requirement.",
-      "evidence": [
-        "frontend/src/components/RoleSelectionModal.tsx"
+        "frontend/src/index.css",
+        "frontend-file-summaries.txt"
       ]
     }
   ],
-  "confidence": 0.72,
+  "confidence": 0.62,
   "changed_files": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/App.tsx",
-    "frontend/src/components/RoleSelectionModal.tsx",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/KidsDashboard.tsx",
-    "frontend/src/pages/PostLoginProfile.tsx",
+    "frontend/src/components/GameCard.tsx",
+    "frontend/src/components/LearningCard.tsx",
+    "frontend/src/components/ProgressWidget.tsx",
+    "frontend/src/components/layout/Header.tsx",
+    "frontend/src/pages/AlphabetFullScreen.tsx",
+    "frontend/src/pages/AlphabetLesson.tsx",
+    "frontend/src/pages/Home.tsx",
+    "frontend/src/pages/Lessons.tsx",
+    "frontend/src/pages/Numbers100Lesson.tsx",
+    "frontend/src/pages/NumbersLesson.tsx",
+    "frontend/src/pages/PictureLesson.tsx",
+    "frontend/src/pages/Quiz.tsx",
+    "frontend/src/pages/TimedChallenge.tsx",
+    "frontend/src/pages/VocabularyLesson.tsx",
     "project_state.json"
   ]
 }

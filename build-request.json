@@ -1,105 +1,82 @@
 {
   "kind": "build_request",
-  "title": "Post-Login Profile Screen & Learning Dashboard Auto-Launch",
-  "projectName": "KidsLearn",
+  "title": "Add logo to app screen and increase text/number/image sizes",
+  "projectName": "Kids Learn",
   "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Create a post-login profile screen that displays the kid's avatar (selectable from a set of fun kid-friendly emoji/illustration options), editable display name, current level, earned badges grid, and progress stats (lessons completed, quizzes taken, points earned). The screen must appear immediately after a successful Internet Identity login before navigating to the learning dashboard.",
+      "text": "Add the KidsLearn app logo prominently on the Home page (frontend/src/pages/Home.tsx) and in the sticky Header component (frontend/src/components/layout/Header.tsx). The logo should be a fun, colorful kids-themed SVG or PNG rendered as a visible brand mark alongside the app name. Place it at the top-center of the Home page hero area and as an inline element in the header next to the app title.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-8",
-          "msg-9"
+          "msg-1"
         ],
         "quotes": [
-          "avatar, name, progress stats, badges, level",
-          "should users be able to edit their profile from here"
+          "Add logo on app screen"
         ]
       },
       "acceptanceCriteria": [
-        "After login, the user is routed to the profile screen before any other page",
-        "Avatar selector shows at least 8 kid-friendly emoji/character options and saves selection to backend profile",
-        "Display name is editable inline with a save button; changes persist to the backend",
-        "Current level, total points, badges earned, lessons completed, and quizzes taken are all visible",
-        "A 'Start Learning' or 'Continue' button navigates to the learning dashboard"
+        "A logo image or SVG appears at the top of the Home page",
+        "The same logo appears in the Header component next to the app name",
+        "The logo is clearly visible on both mobile and desktop screen sizes",
+        "The logo does not overlap or obscure navigation elements"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "After the profile screen is viewed, automatically launch the kids' learning dashboard. If the kid has previous lesson progress, resume from where they left off and highlight the next recommended lesson. If no prior progress exists, show a recommended starting lesson. The transition should be smooth and kid-friendly (e.g., a brief animated transition).",
+      "text": "Increase the font sizes for all primary text, headings, numbers, and labels throughout the app. This includes: number cards in NumbersLesson, Numbers100Lesson; alphabet cards in AlphabetLesson and AlphabetFullScreen; quiz question and answer text in Quiz and TimedChallenge; lesson body text in Lessons; vocabulary and picture card labels in VocabularyLesson and PictureLesson; and dashboard stat numbers in KidsDashboard and ProgressWidget. Bump base text sizes up at least one Tailwind size step (e.g. text-lg → text-xl, text-2xl → text-3xl) and heading/number display sizes by at least two steps.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-8",
-          "msg-10"
+          "msg-1"
         ],
         "quotes": [
-          "after login show profile and run learning",
-          "automatically starts a lesson/activity, show a list of available lessons, or resume where the user left off"
+          "Increase the size of words ,Numbers and images"
         ]
       },
       "acceptanceCriteria": [
-        "After clicking 'Start Learning' or after a short auto-advance delay on the profile screen, the kids dashboard loads",
-        "If the user has completed lessons, the dashboard highlights the next incomplete lesson as recommended",
-        "If the user has no prior progress, a beginner-friendly first lesson is highlighted as the starting recommendation",
-        "An animated page transition plays between the profile screen and the dashboard"
+        "Number cards in NumbersLesson and Numbers100Lesson display noticeably larger numerals",
+        "Alphabet characters in AlphabetLesson and AlphabetFullScreen are visibly bigger",
+        "Quiz and lesson body text is larger and easier to read for kids",
+        "Dashboard stat numbers and labels are increased in size",
+        "No text overflows its container or becomes unreadable on small screens"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Update the backend to store and retrieve avatar selection as part of the user profile. Add or extend the existing user profile data structure to include an avatarId field (a short string identifier) that can be set and fetched via dedicated update and query calls.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-8",
-          "msg-9"
-        ],
-        "quotes": [
-          "Avatar (with option to change it)"
-        ]
-      },
-      "acceptanceCriteria": [
-        "A new or updated Motoko function allows setting an avatarId for the authenticated caller",
-        "The getProfile or equivalent query returns the avatarId field",
-        "AvatarId persists across sessions for the same principal"
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "text": "Optimise the KidsDashboard page for fast initial load by lazy-loading non-critical sections (games list, tasks, rewards) and showing skeleton loaders while data is being fetched. Priority-load the progress stats and recommended lesson card first so the kid sees actionable content immediately.",
+      "text": "Increase the size of images, emoji illustrations, and card thumbnails across the app. This includes: emoji/image displays in AlphabetLesson, AlphabetFullScreen, PictureLesson, VocabularyLesson, NumbersLesson, GameCard, LearningCard, and MiniGame. Increase image/emoji container sizes by at least 25–40% compared to current sizing, using larger Tailwind size classes (e.g. w-16 h-16 → w-24 h-24, text-4xl emoji → text-6xl).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-6"
+          "msg-1"
         ],
         "quotes": [
-          "Improve the kid's dashboard performance",
-          "after login show profile and run learning"
+          "Increase the size of words ,Numbers and images"
         ]
       },
       "acceptanceCriteria": [
-        "Skeleton loaders are shown for games, tasks, and rewards sections while data loads",
-        "Progress stats and recommended lesson card render before games and tasks sections",
-        "No visible layout shift after data loads",
-        "React Query caching is used so repeated visits to the dashboard do not trigger redundant backend calls"
+        "Emoji and image elements in alphabet, number, and vocabulary pages are visibly larger",
+        "Game and learning card thumbnails/emojis are bigger and more prominent",
+        "Card layouts accommodate the larger images without breaking the grid",
+        "Changes are consistent across all affected pages"
       ]
     }
   ],
   "constraints": [
-    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
-    "Keep all Motoko logic in backend/main.mo as a single actor",
-    "Avatar options must be built-in (emoji or inline SVG) — no external image URLs"
+    "Do not modify files under frontend/src/hooks/ or frontend/src/components/ui/",
+    "Do not alter backend logic or data models"
   ],
   "nonGoals": [
-    "Parent or teacher dashboard changes",
-    "New lesson content or curriculum changes",
-    "Real-time multiplayer or WebSocket features",
-    "External authentication providers other than Internet Identity"
+    "Adding new pages or routes",
+    "Changing the color theme or overall design system",
+    "Adding new learning content or backend data",
+    "Modifying the PWA manifest icons"
   ],
   "imageRequirements": {
-    "required": [],
+    "required": [
+      "Colorful kids-themed app logo with a friendly star or book illustration and bold playful text 'KidsLearn', suitable for both header and splash screen use (kidslearn-logo.dim_256x256.png)"
+    ],
     "edits": []
   }
 }

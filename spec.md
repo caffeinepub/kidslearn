@@ -1,14 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Add a post-login profile screen with avatar selection and progress stats, auto-launch the learning dashboard after the profile screen, store avatar data in the backend, and optimise the kids dashboard for faster initial load.
+**Goal:** Add the KidsLearn logo to the Home page and Header, and increase the sizes of text, numbers, and images throughout the app for better readability for kids.
 
 **Planned changes:**
-- Create a post-login profile screen that appears immediately after Internet Identity login, showing a selectable avatar (8+ kid-friendly emoji/character options), editable display name, current level, earned badges grid, lessons completed, quizzes taken, and points earned
-- Add a "Start Learning" / "Continue" button on the profile screen that navigates to the learning dashboard with an animated kid-friendly page transition
-- If the user has prior lesson progress, the dashboard highlights the next incomplete lesson as recommended; otherwise a beginner-friendly first lesson is highlighted
-- Extend the backend Motoko profile data structure with an `avatarId` field; add update and query support for it
-- Add skeleton loaders to the kids dashboard for games, tasks, and rewards sections; priority-load progress stats and recommended lesson card first
-- Use React Query caching on the dashboard to avoid redundant backend calls on repeated visits
+- Add the KidsLearn logo prominently at the top-center of the Home page hero area
+- Add the KidsLearn logo inline in the sticky Header component next to the app name
+- Increase font sizes for headings, numbers, and body text across NumbersLesson, Numbers100Lesson, AlphabetLesson, AlphabetFullScreen, Quiz, TimedChallenge, Lessons, VocabularyLesson, PictureLesson, KidsDashboard, and ProgressWidget (at least one Tailwind size step up for text, two steps for headings/numbers)
+- Increase image and emoji container sizes by 25–40% in AlphabetLesson, AlphabetFullScreen, PictureLesson, VocabularyLesson, NumbersLesson, GameCard, LearningCard, and MiniGame
 
-**User-visible outcome:** After logging in, kids see their profile screen with their avatar, stats, and badges, then proceed to the learning dashboard which loads quickly and highlights exactly where they should start or continue learning.
+**User-visible outcome:** The app displays the KidsLearn logo in the header and home screen, and all text, numbers, and images are noticeably larger and easier for children to read and interact with.

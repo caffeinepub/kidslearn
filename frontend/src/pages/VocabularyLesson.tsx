@@ -47,10 +47,10 @@ export default function VocabularyLesson() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="font-heading text-5xl md:text-6xl text-lavender-600 drop-shadow-md mb-2">
+          <h1 className="font-heading text-5xl md:text-7xl text-lavender-600 drop-shadow-md mb-2">
             📚 Vocabulary
           </h1>
-          <p className="font-body text-xl text-lavender-500 font-semibold">
+          <p className="font-body text-xl md:text-2xl text-lavender-500 font-semibold">
             Learn words with pictures!
           </p>
         </div>
@@ -61,7 +61,7 @@ export default function VocabularyLesson() {
             <button
               key={lang}
               onClick={() => setLanguage(lang)}
-              className={`kid-btn px-6 py-3 text-lg font-heading border-4 ${
+              className={`kid-btn px-6 py-3 text-xl font-heading border-4 ${
                 language === lang
                   ? LANGUAGE_CONFIG[lang].btnClass + " scale-110 shadow-fun-lg"
                   : "bg-white border-gray-300 text-gray-600 hover:scale-105"
@@ -82,11 +82,11 @@ export default function VocabularyLesson() {
               <section key={cat.key}>
                 {/* Category Header */}
                 <div className={`flex items-center gap-3 mb-5 px-5 py-3 rounded-3xl border-4 ${cat.bgClass} inline-flex`}>
-                  <span className="text-3xl">{cat.emoji}</span>
-                  <h2 className="font-heading text-2xl md:text-3xl text-gray-800">
+                  <span className="text-4xl">{cat.emoji}</span>
+                  <h2 className="font-heading text-3xl md:text-4xl text-gray-800">
                     {cat.label}
                   </h2>
-                  <span className="font-body text-base text-gray-600 ml-1">
+                  <span className="font-body text-lg text-gray-600 ml-1">
                     ({entries.length} words)
                   </span>
                 </div>
@@ -99,22 +99,22 @@ export default function VocabularyLesson() {
                       <div
                         key={`${language}-${cat.key}-${idx}`}
                         className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 flex flex-col overflow-hidden`}
-                        style={{ minHeight: "200px" }}
+                        style={{ minHeight: "230px" }}
                         onClick={() => speak(item.word, config.voice)}
                       >
-                        {/* Emoji area */}
-                        <div className="flex-1 flex items-center justify-center bg-white/20 py-4">
-                          <span className="text-6xl">{item.emoji}</span>
+                        {/* Emoji area - larger */}
+                        <div className="flex-1 flex items-center justify-center bg-white/20 py-5">
+                          <span className="text-7xl">{item.emoji}</span>
                         </div>
                         {/* Word area */}
                         <div className="flex items-center justify-between px-3 py-2 bg-white/30">
-                          <span className="font-heading text-lg text-gray-800 truncate flex-1">{item.word}</span>
+                          <span className="font-heading text-xl text-gray-800 truncate flex-1">{item.word}</span>
                           <button
                             onClick={(e) => { e.stopPropagation(); speak(item.word, config.voice); }}
-                            className={`kid-btn p-1.5 rounded-xl border-2 border-white ${config.btnClass} shrink-0 ml-1`}
+                            className={`kid-btn p-2 rounded-xl border-2 border-white ${config.btnClass} shrink-0 ml-1`}
                             aria-label="Speak"
                           >
-                            <Volume2 size={16} />
+                            <Volume2 size={18} />
                           </button>
                         </div>
                       </div>

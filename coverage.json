@@ -1,84 +1,104 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T07:53:34.991Z",
+  "generatedAt": "2026-02-27T14:38:27.417Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 4,
+    "total": 3,
     "implemented": 3,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Create a post-login profile screen that displays the kid's avatar (selectable from a set of fun kid-friendly emoji/illustration options), editable display name, current level, earned badges grid, and progress stats (lessons completed, quizzes taken, points earned). The screen must appear immediately after a successful Internet Identity login before navigating to the learning dashboard.",
+        "summary": "Add the KidsLearn app logo prominently on the Home page (frontend/src/pages/Home.tsx) and in the sticky Header component (frontend/src/components/layout/Header.tsx). The logo should be a fun, colorful kids-themed SVG or PNG rendered as a visible brand mark alongside the app name. Place it at the top-center of the Home page hero area and as an inline element in the header next to the app title.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/PostLoginProfile.tsx",
-          "frontend/src/App.tsx",
-          "frontend/src/components/RoleSelectionModal.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/pages/Home.tsx",
+          "frontend/src/components/layout/Header.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/PostLoginProfile.tsx",
-          "frontend/src/App.tsx",
-          "frontend/src/components/RoleSelectionModal.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/pages/Home.tsx",
+          "frontend/src/components/layout/Header.tsx"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "After the profile screen is viewed, automatically launch the kids' learning dashboard. If the kid has previous lesson progress, resume from where they left off and highlight the next recommended lesson. If no prior progress exists, show a recommended starting lesson. The transition should be smooth and kid-friendly (e.g., a brief animated transition).",
+        "summary": "Increase the font sizes for all primary text, headings, numbers, and labels throughout the app. This includes: number cards in NumbersLesson, Numbers100Lesson; alphabet cards in AlphabetLesson and AlphabetFullScreen; quiz question and answer text in Quiz and TimedChallenge; lesson body text in Lessons; vocabulary and picture card labels in VocabularyLesson and PictureLesson; and dashboard stat numbers in KidsDashboard and ProgressWidget. Bump base text sizes up at least one Tailwind size step (e.g. text-lg → text-xl, text-2xl → text-3xl) and heading/number display sizes by at least two steps.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/PostLoginProfile.tsx",
-          "frontend/src/pages/KidsDashboard.tsx"
+          "frontend/src/pages/NumbersLesson.tsx",
+          "frontend/src/pages/Numbers100Lesson.tsx",
+          "frontend/src/pages/AlphabetLesson.tsx",
+          "frontend/src/pages/AlphabetFullScreen.tsx",
+          "frontend/src/pages/Quiz.tsx",
+          "frontend/src/pages/TimedChallenge.tsx",
+          "frontend/src/pages/Lessons.tsx",
+          "frontend/src/pages/VocabularyLesson.tsx",
+          "frontend/src/pages/PictureLesson.tsx",
+          "frontend/src/pages/KidsDashboard.tsx",
+          "frontend/src/components/ProgressWidget.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/PostLoginProfile.tsx",
-          "frontend/src/pages/KidsDashboard.tsx"
+          "frontend/src/pages/NumbersLesson.tsx",
+          "frontend/src/pages/Numbers100Lesson.tsx",
+          "frontend/src/pages/AlphabetLesson.tsx",
+          "frontend/src/pages/AlphabetFullScreen.tsx",
+          "frontend/src/pages/Quiz.tsx",
+          "frontend/src/pages/TimedChallenge.tsx",
+          "frontend/src/pages/Lessons.tsx",
+          "frontend/src/pages/VocabularyLesson.tsx",
+          "frontend/src/pages/PictureLesson.tsx",
+          "frontend/src/components/ProgressWidget.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Update the backend to store and retrieve avatar selection as part of the user profile. Add or extend the existing user profile data structure to include an avatarId field (a short string identifier) that can be set and fetched via dedicated update and query calls.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-4",
-        "summary": "Optimise the KidsDashboard page for fast initial load by lazy-loading non-critical sections (games list, tasks, rewards) and showing skeleton loaders while data is being fetched. Priority-load the progress stats and recommended lesson card first so the kid sees actionable content immediately.",
+        "summary": "Increase the size of images, emoji illustrations, and card thumbnails across the app. This includes: emoji/image displays in AlphabetLesson, AlphabetFullScreen, PictureLesson, VocabularyLesson, NumbersLesson, GameCard, LearningCard, and MiniGame. Increase image/emoji container sizes by at least 25–40% compared to current sizing, using larger Tailwind size classes (e.g. w-16 h-16 → w-24 h-24, text-4xl emoji → text-6xl).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/pages/KidsDashboard.tsx",
-          "frontend/src/components/ui/Skeleton.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/pages/AlphabetLesson.tsx",
+          "frontend/src/pages/AlphabetFullScreen.tsx",
+          "frontend/src/pages/PictureLesson.tsx",
+          "frontend/src/pages/VocabularyLesson.tsx",
+          "frontend/src/pages/NumbersLesson.tsx",
+          "frontend/src/components/GameCard.tsx",
+          "frontend/src/components/LearningCard.tsx",
+          "frontend/src/pages/MiniGame.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/pages/KidsDashboard.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/pages/AlphabetLesson.tsx",
+          "frontend/src/pages/AlphabetFullScreen.tsx",
+          "frontend/src/pages/PictureLesson.tsx",
+          "frontend/src/pages/VocabularyLesson.tsx",
+          "frontend/src/pages/NumbersLesson.tsx",
+          "frontend/src/components/GameCard.tsx",
+          "frontend/src/components/LearningCard.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/RoleSelectionModal.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useQueries.ts",
-    "frontend/src/pages/KidsDashboard.tsx",
-    "frontend/src/pages/PostLoginProfile.tsx",
+    "frontend/public/assets/generated/kidslearn-logo.dim_256x256.png",
+    "frontend/src/components/GameCard.tsx",
+    "frontend/src/components/LearningCard.tsx",
+    "frontend/src/components/ProgressWidget.tsx",
+    "frontend/src/components/layout/Header.tsx",
+    "frontend/src/pages/AlphabetFullScreen.tsx",
+    "frontend/src/pages/AlphabetLesson.tsx",
+    "frontend/src/pages/Home.tsx",
+    "frontend/src/pages/Lessons.tsx",
+    "frontend/src/pages/Numbers100Lesson.tsx",
+    "frontend/src/pages/NumbersLesson.tsx",
+    "frontend/src/pages/PictureLesson.tsx",
+    "frontend/src/pages/Quiz.tsx",
+    "frontend/src/pages/TimedChallenge.tsx",
+    "frontend/src/pages/VocabularyLesson.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Progress } from '@/components/ui/progress';
 import { Task } from '../backend';
 
 interface ProgressWidgetProps {
@@ -55,26 +54,26 @@ const ProgressWidget: React.FC<ProgressWidgetProps> = ({
   ];
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {items.map((item) => (
-        <div key={item.label} className={`rounded-2xl border-2 p-4 ${item.bgClass}`}>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">{item.emoji}</span>
-              <span className={`font-heading text-base ${item.textClass}`}>{item.label}</span>
+        <div key={item.label} className={`rounded-2xl border-2 p-5 ${item.bgClass}`}>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">{item.emoji}</span>
+              <span className={`font-heading text-xl ${item.textClass}`}>{item.label}</span>
             </div>
-            <span className={`font-bold font-nunito text-sm ${item.textClass}`}>
+            <span className={`font-bold font-nunito text-xl ${item.textClass}`}>
               {item.total !== null ? `${item.value} / ${item.total}` : item.value}
             </span>
           </div>
-          <div className="w-full bg-white/60 rounded-full h-3 overflow-hidden">
+          <div className="w-full bg-white/60 rounded-full h-4 overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-700 ${item.barClass}`}
               style={{ width: `${item.pct}%` }}
             />
           </div>
           {item.pct === 100 && item.total !== null && (
-            <p className="text-xs font-nunito font-bold text-grass-600 mt-1 text-center">
+            <p className="text-base font-nunito font-bold text-grass-600 mt-2 text-center">
               🎉 All done! Amazing!
             </p>
           )}

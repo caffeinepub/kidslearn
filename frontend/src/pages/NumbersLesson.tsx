@@ -65,10 +65,10 @@ export default function NumbersLesson() {
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="font-heading text-5xl md:text-6xl text-tangerine-600 drop-shadow-md mb-2">
+          <h1 className="font-heading text-5xl md:text-7xl text-tangerine-600 drop-shadow-md mb-2">
             🔢 Numbers 1–10
           </h1>
-          <p className="font-body text-xl text-tangerine-500 font-semibold">
+          <p className="font-body text-xl md:text-2xl text-tangerine-500 font-semibold">
             Tap a card to hear the number!
           </p>
         </div>
@@ -79,7 +79,7 @@ export default function NumbersLesson() {
             <button
               key={lang}
               onClick={() => setLanguage(lang)}
-              className={`kid-btn px-6 py-3 text-lg font-heading border-4 ${
+              className={`kid-btn px-6 py-3 text-xl font-heading border-4 ${
                 language === lang
                   ? LANGUAGE_CONFIG[lang].btnClass + " scale-110 shadow-fun-lg"
                   : "bg-white border-gray-300 text-gray-600 hover:scale-105"
@@ -97,28 +97,28 @@ export default function NumbersLesson() {
             return (
               <div
                 key={`${language}-${num.numeral}-${idx}`}
-                className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-110 hover:shadow-fun-xl active:scale-95 animate-card-entrance card-delay-${Math.min(idx + 1, 6)} flex flex-col items-center justify-center p-4 min-h-[240px] gap-2`}
+                className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-110 hover:shadow-fun-xl active:scale-95 animate-card-entrance card-delay-${Math.min(idx + 1, 6)} flex flex-col items-center justify-center p-4 min-h-[280px] gap-3`}
                 onClick={() => speak(num.word, config.voice)}
               >
                 {/* Big Number */}
-                <span className="font-heading text-8xl md:text-9xl leading-none drop-shadow-md select-none text-gray-800">
+                <span className="font-heading text-9xl leading-none drop-shadow-md select-none text-gray-800">
                   {num.numeral}
                 </span>
 
-                {/* Emoji */}
-                <span className="text-4xl">{NUMBER_EMOJIS[idx] || "⭐"}</span>
+                {/* Emoji - larger */}
+                <span className="text-6xl">{NUMBER_EMOJIS[idx] || "⭐"}</span>
 
                 {/* Word */}
                 <div className="flex items-center gap-1 w-full justify-center">
-                  <span className="font-heading text-lg text-gray-700 text-center leading-tight">
+                  <span className="font-heading text-xl text-gray-700 text-center leading-tight">
                     {num.word}
                   </span>
                   <button
                     onClick={(e) => { e.stopPropagation(); speak(num.word, config.voice); }}
-                    className={`kid-btn p-1.5 rounded-xl border-2 border-white ${config.btnClass} shrink-0`}
+                    className={`kid-btn p-2 rounded-xl border-2 border-white ${config.btnClass} shrink-0`}
                     aria-label="Speak"
                   >
-                    <Volume2 size={16} />
+                    <Volume2 size={18} />
                   </button>
                 </div>
               </div>

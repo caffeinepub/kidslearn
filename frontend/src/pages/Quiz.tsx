@@ -53,7 +53,6 @@ export default function Quiz() {
         setShowCelebration(true);
       }
       if (identity) {
-        // targetPrincipal must be a string
         const principalStr = identity.getPrincipal().toString();
         try {
           await awardBadge.mutateAsync({ targetPrincipal: principalStr, badgeId: `quiz-${language}` });
@@ -91,14 +90,14 @@ export default function Quiz() {
       <div className="min-h-screen bg-gradient-to-br from-sunshine-100 via-cherry-100 to-lavender-100 flex items-center justify-center p-4">
         <CelebrationAnimation active={showCelebration} />
         <div className="kid-card border-4 bg-white border-sunshine-400 max-w-md w-full p-8 text-center">
-          <div className="text-7xl mb-4">{pct >= 70 ? "🏆" : "💪"}</div>
-          <h2 className="font-heading text-4xl text-sunshine-600 mb-2">
+          <div className="text-8xl mb-4">{pct >= 70 ? "🏆" : "💪"}</div>
+          <h2 className="font-heading text-5xl text-sunshine-600 mb-3">
             {pct >= 70 ? "Amazing!" : "Good Try!"}
           </h2>
-          <p className="font-body text-xl text-gray-600 mb-4">
+          <p className="font-body text-2xl text-gray-600 mb-4">
             You scored{" "}
-            <span className="font-heading text-cherry-500 text-2xl">{score}</span> out of{" "}
-            <span className="font-heading text-2xl">{questions.length}</span>
+            <span className="font-heading text-cherry-500 text-3xl">{score}</span> out of{" "}
+            <span className="font-heading text-3xl">{questions.length}</span>
           </p>
           <div className="w-full bg-gray-200 rounded-full h-6 mb-6 overflow-hidden">
             <div
@@ -108,14 +107,14 @@ export default function Quiz() {
           </div>
           {pct >= 70 && (
             <div className="bg-sunshine-100 border-4 border-sunshine-400 rounded-2xl p-4 mb-4">
-              <p className="font-heading text-xl text-sunshine-700">🎖️ Badge Earned!</p>
+              <p className="font-heading text-2xl text-sunshine-700">🎖️ Badge Earned!</p>
             </div>
           )}
           <button
             onClick={handleRestart}
-            className="kid-btn bg-sky-400 hover:bg-sky-500 text-white px-8 py-3 text-xl border-4 border-sky-600 flex items-center gap-2 mx-auto"
+            className="kid-btn bg-sky-400 hover:bg-sky-500 text-white px-8 py-4 text-2xl border-4 border-sky-600 flex items-center gap-2 mx-auto"
           >
-            <RotateCcw size={22} /> Try Again
+            <RotateCcw size={24} /> Try Again
           </button>
         </div>
       </div>
@@ -127,7 +126,7 @@ export default function Quiz() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6">
-          <h1 className="font-heading text-5xl text-cherry-600 drop-shadow-md mb-2">❓ Quiz Time!</h1>
+          <h1 className="font-heading text-5xl md:text-6xl text-cherry-600 drop-shadow-md mb-2">❓ Quiz Time!</h1>
         </div>
 
         {/* Language Selector */}
@@ -136,7 +135,7 @@ export default function Quiz() {
             <button
               key={lang}
               onClick={() => handleLanguageChange(lang)}
-              className={`kid-btn px-5 py-2.5 text-base font-heading border-4 ${
+              className={`kid-btn px-5 py-3 text-lg font-heading border-4 ${
                 language === lang
                   ? LANGUAGE_CONFIG[lang].btnClass + " scale-110 shadow-fun-lg"
                   : "bg-white border-gray-300 text-gray-600 hover:scale-105"
@@ -149,19 +148,19 @@ export default function Quiz() {
 
         {/* Progress */}
         <div className="flex items-center gap-3 mb-6">
-          <span className="font-heading text-lg text-gray-600">{currentIdx + 1}/{questions.length}</span>
-          <div className="flex-1 bg-gray-200 rounded-full h-4 overflow-hidden">
+          <span className="font-heading text-xl text-gray-600">{currentIdx + 1}/{questions.length}</span>
+          <div className="flex-1 bg-gray-200 rounded-full h-5 overflow-hidden">
             <div
-              className="h-4 bg-gradient-to-r from-sky-400 to-lavender-400 rounded-full transition-all duration-500"
+              className="h-5 bg-gradient-to-r from-sky-400 to-lavender-400 rounded-full transition-all duration-500"
               style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }}
             />
           </div>
-          <span className="font-heading text-lg text-grass-600">⭐ {score}</span>
+          <span className="font-heading text-xl text-grass-600">⭐ {score}</span>
         </div>
 
         {/* Question Card */}
-        <div className="kid-card border-4 bg-white border-sky-300 p-6 mb-6">
-          <p className="font-heading text-2xl text-gray-800 text-center leading-relaxed">
+        <div className="kid-card border-4 bg-white border-sky-300 p-8 mb-6">
+          <p className="font-heading text-3xl md:text-4xl text-gray-800 text-center leading-relaxed">
             {currentQuestion.question}
           </p>
         </div>
@@ -182,12 +181,12 @@ export default function Quiz() {
                 key={idx}
                 onClick={() => handleAnswer(idx)}
                 disabled={selectedAnswer !== null}
-                className={`kid-card border-4 p-4 text-left font-heading text-xl transition-all duration-200 ${
+                className={`kid-card border-4 p-5 text-left font-heading text-2xl transition-all duration-200 ${
                   showResult ? extraClass : OPTION_COLORS[idx % OPTION_COLORS.length]
                 } disabled:cursor-default flex items-center gap-3`}
               >
-                {showResult && isCorrect && <CheckCircle className="text-grass-600 shrink-0" size={24} />}
-                {showResult && isSelected && !isCorrect && <XCircle className="text-cherry-600 shrink-0" size={24} />}
+                {showResult && isCorrect && <CheckCircle className="text-grass-600 shrink-0" size={28} />}
+                {showResult && isSelected && !isCorrect && <XCircle className="text-cherry-600 shrink-0" size={28} />}
                 <span>{option}</span>
               </button>
             );
@@ -199,7 +198,7 @@ export default function Quiz() {
           <div className="flex justify-center">
             <button
               onClick={handleNext}
-              className="kid-btn bg-sunshine-400 hover:bg-sunshine-500 text-white px-10 py-4 text-xl border-4 border-sunshine-600 shadow-fun-xl"
+              className="kid-btn bg-sunshine-400 hover:bg-sunshine-500 text-white px-10 py-4 text-2xl border-4 border-sunshine-600 shadow-fun-xl"
             >
               {currentIdx + 1 >= questions.length ? "🏁 Finish!" : "Next ➡️"}
             </button>

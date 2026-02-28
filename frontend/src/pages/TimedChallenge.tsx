@@ -117,10 +117,10 @@ export default function TimedChallenge() {
       <div className="min-h-screen bg-gradient-to-br from-sunshine-100 via-tangerine-100 to-cherry-100 flex items-center justify-center p-4">
         <CelebrationAnimation active={showCelebration} />
         <div className="kid-card border-4 bg-white border-sunshine-400 max-w-md w-full p-8 text-center">
-          <div className="text-7xl mb-4">{pct >= 70 ? "🏆" : "💪"}</div>
-          <h2 className="font-heading text-4xl text-sunshine-600 mb-2">{pct >= 70 ? "Amazing!" : "Good Try!"}</h2>
-          <p className="font-body text-xl text-gray-600 mb-4">
-            Score: <span className="font-heading text-cherry-500 text-2xl">{score}</span> / {questions.length}
+          <div className="text-8xl mb-4">{pct >= 70 ? "🏆" : "💪"}</div>
+          <h2 className="font-heading text-5xl text-sunshine-600 mb-3">{pct >= 70 ? "Amazing!" : "Good Try!"}</h2>
+          <p className="font-body text-2xl text-gray-600 mb-4">
+            Score: <span className="font-heading text-cherry-500 text-3xl">{score}</span> / {questions.length}
           </p>
           <div className="w-full bg-gray-200 rounded-full h-6 mb-6 overflow-hidden">
             <div
@@ -130,9 +130,9 @@ export default function TimedChallenge() {
           </div>
           <button
             onClick={handleRestart}
-            className="kid-btn bg-sky-400 hover:bg-sky-500 text-white px-8 py-3 text-xl border-4 border-sky-600 flex items-center gap-2 mx-auto"
+            className="kid-btn bg-sky-400 hover:bg-sky-500 text-white px-8 py-4 text-2xl border-4 border-sky-600 flex items-center gap-2 mx-auto"
           >
-            <RotateCcw size={22} /> Play Again
+            <RotateCcw size={24} /> Play Again
           </button>
         </div>
       </div>
@@ -143,9 +143,9 @@ export default function TimedChallenge() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-sunshine-100 via-tangerine-100 to-cherry-100 flex items-center justify-center p-4">
         <div className="kid-card border-4 bg-white border-tangerine-400 max-w-md w-full p-8 text-center">
-          <div className="text-7xl mb-4">⏱️</div>
-          <h1 className="font-heading text-4xl text-tangerine-600 mb-4">Timed Challenge!</h1>
-          <p className="font-body text-lg text-gray-600 mb-6">
+          <div className="text-8xl mb-4">⏱️</div>
+          <h1 className="font-heading text-5xl text-tangerine-600 mb-4">Timed Challenge!</h1>
+          <p className="font-body text-xl text-gray-600 mb-6">
             Answer {questions.length} questions as fast as you can! You have {TIME_PER_QUESTION} seconds per question.
           </p>
           <div className="flex flex-wrap justify-center gap-3 mb-6">
@@ -153,7 +153,7 @@ export default function TimedChallenge() {
               <button
                 key={lang}
                 onClick={() => setLanguage(lang)}
-                className={`kid-btn px-5 py-2.5 text-base font-heading border-4 ${
+                className={`kid-btn px-5 py-3 text-lg font-heading border-4 ${
                   language === lang
                     ? LANGUAGE_CONFIG[lang].btnClass + " scale-110 shadow-fun-lg"
                     : "bg-white border-gray-300 text-gray-600 hover:scale-105"
@@ -183,8 +183,8 @@ export default function TimedChallenge() {
         {/* Timer & Score */}
         <div className="flex items-center gap-4 mb-6">
           <div className={`kid-card border-4 px-5 py-3 flex items-center gap-2 ${timeLeft <= 5 ? "bg-cherry-200 border-cherry-500" : "bg-sunshine-200 border-sunshine-500"}`}>
-            <Timer size={24} className={timeLeft <= 5 ? "text-cherry-600 animate-pulse" : "text-sunshine-600"} />
-            <span className={`font-heading text-2xl ${timeLeft <= 5 ? "text-cherry-700" : "text-sunshine-700"}`}>{timeLeft}s</span>
+            <Timer size={28} className={timeLeft <= 5 ? "text-cherry-600 animate-pulse" : "text-sunshine-600"} />
+            <span className={`font-heading text-3xl ${timeLeft <= 5 ? "text-cherry-700" : "text-sunshine-700"}`}>{timeLeft}s</span>
           </div>
           <div className="flex-1 bg-gray-200 rounded-full h-5 overflow-hidden">
             <div
@@ -193,18 +193,18 @@ export default function TimedChallenge() {
             />
           </div>
           <div className="kid-card border-4 bg-grass-200 border-grass-500 px-5 py-3">
-            <span className="font-heading text-2xl text-grass-700">⭐ {score}</span>
+            <span className="font-heading text-3xl text-grass-700">⭐ {score}</span>
           </div>
         </div>
 
         {/* Progress */}
         <div className="text-center mb-4">
-          <span className="font-heading text-xl text-gray-600">{currentIdx + 1} / {questions.length}</span>
+          <span className="font-heading text-2xl text-gray-600">{currentIdx + 1} / {questions.length}</span>
         </div>
 
         {/* Question */}
-        <div className="kid-card border-4 bg-white border-sky-300 p-6 mb-6">
-          <p className="font-heading text-2xl text-gray-800 text-center">{question.question}</p>
+        <div className="kid-card border-4 bg-white border-sky-300 p-8 mb-6">
+          <p className="font-heading text-3xl md:text-4xl text-gray-800 text-center">{question.question}</p>
         </div>
 
         {/* Options */}
@@ -214,11 +214,13 @@ export default function TimedChallenge() {
               key={idx}
               onClick={() => handleAnswer(idx)}
               disabled={selectedAnswer !== null}
-              className={`kid-card border-4 p-4 font-heading text-xl text-left transition-all duration-200 ${
+              className={`kid-card border-4 p-5 font-heading text-2xl text-left transition-all duration-200 ${
                 selectedAnswer === idx
                   ? idx === question.correctIndex
                     ? "bg-grass-300 border-grass-600"
                     : "bg-cherry-300 border-cherry-600"
+                  : selectedAnswer !== null && idx === question.correctIndex
+                  ? "bg-grass-300 border-grass-600"
                   : OPTION_COLORS[idx % OPTION_COLORS.length]
               } disabled:cursor-default`}
             >

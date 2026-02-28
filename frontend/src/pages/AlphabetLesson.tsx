@@ -89,10 +89,10 @@ export default function AlphabetLesson() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="font-heading text-5xl md:text-6xl text-sky-600 drop-shadow-md mb-2">
+          <h1 className="font-heading text-5xl md:text-7xl text-sky-600 drop-shadow-md mb-2">
             🔤 Alphabet Fun!
           </h1>
-          <p className="font-body text-xl text-sky-500 font-semibold">
+          <p className="font-body text-xl md:text-2xl text-sky-500 font-semibold">
             Tap a card to hear the letter!
           </p>
         </div>
@@ -103,7 +103,7 @@ export default function AlphabetLesson() {
             <button
               key={lang}
               onClick={() => setLanguage(lang)}
-              className={`kid-btn px-6 py-3 text-lg font-heading border-4 ${
+              className={`kid-btn px-6 py-3 text-xl font-heading border-4 ${
                 language === lang
                   ? LANGUAGE_CONFIG[lang].btnClass + " scale-110 shadow-fun-lg border-white"
                   : "bg-white border-gray-300 text-gray-600 hover:scale-105"
@@ -115,7 +115,7 @@ export default function AlphabetLesson() {
         </div>
 
         {/* Info Banner */}
-        <div className={`mx-auto max-w-xl mb-8 p-4 rounded-3xl border-4 text-center font-heading text-lg ${config.bgClass}`}>
+        <div className={`mx-auto max-w-xl mb-8 p-4 rounded-3xl border-4 text-center font-heading text-xl ${config.bgClass}`}>
           {language.charAt(0).toUpperCase() + language.slice(1)} Alphabet — {cards.length} characters
         </div>
 
@@ -127,32 +127,32 @@ export default function AlphabetLesson() {
             return (
               <div
                 key={`${language}-${card.letter}-${idx}`}
-                className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 flex flex-col items-center justify-between p-4 min-h-[280px]`}
+                className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 flex flex-col items-center justify-between p-4 min-h-[320px]`}
                 onClick={() => speak(`${card.letter}. ${card.word}`, config.voice)}
               >
                 {/* Letter - VERY LARGE */}
                 <div className="flex-1 flex items-center justify-center w-full">
-                  <span className="font-heading text-7xl md:text-8xl leading-none drop-shadow-md select-none">
+                  <span className="font-heading text-8xl md:text-9xl leading-none drop-shadow-md select-none">
                     {card.letter}
                   </span>
                 </div>
 
-                {/* Image or Emoji */}
+                {/* Image or Emoji - larger */}
                 <div className="w-full flex items-center justify-center py-2">
                   {imgSrc ? (
                     <img
                       src={imgSrc}
                       alt={card.word}
-                      className="w-20 h-20 object-contain rounded-2xl"
+                      className="w-28 h-28 object-contain rounded-2xl"
                     />
                   ) : (
-                    <span className="text-5xl">{card.emoji}</span>
+                    <span className="text-7xl">{card.emoji}</span>
                   )}
                 </div>
 
                 {/* Word + Speak Button */}
                 <div className="w-full flex items-center justify-between gap-2 mt-1">
-                  <span className="font-heading text-lg text-gray-700 truncate flex-1">
+                  <span className="font-heading text-xl text-gray-700 truncate flex-1">
                     {card.word}
                   </span>
                   <button
@@ -160,7 +160,7 @@ export default function AlphabetLesson() {
                     className={`kid-btn p-2 rounded-xl border-2 border-white ${config.btnClass} shrink-0`}
                     aria-label="Speak"
                   >
-                    <Volume2 size={20} />
+                    <Volume2 size={22} />
                   </button>
                 </div>
               </div>

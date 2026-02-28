@@ -1,32 +1,33 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Kids' educational app with a post-login experience featuring a profile screen (avatar, name, progress stats, badges, level, editable fields) that auto-launches into a learning dashboard resuming progress or recommending the next lesson. Includes a fun, colorful kid-friendly UI with progress tracking, badges, and levels.",
+  "summary": "New project",
   "architectural_notes": [],
   "known_issues": [],
   "isFixRequest": false,
+  "imageRequirements": "## Required Images\n- Colorful kids-themed app logo with a friendly star or book illustration and bold playful text 'KidsLearn', suitable for both header and splash screen use (kidslearn-logo.dim_256x256.png)",
   "existing_features": [
     {
-      "id": "feature-create-a-post-login-profile-screen-that-displays-the-kid-s-avatar-selectable-from-a-set-of-fun-kid-friendly-emoji-illustration-options-editable-display-name-current-level-earned-badges-grid-and-progress-stats-lessons-completed-quizzes-taken-points-earned-the-screen-must-appear-immediately-after-a-successful-internet-identity-login-before-navigating-to-the-learning-dashboard",
-      "title": "Create a post-login profile screen that displays the kid's avatar (selectable from a set of fun kid-friendly emoji/illustration options), editable display name, current level, earned badges grid, and progress stats (lessons completed, quizzes taken, points earned). The screen must appear immediately after a successful Internet Identity login before navigating to the learning dashboard.",
+      "id": "feature-add-the-kidslearn-app-logo-prominently-on-the-home-page-frontend-src-pages-home-tsx-and-in-the-sticky-header-component-frontend-src-components-layout-header-tsx-the-logo-should-be-a-fun-colorful-kids-themed-svg-or-png-rendered-as-a-visible-brand-mark-alongside-the-app-name-place-it-at-the-top-center-of-the-home-page-hero-area-and-as-an-inline-element-in-the-header-next-to-the-app-title",
+      "title": "Add the KidsLearn app logo prominently on the Home page (frontend/src/pages/Home.tsx) and in the sticky Header component (frontend/src/components/layout/Header.tsx). The logo should be a fun, colorful kids-themed SVG or PNG rendered as a visible brand mark alongside the app name. Place it at the top-center of the Home page hero area and as an inline element in the header next to the app title.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-after-the-profile-screen-is-viewed-automatically-launch-the-kids-learning-dashboard-if-the-kid-has-previous-lesson-progress-resume-from-where-they-left-off-and-highlight-the-next-recommended-lesson-if-no-prior-progress-exists-show-a-recommended-starting-lesson-the-transition-should-be-smooth-and-kid-friendly-e-g-a-brief-animated-transition",
-      "title": "After the profile screen is viewed, automatically launch the kids' learning dashboard. If the kid has previous lesson progress, resume from where they left off and highlight the next recommended lesson. If no prior progress exists, show a recommended starting lesson. The transition should be smooth and kid-friendly (e.g., a brief animated transition).",
+      "id": "feature-increase-the-font-sizes-for-all-primary-text-headings-numbers-and-labels-throughout-the-app-this-includes-number-cards-in-numberslesson-numbers100lesson-alphabet-cards-in-alphabetlesson-and-alphabetfullscreen-quiz-question-and-answer-text-in-quiz-and-timedchallenge-lesson-body-text-in-lessons-vocabulary-and-picture-card-labels-in-vocabularylesson-and-picturelesson-and-dashboard-stat-numbers-in-kidsdashboard-and-progresswidget-bump-base-text-sizes-up-at-least-one-tailwind-size-step-e-g-text-lg-text-xl-text-2xl-text-3xl-and-heading-number-display-sizes-by-at-least-two-steps",
+      "title": "Increase the font sizes for all primary text, headings, numbers, and labels throughout the app. This includes: number cards in NumbersLesson, Numbers100Lesson; alphabet cards in AlphabetLesson and AlphabetFullScreen; quiz question and answer text in Quiz and TimedChallenge; lesson body text in Lessons; vocabulary and picture card labels in VocabularyLesson and PictureLesson; and dashboard stat numbers in KidsDashboard and ProgressWidget. Bump base text sizes up at least one Tailwind size step (e.g. text-lg → text-xl, text-2xl → text-3xl) and heading/number display sizes by at least two steps.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-optimise-the-kidsdashboard-page-for-fast-initial-load-by-lazy-loading-non-critical-sections-games-list-tasks-rewards-and-showing-skeleton-loaders-while-data-is-being-fetched-priority-load-the-progress-stats-and-recommended-lesson-card-first-so-the-kid-sees-actionable-content-immediately",
-      "title": "Optimise the KidsDashboard page for fast initial load by lazy-loading non-critical sections (games list, tasks, rewards) and showing skeleton loaders while data is being fetched. Priority-load the progress stats and recommended lesson card first so the kid sees actionable content immediately.",
+      "id": "feature-increase-the-size-of-images-emoji-illustrations-and-card-thumbnails-across-the-app-this-includes-emoji-image-displays-in-alphabetlesson-alphabetfullscreen-picturelesson-vocabularylesson-numberslesson-gamecard-learningcard-and-minigame-increase-image-emoji-container-sizes-by-at-least-25-40-compared-to-current-sizing-using-larger-tailwind-size-classes-e-g-w-16-h-16-w-24-h-24-text-4xl-emoji-text-6xl",
+      "title": "Increase the size of images, emoji illustrations, and card thumbnails across the app. This includes: emoji/image displays in AlphabetLesson, AlphabetFullScreen, PictureLesson, VocabularyLesson, NumbersLesson, GameCard, LearningCard, and MiniGame. Increase image/emoji container sizes by at least 25–40% compared to current sizing, using larger Tailwind size classes (e.g. w-16 h-16 → w-24 h-24, text-4xl emoji → text-6xl).",
       "reqIds": [
-        "REQ-4"
+        "REQ-3"
       ],
       "version": 1
     }
@@ -34,33 +35,18 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Post-login profile screen with avatar (editable), name (editable), progress stats, badges, and current level",
+      "summary": "Add logo on app screen",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Auto-launch learning dashboard after profile view, resuming where kid left off or recommending next lesson",
+      "summary": "Increase the size of words, numbers and images throughout the app",
       "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Kid-friendly colorful UI with fast-loading content, progress tracking, badges, and levels",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Update the backend to store and retrieve avatar selection as part of the user profile. Add or extend the existing user profile data structure to include an avatarId field (a short string identifier) that can be set and fetched via dedicated update and query calls.",
-      "reqIds": [
-        "REQ-3"
-      ],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
-  "projectName": "Kids Educational App",
+  "projectName": "Kids Learn",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

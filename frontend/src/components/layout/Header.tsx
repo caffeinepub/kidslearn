@@ -43,7 +43,7 @@ const Header: React.FC = () => {
               className="p-2 rounded-2xl bg-sunshine-100 hover:bg-sunshine-200 text-sunshine-700 transition-colors"
               aria-label="Go back"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={22} />
             </button>
           )}
           <button
@@ -53,9 +53,9 @@ const Header: React.FC = () => {
             <img
               src="/assets/generated/kidslearn-logo.dim_256x256.png"
               alt="KidsLearn"
-              className="w-9 h-9 rounded-xl border-2 border-sunshine-300"
+              className="w-12 h-12 md:w-14 md:h-14 rounded-xl border-2 border-sunshine-300"
             />
-            <span className="font-heading text-xl text-sunshine-600 hidden sm:block">KidsLearn</span>
+            <span className="font-heading text-2xl text-sunshine-600 hidden sm:block">KidsLearn</span>
           </button>
         </div>
 
@@ -67,7 +67,7 @@ const Header: React.FC = () => {
               className="flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-sky-100 hover:bg-sky-200 text-sky-700 font-nunito font-bold text-sm transition-colors"
               aria-label="Kids Dashboard"
             >
-              <LayoutDashboard size={16} />
+              <LayoutDashboard size={18} />
               <span className="hidden sm:inline">Dashboard</span>
             </button>
           )}
@@ -78,7 +78,7 @@ const Header: React.FC = () => {
               className="p-2 rounded-2xl bg-lavender-100 hover:bg-lavender-200 text-lavender-700 transition-colors"
               aria-label="Profile"
             >
-              <User size={20} />
+              <User size={22} />
             </button>
           )}
 

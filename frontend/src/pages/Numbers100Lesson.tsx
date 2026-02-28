@@ -61,10 +61,10 @@ export default function Numbers100Lesson() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className={`font-heading text-5xl md:text-6xl drop-shadow-md mb-2 ${config.headerColor}`}>
+          <h1 className={`font-heading text-5xl md:text-7xl drop-shadow-md mb-2 ${config.headerColor}`}>
             🔢 Numbers 1–100
           </h1>
-          <p className="font-body text-xl text-grass-500 font-semibold">
+          <p className="font-body text-xl md:text-2xl text-grass-500 font-semibold">
             Tap any number to hear it!
           </p>
         </div>
@@ -75,7 +75,7 @@ export default function Numbers100Lesson() {
             <button
               key={lang}
               onClick={() => setLanguage(lang)}
-              className={`kid-btn px-6 py-3 text-lg font-heading border-4 ${
+              className={`kid-btn px-6 py-3 text-xl font-heading border-4 ${
                 language === lang
                   ? LANGUAGE_CONFIG[lang].btnClass + " scale-110 shadow-fun-lg"
                   : "bg-white border-gray-300 text-gray-600 hover:scale-105"
@@ -93,16 +93,16 @@ export default function Numbers100Lesson() {
             return (
               <div
                 key={`${language}-${num.numeral}-${idx}`}
-                className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-110 hover:shadow-fun-xl active:scale-95 flex flex-col items-center justify-center p-2 min-h-[100px] gap-1 transition-all duration-150`}
+                className={`kid-card border-4 ${colorClass} cursor-pointer hover:scale-110 hover:shadow-fun-xl active:scale-95 flex flex-col items-center justify-center p-2 min-h-[120px] gap-1 transition-all duration-150`}
                 onClick={() => speak(num.word, config.voice)}
               >
-                {/* Number - Large */}
-                <span className="font-heading text-4xl md:text-5xl leading-none drop-shadow-sm select-none text-gray-800">
+                {/* Number - Larger */}
+                <span className="font-heading text-4xl md:text-5xl lg:text-6xl leading-none drop-shadow-sm select-none text-gray-800">
                   {num.numeral}
                 </span>
 
                 {/* Word */}
-                <span className="font-body text-xs text-gray-600 text-center leading-tight line-clamp-2 w-full px-1">
+                <span className="font-body text-xs md:text-sm text-gray-600 text-center leading-tight line-clamp-2 w-full px-1">
                   {num.word}
                 </span>
 
@@ -112,7 +112,7 @@ export default function Numbers100Lesson() {
                   className={`kid-btn p-1 rounded-lg border-2 border-white ${config.btnClass} mt-0.5`}
                   aria-label="Speak"
                 >
-                  <Volume2 size={12} />
+                  <Volume2 size={14} />
                 </button>
               </div>
             );

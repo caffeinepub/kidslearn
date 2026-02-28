@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { Heart } from 'lucide-react';
+import { Heart, Share2 } from 'lucide-react';
 import { useInternetIdentity } from '../../hooks/useInternetIdentity';
+import ShareModal from '../ShareModal';
 
 const Footer: React.FC = () => {
   const navigate = useNavigate();
   const { identity } = useInternetIdentity();
   const isAuthenticated = !!identity;
+  const [shareOpen, setShareOpen] = useState(false);
 
   const appId = typeof window !== 'undefined' ? encodeURIComponent(window.location.hostname) : 'kidslearn-app';
   const caffeineUrl = `https://caffeine.ai/?utm_source=Caffeine-footer&utm_medium=referral&utm_content=${appId}`;
@@ -39,6 +41,14 @@ const Footer: React.FC = () => {
           <button onClick={() => navigate({ to: '/donate' })} className="hover:text-sunshine-100 transition-colors">
             Support Us
           </button>
+          {/* Share App Link */}
+          <button
+            onClick={() => setShareOpen(true)}
+            className="hover:text-sunshine-100 transition-colors flex items-center gap-1"
+          >
+            <Share2 size={13} />
+            Share App
+          </button>
         </div>
 
         {/* Attribution */}
@@ -57,6 +67,9 @@ const Footer: React.FC = () => {
           <p>© {new Date().getFullYear()} KidsLearn. All rights reserved.</p>
         </div>
       </div>
+
+      {/* Share Modal */}
+      <ShareModal isOpen={shareOpen} onClose={() => setShareOpen(false)} />
     </footer>
   );
 };

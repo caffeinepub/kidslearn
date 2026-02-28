@@ -119,7 +119,7 @@ export default function Lessons() {
   if (!currentLesson) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8 text-center">
-        <p className="font-fredoka text-2xl text-muted-foreground">No lessons found!</p>
+        <p className="font-fredoka text-3xl text-muted-foreground">No lessons found!</p>
       </div>
     );
   }
@@ -127,8 +127,8 @@ export default function Lessons() {
   return (
     <div className="animate-fade-slide-in max-w-2xl mx-auto px-4 py-8">
       <div className="text-center mb-6">
-        <h1 className="font-fredoka text-3xl text-foreground">{subjectEmoji} {subjectLabel} Lessons</h1>
-        <p className="font-nunito text-muted-foreground font-semibold">
+        <h1 className="font-fredoka text-4xl md:text-5xl text-foreground">{subjectEmoji} {subjectLabel} Lessons</h1>
+        <p className="font-nunito text-xl text-muted-foreground font-semibold">
           Lesson {currentIndex + 1} of {lessons.length}
         </p>
       </div>
@@ -141,7 +141,7 @@ export default function Lessons() {
             <button
               key={i}
               onClick={() => { synthRef.current?.cancel(); setIsSpeaking(false); setCurrentIndex(i); }}
-              className={`w-4 h-4 rounded-full transition-all ${
+              className={`w-5 h-5 rounded-full transition-all ${
                 i === currentIndex ? 'bg-tangerine-500 scale-125' : done ? 'bg-grass-500' : 'bg-muted'
               }`}
             />
@@ -151,7 +151,7 @@ export default function Lessons() {
 
       {/* Lesson Card */}
       <div className="bg-card rounded-3xl border-4 border-sunshine-400 shadow-card overflow-hidden mb-6">
-        <div className="bg-sunshine-100 h-40 flex items-center justify-center text-6xl">
+        <div className="bg-sunshine-100 h-48 flex items-center justify-center text-8xl">
           {currentLesson.image ? (
             <img src={currentLesson.image} alt={currentLesson.title} className="h-full w-full object-cover" />
           ) : (
@@ -160,10 +160,10 @@ export default function Lessons() {
         </div>
         <div className="p-6">
           <div className="flex items-start justify-between gap-3 mb-4">
-            <h2 className="font-fredoka text-2xl text-foreground flex-1">{currentLesson.title}</h2>
-            {isCompleted && <CheckCircle className="text-grass-500 shrink-0 mt-1" size={28} />}
+            <h2 className="font-fredoka text-3xl text-foreground flex-1">{currentLesson.title}</h2>
+            {isCompleted && <CheckCircle className="text-grass-500 shrink-0 mt-1" size={32} />}
           </div>
-          <p className="font-nunito text-foreground leading-relaxed text-base">{currentLesson.body}</p>
+          <p className="font-nunito text-foreground leading-relaxed text-xl">{currentLesson.body}</p>
         </div>
       </div>
 
@@ -171,11 +171,11 @@ export default function Lessons() {
       <div className="flex items-center gap-3 mb-4">
         <button
           onClick={handleSpeak}
-          className={`touch-target flex items-center justify-center gap-2 px-5 py-3 rounded-2xl font-nunito font-bold shadow-fun hover:scale-105 active:scale-95 transition-all ${
+          className={`touch-target flex items-center justify-center gap-2 px-5 py-3 rounded-2xl font-nunito font-bold text-lg shadow-fun hover:scale-105 active:scale-95 transition-all ${
             isSpeaking ? 'bg-cherry-500 text-white' : 'bg-tangerine-400 text-white hover:bg-tangerine-300'
           }`}
         >
-          {isSpeaking ? <VolumeX size={20} /> : <Volume2 size={20} />}
+          {isSpeaking ? <VolumeX size={22} /> : <Volume2 size={22} />}
           {isSpeaking ? 'Stop' : 'Listen'}
         </button>
 
@@ -183,15 +183,15 @@ export default function Lessons() {
           <button
             onClick={handleComplete}
             disabled={completeLessonMutation.isPending}
-            className="touch-target flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-grass-500 text-white font-nunito font-bold shadow-fun hover:scale-105 active:scale-95 transition-all disabled:opacity-60"
+            className="touch-target flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-grass-500 text-white font-nunito font-bold text-lg shadow-fun hover:scale-105 active:scale-95 transition-all disabled:opacity-60"
           >
-            <CheckCircle size={20} />
+            <CheckCircle size={22} />
             {completeLessonMutation.isPending ? 'Saving...' : 'Mark Complete'}
           </button>
         )}
         {isCompleted && (
-          <div className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-grass-100 border-4 border-grass-400 text-grass-700 font-nunito font-bold">
-            <CheckCircle size={20} /> Completed!
+          <div className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-grass-100 border-4 border-grass-400 text-grass-700 font-nunito font-bold text-lg">
+            <CheckCircle size={22} /> Completed!
           </div>
         )}
       </div>
@@ -201,16 +201,16 @@ export default function Lessons() {
         <button
           onClick={handlePrev}
           disabled={currentIndex === 0}
-          className="touch-target flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-muted font-nunito font-bold hover:bg-muted/80 disabled:opacity-40 transition-all shadow-fun hover:scale-105 active:scale-95"
+          className="touch-target flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-muted font-nunito font-bold text-lg hover:bg-muted/80 disabled:opacity-40 transition-all shadow-fun hover:scale-105 active:scale-95"
         >
-          <ChevronLeft size={20} /> Prev
+          <ChevronLeft size={22} /> Prev
         </button>
         <button
           onClick={handleNext}
           disabled={currentIndex === lessons.length - 1}
-          className="touch-target flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-sunshine-400 text-foreground font-nunito font-bold hover:bg-sunshine-300 disabled:opacity-40 transition-all shadow-fun hover:scale-105 active:scale-95"
+          className="touch-target flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-sunshine-400 text-foreground font-nunito font-bold text-lg hover:bg-sunshine-300 disabled:opacity-40 transition-all shadow-fun hover:scale-105 active:scale-95"
         >
-          Next <ChevronRight size={20} />
+          Next <ChevronRight size={22} />
         </button>
       </div>
     </div>

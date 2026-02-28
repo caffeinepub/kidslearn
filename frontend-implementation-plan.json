@@ -1,87 +1,147 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Post-Login Profile Screen & Learning Dashboard Auto-Launch",
+  "title": "Add logo to app screen and increase text/number/image sizes",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Create a post-login profile screen that displays the kid's avatar (selectable from a set of fun kid-friendly emoji/illustration options), editable display name, current level, earned badges grid, and progress stats (lessons completed, quizzes taken, points earned). The screen must appear immediately after a successful Internet Identity login before navigating to the learning dashboard.",
+      "summary": "Add the KidsLearn app logo prominently on the Home page and in the Header component",
       "acceptanceCriteria": [
-        "After login, the user is routed to the profile screen before any other page",
-        "Avatar selector shows at least 8 kid-friendly emoji/character options and saves selection to backend profile",
-        "Display name is editable inline with a save button; changes persist to the backend",
-        "Current level, total points, badges earned, lessons completed, and quizzes taken are all visible",
-        "A 'Start Learning' or 'Continue' button navigates to the learning dashboard"
+        "A logo image or SVG appears at the top of the Home page",
+        "The same logo appears in the Header component next to the app name",
+        "The logo is clearly visible on both mobile and desktop screen sizes",
+        "The logo does not overlap or obscure navigation elements"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/PostLoginProfile.tsx",
-          "operation": "create",
-          "description": "Create a new PostLoginProfile page component that displays the user's avatar selector (8+ emoji options like 🦁🐼🦊🐸🐙🦄🐻🐨), editable display name with inline save button, current level calculation based on points, earned badges in a grid layout, and progress stats (lessons completed, quizzes taken, total points). Include a prominent 'Start Learning' button that navigates to /kids-dashboard. Use the authorization component's getCallerUserProfile and saveCallerUserProfile backend methods to fetch and persist avatar and name. Use the existing useGetSessionProgress hook for progress stats and badges. Implement avatar selection as a grid of clickable emoji buttons that update the UserProfile.avatarId field."
+          "path": "frontend/src/pages/Home.tsx",
+          "operation": "modify",
+          "description": "Add the generated KidsLearn logo image (frontend/public/assets/generated/kidslearn-logo.dim_256x256.png) prominently at the top-center of the Home page hero area above the grid of learning activities. Use an img element with appropriate Tailwind sizing classes (e.g., w-32 h-32 md:w-40 md:h-40) to ensure visibility across screen sizes. Position the logo above the app name and tagline in the existing hero section."
         },
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/components/layout/Header.tsx",
           "operation": "modify",
-          "description": "Add a new route for /post-login-profile that renders the PostLoginProfile page. Ensure this route is defined before the /kids-dashboard route in the routing configuration. Wire the route into the existing RouterProvider setup using TanStack Router's route definition pattern consistent with other pages in the app."
-        },
-        {
-          "path": "frontend/src/components/RoleSelectionModal.tsx",
-          "operation": "modify",
-          "description": "Update the RoleSelectionModal component to check if the user has completed their profile setup (has avatarId and name in UserProfile). If profile is incomplete, navigate to /post-login-profile instead of directly to /kids-dashboard. Use the useGetCallerUserProfile hook to check profile completeness. If profile exists and is complete (has avatarId field), navigate to /kids-dashboard as before."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add or update the useGetCallerUserProfile hook to ensure it properly fetches the current user's profile including the new avatarId field from the backend. Add a useSaveCallerUserProfile mutation hook that calls actor.saveCallerUserProfile(profile) and invalidates the 'currentUserProfile' query key on success. Ensure both hooks follow the existing pattern with proper actor dependency checks and React Query configuration."
+          "description": "Add the generated KidsLearn logo image (frontend/public/assets/generated/kidslearn-logo.dim_256x256.png) as an inline element next to the app title 'Kids Learn' in the header. Use a smaller size (e.g., w-8 h-8 md:w-10 md:h-10) to fit within the sticky header bar. Place the logo before or alongside the app name text, ensuring it does not interfere with the back button, dashboard shortcut, profile link, or login button."
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "After the profile screen is viewed, automatically launch the kids' learning dashboard. If the kid has previous lesson progress, resume from where they left off and highlight the next recommended lesson. If no prior progress exists, show a recommended starting lesson. The transition should be smooth and kid-friendly (e.g., a brief animated transition).",
+      "summary": "Increase font sizes for all primary text, headings, numbers, and labels throughout the app",
       "acceptanceCriteria": [
-        "After clicking 'Start Learning' or after a short auto-advance delay on the profile screen, the kids dashboard loads",
-        "If the user has completed lessons, the dashboard highlights the next incomplete lesson as recommended",
-        "If the user has no prior progress, a beginner-friendly first lesson is highlighted as the starting recommendation",
-        "An animated page transition plays between the profile screen and the dashboard"
+        "Number cards in NumbersLesson and Numbers100Lesson display noticeably larger numerals",
+        "Alphabet characters in AlphabetLesson and AlphabetFullScreen are visibly bigger",
+        "Quiz and lesson body text is larger and easier to read for kids",
+        "Dashboard stat numbers and labels are increased in size",
+        "No text overflows its container or becomes unreadable on small screens"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/PostLoginProfile.tsx",
+          "path": "frontend/src/pages/NumbersLesson.tsx",
           "operation": "modify",
-          "description": "Add a kid-friendly animated page transition effect when navigating from PostLoginProfile to KidsDashboard. Implement a fade-out or slide-out animation using CSS transitions or Framer Motion before calling navigate('/kids-dashboard'). The 'Start Learning' button should trigger this animated transition. Consider adding a brief celebration or encouraging message during the transition (e.g., 'Let's learn together!' or 'Adventure awaits!')."
+          "description": "Increase the font size of the number display on each number card. Bump the main number text up by at least two Tailwind size steps (e.g., from text-6xl to text-8xl or text-9xl). Ensure the number remains centered and readable on mobile and desktop screens without overflow."
+        },
+        {
+          "path": "frontend/src/pages/Numbers100Lesson.tsx",
+          "operation": "modify",
+          "description": "Increase the font size of the numbers displayed in the 1-100 grid. Bump each number's text size by at least one Tailwind step (e.g., from text-xl to text-2xl or text-3xl). Verify that the grid layout accommodates the larger text without breaking on smaller screens."
+        },
+        {
+          "path": "frontend/src/pages/AlphabetLesson.tsx",
+          "operation": "modify",
+          "description": "Increase the font size of alphabet characters displayed on each card. Bump the letter text by at least two Tailwind size steps (e.g., from text-4xl to text-6xl or larger). Ensure the characters remain centered and do not overflow their card containers on mobile or desktop."
+        },
+        {
+          "path": "frontend/src/pages/AlphabetFullScreen.tsx",
+          "operation": "modify",
+          "description": "Increase the font size of the full-screen alphabet character display. Bump the main letter text by at least two Tailwind size steps (e.g., from text-8xl to a custom larger size or text-9xl). Ensure it remains prominent and centered without overflowing the viewport."
+        },
+        {
+          "path": "frontend/src/pages/Quiz.tsx",
+          "operation": "modify",
+          "description": "Increase the font size of quiz question text and answer option text. Bump question headings by at least two Tailwind steps (e.g., text-xl to text-3xl) and answer text by at least one step (e.g., text-lg to text-xl). Verify readability and ensure no overflow on small screens."
+        },
+        {
+          "path": "frontend/src/pages/TimedChallenge.tsx",
+          "operation": "modify",
+          "description": "Increase the font size of quiz question text and answer option text. Bump question text by at least two Tailwind steps and answer text by at least one step. Ensure the timer and score displays are also increased for better visibility."
+        },
+        {
+          "path": "frontend/src/pages/Lessons.tsx",
+          "operation": "modify",
+          "description": "Increase the font size of lesson body text and lesson titles. Bump heading text by at least two Tailwind steps and body text by at least one step (e.g., text-base to text-lg or text-xl). Ensure text remains readable and fits within lesson slide containers."
+        },
+        {
+          "path": "frontend/src/pages/VocabularyLesson.tsx",
+          "operation": "modify",
+          "description": "Increase the font size of vocabulary word labels on each card. Bump label text by at least one Tailwind step (e.g., text-sm to text-base or text-lg). Ensure words remain centered under their images without overflow."
+        },
+        {
+          "path": "frontend/src/pages/PictureLesson.tsx",
+          "operation": "modify",
+          "description": "Increase the font size of picture card labels. Bump label text by at least one Tailwind step (e.g., text-sm to text-base or text-lg). Ensure labels remain readable and do not overflow their containers."
         },
         {
           "path": "frontend/src/pages/KidsDashboard.tsx",
           "operation": "modify",
-          "description": "Add logic to highlight the next recommended lesson based on the user's progress. Use the existing useGetSessionProgress hook to fetch completedLessons, then determine the next incomplete lesson ID from the available lessons list. If no lessons are completed, highlight the first beginner lesson as the recommended starting point. Add visual styling (e.g., a pulsing border, star icon, or 'Recommended for You!' badge) to the recommended lesson card to draw attention. Include a fade-in or slide-in animation when the dashboard loads to create a smooth kid-friendly transition from the profile screen."
+          "description": "Increase the font size of stat numbers and stat labels displayed in the dashboard. Bump stat number text by at least two Tailwind steps (e.g., text-2xl to text-4xl) and label text by at least one step (e.g., text-sm to text-base). Ensure the layout accommodates the larger text without breaking on mobile or desktop."
+        },
+        {
+          "path": "frontend/src/components/ProgressWidget.tsx",
+          "operation": "modify",
+          "description": "Increase the font size of progress stat numbers and labels. Bump stat numbers by at least two Tailwind steps and labels by at least one step. Ensure the progress bars and text remain aligned and readable on all screen sizes."
         }
       ]
     },
     {
-      "id": "REQ-4",
-      "summary": "Optimise the KidsDashboard page for fast initial load by lazy-loading non-critical sections (games list, tasks, rewards) and showing skeleton loaders while data is being fetched. Priority-load the progress stats and recommended lesson card first so the kid sees actionable content immediately.",
+      "id": "REQ-3",
+      "summary": "Increase the size of images, emoji illustrations, and card thumbnails across the app",
       "acceptanceCriteria": [
-        "Skeleton loaders are shown for games, tasks, and rewards sections while data loads",
-        "Progress stats and recommended lesson card render before games and tasks sections",
-        "No visible layout shift after data loads",
-        "React Query caching is used so repeated visits to the dashboard do not trigger redundant backend calls"
+        "Emoji and image elements in alphabet, number, and vocabulary pages are visibly larger",
+        "Game and learning card thumbnails/emojis are bigger and more prominent",
+        "Card layouts accommodate the larger images without breaking the grid",
+        "Changes are consistent across all affected pages"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/pages/KidsDashboard.tsx",
+          "path": "frontend/src/pages/AlphabetLesson.tsx",
           "operation": "modify",
-          "description": "Refactor the KidsDashboard to prioritize rendering progress stats and the recommended lesson card first. Use React.lazy() and Suspense to lazy-load the games list, tasks section, and rewards display components. Implement skeleton loaders (using shadcn/ui Skeleton component or custom shimmer placeholders) for each lazy-loaded section that match the expected layout dimensions to prevent layout shift. Ensure the useGetSessionProgress, useGetLessons hooks are called immediately, while games, tasks, and rewards queries use lower priority or are deferred until the critical content renders. Verify that React Query staleTime and cacheTime settings are configured to avoid redundant backend calls on repeated dashboard visits."
+          "description": "Increase the size of emoji/image displays on alphabet cards. Bump image container sizes by at least 25-40% (e.g., from w-16 h-16 to w-24 h-24 or w-32 h-32) and emoji text size from text-4xl to text-6xl or text-7xl. Ensure the card grid layout adapts to the larger content without breaking."
         },
         {
-          "path": "frontend/src/components/ui/Skeleton.tsx",
-          "operation": "create",
-          "description": "Create a reusable Skeleton component for loading states if one does not already exist in the shadcn/ui components directory. The Skeleton should render a placeholder with a shimmer animation effect matching the app's kid-friendly design. Export variants for card skeletons, text skeletons, and circular skeletons to be used across the dashboard sections."
+          "path": "frontend/src/pages/AlphabetFullScreen.tsx",
+          "operation": "modify",
+          "description": "Increase the size of the emoji/image displayed alongside the full-screen alphabet character. Bump the emoji text size from text-4xl to text-6xl or larger, or increase image container dimensions by 25-40%. Ensure the larger content fits within the full-screen layout."
         },
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/pages/PictureLesson.tsx",
           "operation": "modify",
-          "description": "Review and update React Query configurations for useGetTasks, useGetGameSessions, and rewards-related hooks to include appropriate staleTime (e.g., 5 minutes) and cacheTime settings. Ensure that queries are marked with gcTime (formerly cacheTime) to keep cached data available for repeated dashboard visits without re-fetching. Add enabled flags where appropriate to defer non-critical queries until the user interacts with those sections."
+          "description": "Increase the size of picture card images. Bump image container sizes by at least 25-40% (e.g., from w-20 h-20 to w-28 h-28 or w-32 h-32). Ensure the card grid accommodates the larger images without breaking on mobile or desktop."
+        },
+        {
+          "path": "frontend/src/pages/VocabularyLesson.tsx",
+          "operation": "modify",
+          "description": "Increase the size of emoji/image displays on vocabulary cards. Bump emoji text size from text-4xl to text-6xl or larger, or increase image container dimensions by 25-40%. Ensure the card layout accommodates the larger content."
+        },
+        {
+          "path": "frontend/src/pages/NumbersLesson.tsx",
+          "operation": "modify",
+          "description": "Increase the size of emoji illustrations on number cards. Bump emoji text size from text-4xl to text-6xl or text-7xl. Ensure the emoji remains centered and fits within the card layout."
+        },
+        {
+          "path": "frontend/src/components/GameCard.tsx",
+          "operation": "modify",
+          "description": "Increase the size of the emoji/icon displayed on each game card. Bump emoji text size from text-4xl to text-6xl or text-7xl. Ensure the card layout accommodates the larger emoji without overflow."
+        },
+        {
+          "path": "frontend/src/components/LearningCard.tsx",
+          "operation": "modify",
+          "description": "Increase the size of the emoji/icon displayed on each learning card. Bump emoji text size from text-4xl to text-6xl or text-7xl. Ensure the card layout accommodates the larger emoji without overflow."
+        },
+        {
+          "path": "frontend/src/pages/MiniGame.tsx",
+          "operation": "modify",
+          "description": "Increase the size of emoji or image elements used in the toddler memory card matching game and the early learner letter-matching drag-and-drop game. Bump emoji text size from text-4xl to text-6xl or larger, or increase image container dimensions by 25-40%. Ensure the game grid and drag-and-drop areas accommodate the larger content."
         }
       ]
     }

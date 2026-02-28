@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   createRouter,
   createRoute,
@@ -9,6 +9,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
+import SplashScreen from './components/SplashScreen';
 
 // Pages
 import Home from './pages/Home';
@@ -115,10 +116,15 @@ declare module '@tanstack/react-router' {
   }
 }
 
-const App: React.FC = () => (
-  <QueryClientProvider client={queryClient}>
-    <RouterProvider router={router} />
-  </QueryClientProvider>
-);
+const App: React.FC = () => {
+  const [showSplash, setShowSplash] = useState(true);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  );
+};
 
 export default App;
