@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight, Volume2 } from "lucide-react";
 import type React from "react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getNumbers } from "../data/languageData";
 
 type Language = "english" | "telugu" | "hindi" | "tamil";
@@ -49,13 +49,16 @@ const CARD_BG_COLORS = [
   "from-sunshine-400 to-sunshine-600",
 ];
 
-function speak(text: string, lang: string) {
+/** Speak only the word (one sound only) */
+function speakWithGap(_numeral: string, word: string, lang: string) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = lang;
-  utterance.rate = 0.75;
-  window.speechSynthesis.speak(utterance);
+
+  const u = new SpeechSynthesisUtterance(word);
+  u.lang = lang;
+  u.rate = 0.7;
+
+  window.speechSynthesis.speak(u);
 }
 
 export default function NumbersLesson() {
@@ -69,12 +72,20 @@ export default function NumbersLesson() {
   const touchStartX = useRef<number | null>(null);
 
   const goPrev = useCallback(() => {
-    setIdx((i) => (i - 1 + total) % total);
-  }, [total]);
+    setIdx((i) => {
+      const next = (i - 1 + total) % total;
+      speakWithGap(numbers[next].numeral, numbers[next].word, config.voice);
+      return next;
+    });
+  }, [total, numbers, config.voice]);
 
   const goNext = useCallback(() => {
-    setIdx((i) => (i + 1) % total);
-  }, [total]);
+    setIdx((i) => {
+      const next = (i + 1) % total;
+      speakWithGap(numbers[next].numeral, numbers[next].word, config.voice);
+      return next;
+    });
+  }, [total, numbers, config.voice]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -98,6 +109,12 @@ export default function NumbersLesson() {
   const bgGradient = CARD_BG_COLORS[idx % CARD_BG_COLORS.length];
   const emoji = NUMBER_EMOJIS[idx] ?? "⭐";
 
+  // Auto-speak on initial load only
+  // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
+  useEffect(() => {
+    speakWithGap(num.numeral, num.word, config.voice);
+  }, []);
+
   return (
     <div
       className={`relative w-screen h-screen overflow-hidden bg-gradient-to-br ${bgGradient} transition-all duration-500`}
@@ -114,7 +131,7 @@ export default function NumbersLesson() {
               type="button"
               data-ocid={`numbers.lang_${lang}.toggle`}
               onClick={() => handleLangChange(lang)}
-              className={`kid-btn px-4 py-1.5 text-base font-heading border-3 transition-all ${
+              className={`kid-btn px-4 py-1.5 text-base font-nunito font-bold border-3 transition-all ${
                 language === lang
                   ? LANGUAGE_CONFIG[lang].activeClass
                   : "bg-white/30 text-white border-white/50 hover:bg-white/50"
@@ -130,7 +147,7 @@ export default function NumbersLesson() {
       <div className="flex flex-col items-center justify-center h-full pt-16 pb-16 px-24 gap-4">
         {/* Giant numeral */}
         <div
-          className="font-heading leading-none drop-shadow-2xl select-none text-white"
+          className="font-nunito font-bold leading-none drop-shadow-2xl select-none text-white"
           style={{ fontSize: "clamp(6rem, 28vw, 20rem)" }}
         >
           {num.numeral}
@@ -146,7 +163,7 @@ export default function NumbersLesson() {
 
         {/* Word label */}
         <div
-          className="font-heading text-white drop-shadow-lg text-center leading-tight"
+          className="font-nunito font-bold text-white drop-shadow-lg text-center leading-tight"
           style={{ fontSize: "clamp(1.8rem, 5vw, 4rem)" }}
         >
           {num.word}
@@ -156,8 +173,8 @@ export default function NumbersLesson() {
         <button
           type="button"
           data-ocid="numbers.speak.button"
-          onClick={() => speak(num.word, config.voice)}
-          className="kid-btn bg-white/30 hover:bg-white/50 text-white border-4 border-white/60 px-6 py-3 flex items-center gap-2 text-xl font-heading backdrop-blur-sm"
+          onClick={() => speakWithGap(num.numeral, num.word, config.voice)}
+          className="kid-btn bg-white/30 hover:bg-white/50 text-white border-4 border-white/60 px-6 py-3 flex items-center gap-2 text-xl font-nunito font-bold backdrop-blur-sm"
           aria-label="Speak"
         >
           <Volume2 size={28} />
@@ -188,7 +205,7 @@ export default function NumbersLesson() {
       </button>
 
       {/* Position indicator */}
-      <div className="absolute bottom-4 left-0 right-0 text-center font-heading text-2xl text-white/80 drop-shadow-md pointer-events-none">
+      <div className="absolute bottom-4 left-0 right-0 text-center font-nunito text-2xl text-white/80 drop-shadow-md pointer-events-none">
         {idx + 1} / {total}
       </div>
 

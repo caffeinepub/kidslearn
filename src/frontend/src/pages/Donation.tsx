@@ -1,8 +1,27 @@
-import { CheckCircle, Copy, Heart } from "lucide-react";
+import { CheckCircle, Copy, Heart, Star } from "lucide-react";
 import { useState } from "react";
 
 const UPI_ID = "kamerarajendra098@ptyes";
 const ACCOUNT_NAME = "Kamera Rajendraprasad";
+
+// Supporters wall — add names here as donations come in
+const SUPPORTERS: {
+  name: string;
+  tier: "gold" | "silver" | "bronze";
+  message?: string;
+}[] = [
+  {
+    name: "Kamera Rajendraprasad",
+    tier: "gold",
+    message: "Founder & Creator of KidsLearn",
+  },
+  {
+    name: "A Generous Friend",
+    tier: "silver",
+    message: "Supporting children's education",
+  },
+  { name: "Anonymous Supporter", tier: "bronze" },
+];
 
 export default function Donation() {
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -137,6 +156,85 @@ export default function Donation() {
               </li>
             ))}
           </ol>
+        </div>
+
+        {/* Supporters Wall */}
+        <div className="bg-white border-4 border-lavender-400 rounded-4xl p-6 shadow-fun-xl mb-6">
+          <h2 className="font-fredoka text-2xl text-lavender-700 mb-1 text-center">
+            🌟 Our Supporters
+          </h2>
+          <p className="font-nunito text-muted-foreground text-sm text-center mb-5">
+            A heartfelt thank you to everyone who has supported KidsLearn!
+          </p>
+          <div className="space-y-3">
+            {SUPPORTERS.map((supporter) => {
+              const tierConfig = {
+                gold: {
+                  bg: "bg-sunshine-100 border-sunshine-400",
+                  badge: "bg-sunshine-400 text-white",
+                  label: "Gold",
+                  stars: 3,
+                },
+                silver: {
+                  bg: "bg-sky-100 border-sky-400",
+                  badge: "bg-sky-400 text-white",
+                  label: "Silver",
+                  stars: 2,
+                },
+                bronze: {
+                  bg: "bg-tangerine-100 border-tangerine-400",
+                  badge: "bg-tangerine-400 text-white",
+                  label: "Bronze",
+                  stars: 1,
+                },
+              }[supporter.tier];
+
+              return (
+                <div
+                  key={supporter.name}
+                  className={`flex items-center gap-4 border-2 rounded-2xl px-4 py-3 ${tierConfig.bg}`}
+                  data-ocid="donation.supporters.item"
+                >
+                  {/* Avatar circle */}
+                  <div
+                    className={`w-12 h-12 rounded-full ${tierConfig.badge} flex items-center justify-center shrink-0 text-xl font-fredoka shadow-fun`}
+                  >
+                    {supporter.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-fredoka text-lg text-gray-800 truncate">
+                      {supporter.name}
+                    </p>
+                    {supporter.message && (
+                      <p className="font-nunito text-xs text-gray-500 truncate">
+                        {supporter.message}
+                      </p>
+                    )}
+                  </div>
+                  {/* Stars */}
+                  <div className="flex gap-0.5 shrink-0">
+                    {Array.from({ length: tierConfig.stars }).map((_, i) => (
+                      <Star
+                        key={`star-${supporter.name}-${i}`}
+                        size={16}
+                        className="text-sunshine-500 fill-sunshine-400"
+                      />
+                    ))}
+                  </div>
+                  {/* Tier badge */}
+                  <span
+                    className={`${tierConfig.badge} font-fredoka text-xs px-2 py-1 rounded-full shrink-0`}
+                  >
+                    {tierConfig.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+          <p className="font-nunito text-xs text-muted-foreground text-center mt-4">
+            Your name will appear here after your donation is confirmed. Contact
+            us to be added!
+          </p>
         </div>
 
         {/* Thank You */}

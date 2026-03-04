@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight, Volume2 } from "lucide-react";
 import type React from "react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getAlphabetCards } from "../data/languageData";
 
 type Language = "english" | "telugu" | "hindi" | "tamil";
@@ -67,15 +67,44 @@ const ENGLISH_IMAGE_MAP: Record<string, string> = {
   m: "/assets/generated/alphabet-m.dim_200x200.png",
   n: "/assets/generated/alphabet-n.dim_200x200.png",
   o: "/assets/generated/alphabet-o.dim_200x200.png",
+  p: "/assets/generated/alphabet-p.dim_200x200.png",
+  q: "/assets/generated/alphabet-q.dim_200x200.png",
+  r: "/assets/generated/alphabet-r.dim_200x200.png",
+  s: "/assets/generated/alphabet-s.dim_200x200.png",
+  t: "/assets/generated/alphabet-t.dim_200x200.png",
+  u: "/assets/generated/alphabet-u.dim_200x200.png",
+  v: "/assets/generated/alphabet-v.dim_200x200.png",
+  w: "/assets/generated/alphabet-w.dim_200x200.png",
+  x: "/assets/generated/alphabet-x.dim_200x200.png",
+  y: "/assets/generated/alphabet-y.dim_200x200.png",
+  z: "/assets/generated/alphabet-z.dim_200x200.png",
 };
 
-function speak(text: string, lang: string) {
+/**
+ * Speak a letter and its word with a clear pause in between.
+ * We split into two utterances so the browser inserts a natural gap.
+ */
+function speakWithGap(letter: string, word: string, lang: string) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = lang;
-  utterance.rate = 0.75;
-  window.speechSynthesis.speak(utterance);
+
+  const u1 = new SpeechSynthesisUtterance(letter);
+  u1.lang = lang;
+  u1.rate = 0.7;
+
+  const u2 = new SpeechSynthesisUtterance(word);
+  u2.lang = lang;
+  u2.rate = 0.7;
+
+  // Small silence utterance acts as a pause
+  const pause = new SpeechSynthesisUtterance(" ");
+  pause.lang = lang;
+  pause.rate = 0.1;
+  pause.volume = 0;
+
+  window.speechSynthesis.speak(u1);
+  window.speechSynthesis.speak(pause);
+  window.speechSynthesis.speak(u2);
 }
 
 export default function AlphabetLesson() {
@@ -89,12 +118,22 @@ export default function AlphabetLesson() {
   const touchStartX = useRef<number | null>(null);
 
   const goPrev = useCallback(() => {
-    setIdx((i) => (i - 1 + total) % total);
-  }, [total]);
+    setIdx((i) => {
+      const next = (i - 1 + total) % total;
+      const nextCard = cards[next];
+      speakWithGap(nextCard.letter, nextCard.word, config.voice);
+      return next;
+    });
+  }, [total, cards, config.voice]);
 
   const goNext = useCallback(() => {
-    setIdx((i) => (i + 1) % total);
-  }, [total]);
+    setIdx((i) => {
+      const next = (i + 1) % total;
+      const nextCard = cards[next];
+      speakWithGap(nextCard.letter, nextCard.word, config.voice);
+      return next;
+    });
+  }, [total, cards, config.voice]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -115,6 +154,12 @@ export default function AlphabetLesson() {
     language === "english"
       ? (ENGLISH_IMAGE_MAP[card.letter.toLowerCase()] ?? null)
       : null;
+
+  // Auto-speak on initial load only
+  // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
+  useEffect(() => {
+    speakWithGap(card.letter, card.word, config.voice);
+  }, []);
 
   const handleLangChange = (lang: Language) => {
     setLanguage(lang);
@@ -137,7 +182,7 @@ export default function AlphabetLesson() {
               type="button"
               data-ocid={`alphabet.lang_${lang}.toggle`}
               onClick={() => handleLangChange(lang)}
-              className={`kid-btn px-4 py-1.5 text-base font-heading border-3 transition-all ${
+              className={`kid-btn px-4 py-1.5 text-base font-nunito font-bold border-3 transition-all ${
                 language === lang
                   ? LANGUAGE_CONFIG[lang].activeClass
                   : "bg-white/30 text-white border-white/50 hover:bg-white/50"
@@ -153,7 +198,7 @@ export default function AlphabetLesson() {
       <div className="flex flex-col items-center justify-center h-full pt-16 pb-16 px-24 gap-4">
         {/* Giant letter */}
         <div
-          className="font-heading leading-none drop-shadow-2xl select-none text-white"
+          className="font-nunito font-bold leading-none drop-shadow-2xl select-none text-white"
           style={{ fontSize: "clamp(6rem, 25vw, 18rem)" }}
         >
           {card.letter}
@@ -184,7 +229,7 @@ export default function AlphabetLesson() {
 
         {/* Word label */}
         <div
-          className="font-heading text-white drop-shadow-lg text-center leading-tight"
+          className="font-nunito font-normal text-white drop-shadow-lg text-center leading-tight"
           style={{ fontSize: "clamp(1.8rem, 5vw, 4rem)" }}
         >
           {card.word}
@@ -194,8 +239,8 @@ export default function AlphabetLesson() {
         <button
           type="button"
           data-ocid="alphabet.speak.button"
-          onClick={() => speak(`${card.letter}. ${card.word}`, config.voice)}
-          className="kid-btn bg-white/30 hover:bg-white/50 text-white border-4 border-white/60 px-6 py-3 flex items-center gap-2 text-xl font-heading backdrop-blur-sm"
+          onClick={() => speakWithGap(card.letter, card.word, config.voice)}
+          className="kid-btn bg-white/30 hover:bg-white/50 text-white border-4 border-white/60 px-6 py-3 flex items-center gap-2 text-xl font-nunito font-bold backdrop-blur-sm"
           aria-label="Speak"
         >
           <Volume2 size={28} />
@@ -226,7 +271,7 @@ export default function AlphabetLesson() {
       </button>
 
       {/* Position indicator */}
-      <div className="absolute bottom-4 left-0 right-0 text-center font-heading text-2xl text-white/80 drop-shadow-md pointer-events-none">
+      <div className="absolute bottom-4 left-0 right-0 text-center font-nunito text-2xl text-white/80 drop-shadow-md pointer-events-none">
         {idx + 1} / {total}
       </div>
 

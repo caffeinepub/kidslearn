@@ -221,7 +221,7 @@ export default function Home() {
 
       {/* Navigation Grid */}
       <section className="max-w-6xl mx-auto px-4 py-10">
-        <h2 className="font-heading text-4xl md:text-5xl text-center text-lavender-600 mb-8 drop-shadow-sm">
+        <h2 className="font-bold text-3xl md:text-4xl text-center text-lavender-700 mb-8">
           🎯 What do you want to learn today?
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -229,16 +229,17 @@ export default function Home() {
             <button
               key={card.path}
               type="button"
+              data-ocid={`nav.item.${idx + 1}`}
               onClick={() => navigate({ to: card.path })}
               className={`kid-card border-4 ${card.bgClass} p-5 flex flex-col items-center gap-3 text-center cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 animate-card-entrance card-delay-${Math.min(idx + 1, 6)}`}
             >
-              <span className="text-6xl">{card.emoji}</span>
+              <span className="text-5xl">{card.emoji}</span>
               <span
-                className={`font-heading text-xl md:text-2xl ${card.textClass}`}
+                className={`font-bold text-lg md:text-xl ${card.textClass}`}
               >
                 {card.title}
               </span>
-              <span className="font-body text-sm md:text-base text-gray-600 leading-tight">
+              <span className="text-sm text-gray-600 leading-tight">
                 {card.description}
               </span>
             </button>

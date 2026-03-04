@@ -191,12 +191,20 @@ const CalendarLesson: React.FC = () => {
   const touchStartX = useRef<number | null>(null);
 
   const goPrev = useCallback(() => {
-    setIdx((i) => (i - 1 + total) % total);
-  }, [total]);
+    setIdx((i) => {
+      const next = (i - 1 + total) % total;
+      speak(MONTHS[next][selectedLang], LANG_VOICE[selectedLang]);
+      return next;
+    });
+  }, [total, selectedLang]);
 
   const goNext = useCallback(() => {
-    setIdx((i) => (i + 1) % total);
-  }, [total]);
+    setIdx((i) => {
+      const next = (i + 1) % total;
+      speak(MONTHS[next][selectedLang], LANG_VOICE[selectedLang]);
+      return next;
+    });
+  }, [total, selectedLang]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;

@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight, Volume2 } from "lucide-react";
 import type React from "react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getNumbers100 } from "../data/languageData";
 
 type Language = "english" | "telugu" | "hindi" | "tamil";
@@ -657,6 +657,11 @@ function speak(text: string, lang: string) {
   window.speechSynthesis.speak(utterance);
 }
 
+/** Speak only the word — no numeric prefix to avoid double sound */
+function speakWord(word: string, lang: string) {
+  speak(word, lang);
+}
+
 export default function Numbers100Lesson() {
   const [language, setLanguage] = useState<Language>("english");
   const [idx, setIdx] = useState(0);
@@ -665,12 +670,22 @@ export default function Numbers100Lesson() {
   const touchStartX = useRef<number | null>(null);
 
   const goPrev = useCallback(() => {
-    setIdx((i) => (i - 1 + total) % total);
-  }, [total]);
+    setIdx((i) => {
+      const next = (i - 1 + total) % total;
+      const nextNum = ALL_NUMBERS_DATA[next];
+      speakWord(nextNum[language], LANG_VOICES[language]);
+      return next;
+    });
+  }, [total, language]);
 
   const goNext = useCallback(() => {
-    setIdx((i) => (i + 1) % total);
-  }, [total]);
+    setIdx((i) => {
+      const next = (i + 1) % total;
+      const nextNum = ALL_NUMBERS_DATA[next];
+      speakWord(nextNum[language], LANG_VOICES[language]);
+      return next;
+    });
+  }, [total, language]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -695,6 +710,12 @@ export default function Numbers100Lesson() {
 
   // Get word for current language
   const wordForLang = num[language];
+
+  // Auto-speak on initial load only
+  // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
+  useEffect(() => {
+    speakWord(wordForLang, LANG_VOICES[language]);
+  }, []);
 
   return (
     <div
@@ -765,9 +786,7 @@ export default function Numbers100Lesson() {
         <button
           type="button"
           data-ocid="numbers100.speak.button"
-          onClick={() =>
-            speak(`${num.n}. ${wordForLang}`, LANG_VOICES[language])
-          }
+          onClick={() => speakWord(wordForLang, LANG_VOICES[language])}
           className="kid-btn bg-white/30 hover:bg-white/50 text-white border-4 border-white/60 px-6 py-3 flex items-center gap-2 text-xl font-heading backdrop-blur-sm mt-2"
           aria-label="Speak"
         >

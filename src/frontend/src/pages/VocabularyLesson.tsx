@@ -103,12 +103,22 @@ export default function VocabularyLesson() {
   const touchStartX = useRef<number | null>(null);
 
   const goPrev = useCallback(() => {
-    setWordIdx((i) => (i - 1 + total) % total);
-  }, [total]);
+    setWordIdx((i) => {
+      const next = (i - 1 + total) % total;
+      const nextItem = entries[next];
+      if (nextItem) speak(nextItem.word, config.voice);
+      return next;
+    });
+  }, [total, entries, config.voice]);
 
   const goNext = useCallback(() => {
-    setWordIdx((i) => (i + 1) % total);
-  }, [total]);
+    setWordIdx((i) => {
+      const next = (i + 1) % total;
+      const nextItem = entries[next];
+      if (nextItem) speak(nextItem.word, config.voice);
+      return next;
+    });
+  }, [total, entries, config.voice]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;

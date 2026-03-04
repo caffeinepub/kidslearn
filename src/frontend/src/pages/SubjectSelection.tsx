@@ -49,6 +49,14 @@ const subjects = [
     border: "border-lavender-600",
     image: "/assets/generated/subject-english.dim_128x128.png",
   },
+  {
+    id: "tamil",
+    label: "Tamil",
+    emoji: "🌺",
+    color: "bg-mint-400",
+    border: "border-mint-600",
+    image: "/assets/generated/subject-tamil.dim_128x128.png",
+  },
 ];
 
 const activities = [
