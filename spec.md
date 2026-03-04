@@ -1,40 +1,34 @@
 # KidsLearn
 
 ## Current State
-A multilingual kids' learning app (ages 3–12) with sections for Alphabet, Numbers, Vocabulary, Poems, Picture Learning, Flashcards, Quiz, Matching Game, Puzzle, Timed Challenge, Mini Games, Progress tracking, and Donation. Supports 4 languages (Telugu, Hindi, Tamil, English). Built with React + TypeScript + Tailwind. Routes managed via @tanstack/react-router. Existing pages are in src/frontend/src/pages/.
+A multilingual kids learning app (ages 3–12) with alphabet, numbers, vocabulary, poems, flashcards, quizzes, matching game, puzzle, timed challenge, and mini games. Four languages: English, Telugu, Hindi, Tamil. Full-screen swipe-based alphabet and numbers lesson pages with text-to-speech. Vocabulary full-screen cards. Lessons page with emoji-based content. Flashcards flip-card UI. Poems page with individual line speak buttons. The app uses `font-heading` and `font-body` CSS classes alongside `font-nunito` and `font-fredoka`.
 
 ## Requested Changes (Diff)
 
 ### Add
-- A new **Calendar Month Learning** page (`/calendar`) that teaches children all 12 months of the year in all 4 languages (Telugu, Hindi, Tamil, English).
-- Each month card shows:
-  - Month number (1–12)
-  - Month name in all 4 languages
-  - A themed cartoon-style illustration representing the month/season
-  - Fun facts or seasonal notes (e.g., January = New Year, December = Winter/Christmas)
-- Full-screen month view: clicking a month card expands it to show the full-size picture, name in all 4 languages, and a fun fact.
-- Navigation between months (prev/next arrows) in the full-screen view.
-- Language switcher to highlight one language at a time (while still showing all 4).
-- 12 AI-generated seasonal/monthly cartoon images, one per month.
-- New nav card "📅 Months" added to Home page grid and KidsDashboard learning modules.
-- New route `/calendar` added to App.tsx.
+- Nothing new to add
 
 ### Modify
-- `App.tsx` — add CalendarLesson import and route.
-- `Home.tsx` — add "📅 Months" nav card to NAV_CARDS array.
-- `KidsDashboard.tsx` — add "📅 Months" entry to LEARNING_MODULES array.
+- **Font style**: All text throughout the app (alphabet cards, numbers cards, vocabulary cards, lesson cards, flashcards, poems, home nav cards) must use clean, normal, readable font — specifically `font-sans` or `font-nunito` with `font-bold` or `font-semibold`. Remove any decorative/cursive font classes. Replace `font-heading`, `font-body`, `font-fredoka` with plain `font-bold` or `font-semibold` using a clean sans-serif stack.
+- **Alphabet lesson (AlphabetLesson.tsx)**: Each letter card must prominently show: (1) Giant letter, (2) Large picture/image below it (already has ENGLISH_IMAGE_MAP for English, but needs the emoji to display LARGE for non-English languages), (3) Word label clearly below the image. Image size should be bigger (min 200px, max 350px). Word label should be bigger (clamp 2.5rem, 6vw, 5rem). Letter font size should be at least `clamp(7rem, 28vw, 20rem)`.
+- **Numbers lesson (NumbersLesson.tsx)**: Each number card must show: (1) Giant numeral, (2) Large emoji below it (bigger — clamp(100px, 22vw, 200px)), (3) Word label in the selected language clearly below. Word label font bigger (clamp 2.5rem, 6vw, 5rem).
+- **Vocabulary lesson (VocabularyLesson.tsx)**: Emoji size bigger (clamp(120px, 30vw, 260px)). Word label font bigger (clamp 2.5rem, 7vw, 5.5rem). Replace `font-heading` with `font-bold` (sans-serif).
+- **Lessons page (Lessons.tsx)**: Lesson body text size should be `text-2xl` instead of `text-xl`. Replace `font-fredoka` with `font-bold` in headings. Emoji in illustration area should be `text-[10rem]` instead of `text-9xl`.
+- **Flashcards (Flashcards.tsx)**: Replace all `font-heading` and `font-body` with `font-bold` (sans-serif). Card front word label bigger (`text-4xl`). Emoji bigger (`text-8xl`).
+- **Poems (PoemsLesson.tsx)**: Replace `font-heading` and `font-body` with `font-bold`/`font-semibold`. Poem line text bigger (`text-2xl`). Title bigger (`text-4xl`).
+- **Home (Home.tsx)**: Replace `font-heading`/`font-body` with `font-bold`. Nav card title font — ensure bold, normal sans-serif. Hero heading uses clean bold font, no decorative font.
+- **AgeGroupSelection.tsx**: Replace `font-fredoka` with `font-bold` (clean sans-serif). Headings still bold and large.
 
 ### Remove
-- Nothing removed.
+- All uses of `font-fredoka`, `font-heading`, `font-body` in these pages — replaced with plain `font-bold` or `font-semibold` using the default sans-serif (Nunito is already loaded and is a clean font, so `font-nunito font-bold` is acceptable as a replacement).
 
 ## Implementation Plan
-1. Generate 12 seasonal cartoon images for each month via generate_image tool.
-2. Create `src/frontend/src/pages/CalendarLesson.tsx` with:
-   - Grid of 12 month cards (kid-friendly, colorful).
-   - Each card: month number, month image, month name in 4 languages.
-   - Language selector tabs (Telugu, Hindi, Tamil, English).
-   - Full-screen modal/overlay on card click showing enlarged image, all 4 language names, and a fun seasonal note.
-   - Prev/Next navigation in full-screen view.
-3. Add route and import to `App.tsx`.
-4. Add nav card to `Home.tsx` NAV_CARDS array.
-5. Add learning module to `KidsDashboard.tsx` LEARNING_MODULES array.
+1. Update `AlphabetLesson.tsx`: increase image size, letter size, word label size, replace decorative font classes.
+2. Update `NumbersLesson.tsx`: increase emoji size, word label size, replace decorative font classes.
+3. Update `VocabularyLesson.tsx`: increase emoji size, word label size, replace font classes.
+4. Update `Lessons.tsx`: increase body text and emoji sizes, replace decorative font classes.
+5. Update `Flashcards.tsx`: increase word/emoji sizes, replace font classes.
+6. Update `PoemsLesson.tsx`: increase poem line text size, replace font classes.
+7. Update `Home.tsx`: replace decorative font classes with clean bold fonts.
+8. Update `AgeGroupSelection.tsx`: replace `font-fredoka` with `font-bold` clean sans.
+9. Typecheck and build to verify no errors.

@@ -543,7 +543,7 @@ export default function Lessons() {
   if (!currentLesson) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8 text-center">
-        <p className="font-fredoka text-3xl text-muted-foreground">
+        <p className="font-bold text-3xl text-muted-foreground">
           No lessons found!
         </p>
       </div>
@@ -556,7 +556,7 @@ export default function Lessons() {
   return (
     <div className="animate-fade-slide-in max-w-2xl mx-auto px-4 py-8">
       <div className="text-center mb-6">
-        <h1 className="font-fredoka text-4xl md:text-5xl text-foreground">
+        <h1 className="font-bold text-4xl md:text-5xl text-foreground">
           {subjectEmoji} {subjectLabel} Lessons
         </h1>
         <p className="font-nunito text-xl text-muted-foreground font-semibold">
@@ -604,10 +604,13 @@ export default function Lessons() {
             />
           ) : (
             <>
-              <span className="text-9xl select-none drop-shadow-lg leading-none">
+              <span
+                className="select-none drop-shadow-lg leading-none"
+                style={{ fontSize: "10rem" }}
+              >
                 {lessonEmoji}
               </span>
-              <span className="font-fredoka text-2xl text-white drop-shadow-md text-center px-4">
+              <span className="font-bold text-3xl text-white drop-shadow-md text-center px-4">
                 {currentLesson.title}
               </span>
             </>
@@ -616,14 +619,14 @@ export default function Lessons() {
 
         <div className="p-6">
           <div className="flex items-start justify-between gap-3 mb-4">
-            <h2 className="font-fredoka text-3xl text-foreground flex-1">
+            <h2 className="font-bold text-3xl text-foreground flex-1">
               {currentLesson.title}
             </h2>
             {isCompleted && (
               <CheckCircle className="text-grass-500 shrink-0 mt-1" size={32} />
             )}
           </div>
-          <p className="font-nunito text-foreground leading-relaxed text-xl">
+          <p className="font-nunito text-foreground leading-relaxed text-2xl">
             {currentLesson.body}
           </p>
         </div>

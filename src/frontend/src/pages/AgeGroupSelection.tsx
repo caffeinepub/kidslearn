@@ -46,7 +46,7 @@ export default function AgeGroupSelection() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sunshine-50 px-4 py-10">
       <div className="max-w-4xl mx-auto">
-        <h1 className="font-fredoka text-4xl sm:text-5xl text-center text-sunshine-700 mb-2">
+        <h1 className="font-bold text-4xl sm:text-5xl text-center text-sunshine-700 mb-2">
           Who is learning today? 🎉
         </h1>
         <p className="font-nunito text-center text-muted-foreground text-lg mb-10">
@@ -71,7 +71,7 @@ export default function AgeGroupSelection() {
               />
               <div className="p-5 text-center">
                 <div className="text-4xl mb-2">{group.emoji}</div>
-                <h2 className="font-fredoka text-white text-2xl drop-shadow-sm mb-1">
+                <h2 className="font-bold text-white text-2xl drop-shadow-sm mb-1">
                   {group.label}
                 </h2>
                 <p className="font-nunito text-white font-bold text-base mb-3">

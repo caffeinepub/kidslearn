@@ -135,6 +135,22 @@ const NAV_CARDS = [
     bgClass: "bg-cherry-100 border-cherry-400 hover:bg-cherry-200",
     textClass: "text-cherry-700",
   },
+  {
+    title: "Countries & Capitals",
+    emoji: "🌍",
+    description: "Learn world countries!",
+    path: "/countries",
+    bgClass: "bg-sky-200 border-sky-500 hover:bg-sky-300",
+    textClass: "text-sky-800",
+  },
+  {
+    title: "Feedback",
+    emoji: "💬",
+    description: "Share your thoughts!",
+    path: "/feedback",
+    bgClass: "bg-grass-100 border-grass-400 hover:bg-grass-200",
+    textClass: "text-grass-700",
+  },
 ];
 
 export default function Home() {
@@ -182,10 +198,10 @@ export default function Home() {
                 className="w-36 h-36 md:w-48 md:h-48 rounded-3xl shadow-fun-xl border-4 border-white"
               />
             </div>
-            <h1 className="font-heading text-5xl md:text-7xl text-white drop-shadow-lg mb-3">
+            <h1 className="font-bold text-5xl md:text-7xl text-white drop-shadow-lg mb-3">
               🌟 KidsLearn! 🌟
             </h1>
-            <p className="font-body text-xl md:text-2xl text-white/90 font-bold mb-6">
+            <p className="font-semibold text-xl md:text-2xl text-white/90 font-bold mb-6">
               Learn Alphabets, Numbers &amp; Words in Telugu, Hindi, Tamil &amp;
               English!
             </p>
@@ -252,29 +268,29 @@ export default function Home() {
         <div className="flex flex-wrap justify-center gap-8 text-white text-center">
           <div className="flex flex-col items-center gap-2">
             <span className="text-5xl">🌍</span>
-            <span className="font-heading text-3xl">4 Languages</span>
-            <span className="font-body text-base opacity-90">
+            <span className="font-bold text-3xl">4 Languages</span>
+            <span className="font-semibold text-base opacity-90">
               Telugu, Hindi, Tamil, English
             </span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <span className="text-5xl">📖</span>
-            <span className="font-heading text-3xl">100+ Words</span>
-            <span className="font-body text-base opacity-90">
+            <span className="font-bold text-3xl">100+ Words</span>
+            <span className="font-semibold text-base opacity-90">
               Vocabulary & Alphabet
             </span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <span className="text-5xl">🎮</span>
-            <span className="font-heading text-3xl">Fun Games</span>
-            <span className="font-body text-base opacity-90">
+            <span className="font-bold text-3xl">Fun Games</span>
+            <span className="font-semibold text-base opacity-90">
               Learn while playing!
             </span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <span className="text-5xl">🏆</span>
-            <span className="font-heading text-3xl">Earn Badges</span>
-            <span className="font-body text-base opacity-90">
+            <span className="font-bold text-3xl">Earn Badges</span>
+            <span className="font-semibold text-base opacity-90">
               Track your progress!
             </span>
           </div>

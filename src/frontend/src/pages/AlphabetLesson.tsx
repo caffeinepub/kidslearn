@@ -199,7 +199,7 @@ export default function AlphabetLesson() {
         {/* Giant letter */}
         <div
           className="font-nunito font-bold leading-none drop-shadow-2xl select-none text-white"
-          style={{ fontSize: "clamp(6rem, 25vw, 18rem)" }}
+          style={{ fontSize: "clamp(7rem, 28vw, 20rem)" }}
         >
           {card.letter}
         </div>
@@ -212,15 +212,15 @@ export default function AlphabetLesson() {
               alt={card.word}
               className="rounded-3xl shadow-2xl border-4 border-white/60"
               style={{
-                width: "clamp(140px, 25vw, 280px)",
-                height: "clamp(140px, 25vw, 280px)",
+                width: "clamp(180px, 28vw, 350px)",
+                height: "clamp(180px, 28vw, 350px)",
                 objectFit: "contain",
               }}
             />
           ) : (
             <span
               className="drop-shadow-xl"
-              style={{ fontSize: "clamp(80px, 18vw, 180px)" }}
+              style={{ fontSize: "clamp(120px, 22vw, 220px)" }}
             >
               {card.emoji}
             </span>
@@ -229,8 +229,8 @@ export default function AlphabetLesson() {
 
         {/* Word label */}
         <div
-          className="font-nunito font-normal text-white drop-shadow-lg text-center leading-tight"
-          style={{ fontSize: "clamp(1.8rem, 5vw, 4rem)" }}
+          className="font-nunito font-bold text-white drop-shadow-lg text-center leading-tight"
+          style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
         >
           {card.word}
         </div>

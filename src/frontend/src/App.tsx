@@ -15,7 +15,9 @@ import Header from "./components/layout/Header";
 import AgeGroupSelection from "./pages/AgeGroupSelection";
 import AlphabetLesson from "./pages/AlphabetLesson";
 import CalendarLesson from "./pages/CalendarLesson";
+import CountriesCapitals from "./pages/CountriesCapitals";
 import Donation from "./pages/Donation";
+import Feedback from "./pages/Feedback";
 import Flashcards from "./pages/Flashcards";
 // Pages
 import Home from "./pages/Home";
@@ -174,6 +176,16 @@ const calendarRoute = createRoute({
   path: "/calendar",
   component: CalendarLesson,
 });
+const feedbackRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/feedback",
+  component: Feedback,
+});
+const countriesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/countries",
+  component: CountriesCapitals,
+});
 
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -199,6 +211,8 @@ const routeTree = rootRoute.addChildren([
   miniGameRoute,
   profileRoute,
   calendarRoute,
+  feedbackRoute,
+  countriesRoute,
 ]);
 
 const router = createRouter({ routeTree });

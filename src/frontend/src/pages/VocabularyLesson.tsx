@@ -167,7 +167,7 @@ export default function VocabularyLesson() {
               type="button"
               data-ocid={`vocabulary.lang_${lang}.toggle`}
               onClick={() => handleLangChange(lang)}
-              className={`kid-btn px-3 py-1 text-sm font-heading border-2 transition-all ${
+              className={`kid-btn px-3 py-1 text-sm font-bold border-2 transition-all ${
                 language === lang
                   ? LANGUAGE_CONFIG[lang].activeClass
                   : "bg-white/30 text-white border-white/50 hover:bg-white/50"
@@ -186,7 +186,7 @@ export default function VocabularyLesson() {
               type="button"
               data-ocid={`vocabulary.cat_${cat.key}.tab`}
               onClick={() => handleCatChange(i)}
-              className={`kid-btn px-3 py-1 text-sm font-heading border-2 transition-all whitespace-nowrap ${
+              className={`kid-btn px-3 py-1 text-sm font-bold border-2 transition-all whitespace-nowrap ${
                 i === categoryIdx
                   ? "bg-white text-gray-800 border-white scale-105 shadow-fun"
                   : "bg-white/20 text-white border-white/40 hover:bg-white/40"
@@ -203,15 +203,15 @@ export default function VocabularyLesson() {
         {/* Giant emoji */}
         <span
           className="drop-shadow-2xl"
-          style={{ fontSize: "clamp(100px, 28vw, 220px)" }}
+          style={{ fontSize: "clamp(120px, 30vw, 260px)" }}
         >
           {item.emoji}
         </span>
 
         {/* Word label */}
         <div
-          className="font-heading text-white drop-shadow-lg text-center leading-tight"
-          style={{ fontSize: "clamp(2rem, 6vw, 5rem)" }}
+          className="font-bold text-white drop-shadow-lg text-center leading-tight"
+          style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)" }}
         >
           {item.word}
         </div>
@@ -219,8 +219,8 @@ export default function VocabularyLesson() {
         {/* English translation (if not English mode) */}
         {language !== "english" && (
           <div
-            className="font-heading text-white/80 text-center leading-tight"
-            style={{ fontSize: "clamp(1.2rem, 3.5vw, 2.5rem)" }}
+            className="font-bold text-white/80 text-center leading-tight"
+            style={{ fontSize: "clamp(1.5rem, 4vw, 3rem)" }}
           >
             {item.english}
           </div>
@@ -231,7 +231,7 @@ export default function VocabularyLesson() {
           type="button"
           data-ocid="vocabulary.speak.button"
           onClick={() => speak(item.word, config.voice)}
-          className="kid-btn bg-white/30 hover:bg-white/50 text-white border-4 border-white/60 px-6 py-3 flex items-center gap-2 text-xl font-heading backdrop-blur-sm"
+          className="kid-btn bg-white/30 hover:bg-white/50 text-white border-4 border-white/60 px-6 py-3 flex items-center gap-2 text-xl font-bold backdrop-blur-sm"
           aria-label="Speak"
         >
           <Volume2 size={28} />
@@ -262,7 +262,7 @@ export default function VocabularyLesson() {
       </button>
 
       {/* Position indicator */}
-      <div className="absolute bottom-4 left-0 right-0 text-center font-heading text-2xl text-white/80 drop-shadow-md pointer-events-none">
+      <div className="absolute bottom-4 left-0 right-0 text-center font-bold text-2xl text-white/80 drop-shadow-md pointer-events-none">
         {wordIdx + 1} / {total}
       </div>
 

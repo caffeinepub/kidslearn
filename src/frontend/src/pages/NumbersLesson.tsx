@@ -148,7 +148,7 @@ export default function NumbersLesson() {
         {/* Giant numeral */}
         <div
           className="font-nunito font-bold leading-none drop-shadow-2xl select-none text-white"
-          style={{ fontSize: "clamp(6rem, 28vw, 20rem)" }}
+          style={{ fontSize: "clamp(7rem, 30vw, 22rem)" }}
         >
           {num.numeral}
         </div>
@@ -156,7 +156,7 @@ export default function NumbersLesson() {
         {/* Big emoji */}
         <span
           className="drop-shadow-xl"
-          style={{ fontSize: "clamp(80px, 18vw, 160px)" }}
+          style={{ fontSize: "clamp(100px, 22vw, 200px)" }}
         >
           {emoji}
         </span>
@@ -164,7 +164,7 @@ export default function NumbersLesson() {
         {/* Word label */}
         <div
           className="font-nunito font-bold text-white drop-shadow-lg text-center leading-tight"
-          style={{ fontSize: "clamp(1.8rem, 5vw, 4rem)" }}
+          style={{ fontSize: "clamp(2.5rem, 6vw, 5rem)" }}
         >
           {num.word}
         </div>

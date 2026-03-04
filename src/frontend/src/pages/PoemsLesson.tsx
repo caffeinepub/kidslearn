@@ -60,10 +60,10 @@ export default function PoemsLesson() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="font-heading text-5xl text-lavender-600 drop-shadow-md mb-2">
+          <h1 className="font-bold text-5xl text-lavender-600 drop-shadow-md mb-2">
             🎵 Poems & Rhymes
           </h1>
-          <p className="font-body text-xl text-lavender-500 font-semibold">
+          <p className="font-semibold text-xl text-lavender-500">
             Tap a line to hear it!
           </p>
         </div>
@@ -78,7 +78,7 @@ export default function PoemsLesson() {
                 setLanguage(lang);
                 setCurrentIdx(0);
               }}
-              className={`kid-btn px-6 py-3 text-lg font-heading border-4 ${
+              className={`kid-btn px-6 py-3 text-lg font-bold border-4 ${
                 language === lang
                   ? `${LANGUAGE_CONFIG[lang].btnClass} scale-110 shadow-fun-lg`
                   : "bg-white border-gray-300 text-gray-600 hover:scale-105"
@@ -92,7 +92,7 @@ export default function PoemsLesson() {
         {/* Poem Card */}
         {poem && (
           <div className={`kid-card border-4 ${config.cardBg} p-6 mb-6`}>
-            <h2 className="font-heading text-3xl text-center text-gray-800 mb-6">
+            <h2 className="font-bold text-4xl text-center text-gray-800 mb-6">
               {poem.title}
             </h2>
             <div className="space-y-3">
@@ -109,7 +109,7 @@ export default function PoemsLesson() {
                   >
                     <Volume2 size={18} />
                   </button>
-                  <p className="font-body text-xl text-gray-700 leading-relaxed">
+                  <p className="font-semibold text-2xl text-gray-700 leading-relaxed">
                     {line}
                   </p>
                 </div>
@@ -137,7 +137,7 @@ export default function PoemsLesson() {
           >
             <ChevronLeft size={22} /> Prev
           </button>
-          <span className="font-heading text-xl text-gray-600">
+          <span className="font-bold text-xl text-gray-600">
             {currentIdx + 1} / {poems.length}
           </span>
           <button
