@@ -1,8 +1,33 @@
-import { ChevronLeft, ChevronRight, Volume2 } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { ChevronLeft, ChevronRight, Gamepad2, Volume2 } from "lucide-react";
 import type React from "react";
 import { useCallback, useRef, useState } from "react";
 import { vocabularyByCategory } from "../data/languageData";
 import type { Language, VocabCategory } from "../data/languageData";
+import { speakWord } from "../utils/speech";
+
+const WORD_IMAGES: Record<string, string> = {
+  Lion: "/assets/generated/animal-lion-transparent.dim_400x400.png",
+  Elephant: "/assets/generated/animal-elephant-transparent.dim_400x400.png",
+  Monkey: "/assets/generated/animal-monkey-transparent.dim_400x400.png",
+  Tiger: "/assets/generated/animal-tiger-transparent.dim_400x400.png",
+  Zebra: "/assets/generated/animal-zebra-transparent.dim_400x400.png",
+  Giraffe: "/assets/generated/animal-giraffe-transparent.dim_400x400.png",
+  Parrot: "/assets/generated/animal-parrot-transparent.dim_400x400.png",
+  Apple: "/assets/generated/fruit-apple-transparent.dim_400x400.png",
+  Banana: "/assets/generated/fruit-banana-transparent.dim_400x400.png",
+  Orange: "/assets/generated/fruit-orange-transparent.dim_400x400.png",
+  Strawberry: "/assets/generated/fruit-strawberry-transparent.dim_400x400.png",
+  Grapes: "/assets/generated/fruit-grapes-transparent.dim_400x400.png",
+  Mango: "/assets/generated/fruit-mango-transparent.dim_400x400.png",
+  Head: "/assets/generated/body-head-transparent.dim_400x400.png",
+  Hand: "/assets/generated/body-hand-transparent.dim_400x400.png",
+  Eye: "/assets/generated/body-eye-transparent.dim_400x400.png",
+  Nose: "/assets/generated/body-nose-transparent.dim_400x400.png",
+  Ear: "/assets/generated/body-ear-transparent.dim_400x400.png",
+  Mouth: "/assets/generated/body-mouth-transparent.dim_400x400.png",
+  Foot: "/assets/generated/body-foot-transparent.dim_400x400.png",
+};
 
 const LANGUAGE_CONFIG: Record<
   Language,
@@ -76,19 +101,12 @@ const CARD_BG_COLORS = [
   "from-coral-300 to-coral-500",
 ];
 
-function speak(text: string, lang: string) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = lang;
-  utterance.rate = 0.75;
-  window.speechSynthesis.speak(utterance);
-}
-
 export default function VocabularyLesson() {
+  const navigate = useNavigate();
   const [language, setLanguage] = useState<Language>("english");
   const [categoryIdx, setCategoryIdx] = useState(0);
   const [wordIdx, setWordIdx] = useState(0);
+  const [imgError, setImgError] = useState(false);
 
   const config = LANGUAGE_CONFIG[language];
   const currentCat = ALL_CATEGORIES[categoryIdx];
@@ -103,19 +121,29 @@ export default function VocabularyLesson() {
   const touchStartX = useRef<number | null>(null);
 
   const goPrev = useCallback(() => {
+    setImgError(false);
     setWordIdx((i) => {
       const next = (i - 1 + total) % total;
       const nextItem = entries[next];
-      if (nextItem) speak(nextItem.word, config.voice);
+      if (nextItem)
+        speakWord(
+          nextItem.word,
+          config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+        );
       return next;
     });
   }, [total, entries, config.voice]);
 
   const goNext = useCallback(() => {
+    setImgError(false);
     setWordIdx((i) => {
       const next = (i + 1) % total;
       const nextItem = entries[next];
-      if (nextItem) speak(nextItem.word, config.voice);
+      if (nextItem)
+        speakWord(
+          nextItem.word,
+          config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+        );
       return next;
     });
   }, [total, entries, config.voice]);
@@ -136,17 +164,22 @@ export default function VocabularyLesson() {
   const handleLangChange = (lang: Language) => {
     setLanguage(lang);
     setWordIdx(0);
+    setImgError(false);
   };
 
   const handleCatChange = (catI: number) => {
     setCategoryIdx(catI);
     setWordIdx(0);
+    setImgError(false);
   };
 
   const item = entries[wordIdx];
   const bgGradient = item
     ? CARD_BG_COLORS[wordIdx % CARD_BG_COLORS.length]
     : currentCat.bgGradient;
+
+  const imagePath = item ? WORD_IMAGES[item.english] : undefined;
+  const showImage = imagePath && !imgError;
 
   if (!item) return null;
 
@@ -199,14 +232,28 @@ export default function VocabularyLesson() {
       </div>
 
       {/* Main card content — centered */}
-      <div className="flex flex-col items-center justify-center h-full pt-24 pb-16 px-20 gap-4">
-        {/* Giant emoji */}
-        <span
-          className="drop-shadow-2xl"
-          style={{ fontSize: "clamp(120px, 30vw, 260px)" }}
-        >
-          {item.emoji}
-        </span>
+      <div className="flex flex-col items-center justify-center h-full pt-24 pb-20 px-20 gap-4">
+        {/* Image or emoji */}
+        {showImage ? (
+          <img
+            src={imagePath}
+            alt={item.english}
+            onError={() => setImgError(true)}
+            className="drop-shadow-2xl object-contain"
+            style={{
+              height: "clamp(180px, 55vh, 380px)",
+              width: "auto",
+              maxWidth: "90vw",
+            }}
+          />
+        ) : (
+          <span
+            className="drop-shadow-2xl"
+            style={{ fontSize: "clamp(120px, 30vw, 260px)" }}
+          >
+            {item.emoji}
+          </span>
+        )}
 
         {/* Word label */}
         <div
@@ -230,7 +277,12 @@ export default function VocabularyLesson() {
         <button
           type="button"
           data-ocid="vocabulary.speak.button"
-          onClick={() => speak(item.word, config.voice)}
+          onClick={() =>
+            speakWord(
+              item.word,
+              config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+            )
+          }
           className="kid-btn bg-white/30 hover:bg-white/50 text-white border-4 border-white/60 px-6 py-3 flex items-center gap-2 text-xl font-bold backdrop-blur-sm"
           aria-label="Speak"
         >
@@ -259,6 +311,17 @@ export default function VocabularyLesson() {
         aria-label="Next"
       >
         <ChevronRight size={36} />
+      </button>
+
+      {/* Match Game button */}
+      <button
+        type="button"
+        data-ocid="vocabulary.match_game.button"
+        onClick={() => navigate({ to: "/picture-match" })}
+        className="absolute bottom-14 right-4 kid-btn bg-sunshine-400 hover:bg-sunshine-500 text-white border-4 border-sunshine-600 px-4 py-2 flex items-center gap-2 text-base font-bold shadow-fun z-10"
+      >
+        <Gamepad2 size={20} />
+        Match Game
       </button>
 
       {/* Position indicator */}

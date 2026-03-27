@@ -13,7 +13,7 @@ const NAV_CARDS = [
     description: "Learn A to Z in 4 languages!",
     path: "/alphabet",
     bgClass: "bg-sky-100 border-sky-400 hover:bg-sky-200",
-    textClass: "text-sky-600",
+    textClass: "text-sky-700",
   },
   {
     title: "Numbers 1–10",
@@ -38,6 +38,14 @@ const NAV_CARDS = [
     path: "/vocabulary",
     bgClass: "bg-grass-100 border-grass-400 hover:bg-grass-200",
     textClass: "text-grass-700",
+  },
+  {
+    title: "Picture Match",
+    emoji: "🎮",
+    description: "Match pictures to words!",
+    path: "/picture-match",
+    bgClass: "bg-sunshine-200 border-sunshine-500 hover:bg-sunshine-300",
+    textClass: "text-sunshine-800",
   },
   {
     title: "Picture Learning",
@@ -65,7 +73,7 @@ const NAV_CARDS = [
   },
   {
     title: "Matching Game",
-    emoji: "🃏",
+    emoji: "🃃",
     description: "Match the cards!",
     path: "/matching-game",
     bgClass: "bg-mint-200 border-mint-500 hover:bg-mint-300",
@@ -128,6 +136,14 @@ const NAV_CARDS = [
     textClass: "text-sky-800",
   },
   {
+    title: "Days of the Week",
+    emoji: "🗓️",
+    description: "Sunday to Saturday!",
+    path: "/days",
+    bgClass: "bg-sunshine-200 border-sunshine-500 hover:bg-sunshine-300",
+    textClass: "text-sunshine-800",
+  },
+  {
     title: "Support Us",
     emoji: "💝",
     description: "Donate & help us grow!",
@@ -186,7 +202,7 @@ export default function Home() {
             </div>
             <div className="absolute bottom-4 left-1/4 text-4xl">🎉</div>
             <div className="absolute bottom-6 right-1/3 text-5xl animate-float">
-              🦋
+              🦸
             </div>
           </div>
           <div className="max-w-4xl mx-auto text-center relative z-10">
@@ -201,13 +217,14 @@ export default function Home() {
             <h1 className="font-bold text-5xl md:text-7xl text-white drop-shadow-lg mb-3">
               🌟 KidsLearn! 🌟
             </h1>
-            <p className="font-semibold text-xl md:text-2xl text-white/90 font-bold mb-6">
+            <p className="font-semibold text-xl md:text-2xl text-white/90 mb-6">
               Learn Alphabets, Numbers &amp; Words in Telugu, Hindi, Tamil &amp;
               English!
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               <button
                 type="button"
+                data-ocid="home.primary_button"
                 onClick={() => navigate({ to: "/age-group" })}
                 className="kid-btn bg-sunshine-400 hover:bg-sunshine-500 text-white px-8 py-4 text-xl border-4 border-sunshine-600 shadow-fun-xl"
               >
@@ -216,6 +233,7 @@ export default function Home() {
               {isAuthenticated && (
                 <button
                   type="button"
+                  data-ocid="home.secondary_button"
                   onClick={() => navigate({ to: "/kids-dashboard" })}
                   className="kid-btn bg-white/80 hover:bg-white text-sky-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
                 >
@@ -225,6 +243,7 @@ export default function Home() {
               {/* Share App Button */}
               <button
                 type="button"
+                data-ocid="home.share.button"
                 onClick={() => setShareOpen(true)}
                 className="kid-btn bg-white/80 hover:bg-white text-cherry-600 px-8 py-4 text-xl border-4 border-white shadow-fun-xl flex items-center gap-2"
               >
@@ -247,7 +266,7 @@ export default function Home() {
               type="button"
               data-ocid={`nav.item.${idx + 1}`}
               onClick={() => navigate({ to: card.path })}
-              className={`kid-card border-4 ${card.bgClass} p-5 flex flex-col items-center gap-3 text-center cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95 animate-card-entrance card-delay-${Math.min(idx + 1, 6)}`}
+              className={`kid-card border-4 ${card.bgClass} p-5 flex flex-col items-center gap-3 text-center cursor-pointer hover:scale-105 hover:shadow-fun-xl active:scale-95`}
             >
               <span className="text-5xl">{card.emoji}</span>
               <span

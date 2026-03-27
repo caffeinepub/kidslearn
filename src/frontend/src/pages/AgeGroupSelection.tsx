@@ -5,37 +5,51 @@ const ageGroups = [
     id: "toddler",
     label: "Toddlers",
     age: "2–4 years",
-    emoji: "🐣",
-    color: "bg-sunshine-400",
+    emoji: "🧸",
+    bgGradient: "from-sunshine-300 to-tangerine-400",
     border: "border-sunshine-600",
-    image: "/assets/generated/age-group-toddler.dim_400x300.png",
-    description: "Animals, Shapes, A-B-C, 1-2-3 with big pictures!",
-    topics: ["🐘 Animals & Shapes", "🔤 A-B-C Alphabet", "🔢 Numbers 1-2-3"],
+    description: "Big pictures & playful learning for tiny tots!",
+    topics: [
+      "🐘 Animals with pictures",
+      "🔤 A-B-C Alphabet",
+      "🔢 Numbers 1–5",
+      "🟡 Shapes & Colors",
+      "➕ Simple addition",
+      "🍎 Fruits & Food",
+    ],
   },
   {
     id: "early",
     label: "Early Learners",
     age: "5–7 years",
-    emoji: "🌱",
-    color: "bg-grass-400",
+    emoji: "📖",
+    bgGradient: "from-grass-300 to-mint-400",
     border: "border-grass-600",
-    image: "/assets/generated/age-group-early-learner.dim_400x300.png",
-    description: "Alphabet, Numbers 1–20, Words & Nature with pictures!",
-    topics: ["🔤 Full Alphabet", "🔢 Numbers 1–20", "🌿 Words & Nature"],
+    description: "Words, numbers, nature & science with pictures!",
+    topics: [
+      "🔤 Full Alphabet (A–Z)",
+      "🔢 Numbers 1–20",
+      "🌿 Plants & Nature",
+      "🐾 Animals & Birds",
+      "🫀 Human body",
+      "🔬 Basic Science",
+    ],
   },
   {
     id: "older",
     label: "Older Kids",
     age: "8–12 years",
-    emoji: "🚀",
-    color: "bg-sky-400",
+    emoji: "🎓",
+    bgGradient: "from-sky-300 to-lavender-400",
     border: "border-sky-600",
-    image: "/assets/generated/age-group-older-kids.dim_400x300.png",
-    description: "Full Alphabet, Numbers 1–100, Body Parts, Math & Science!",
+    description: "Deep learning in math, science, history & more!",
     topics: [
       "🔢 Numbers 1–100",
       "🫀 Body Parts & Science",
-      "➕ Math Operations",
+      "➕ Math: Add, Sub, Mul, Div",
+      "🌍 World Geography",
+      "🏛️ History & Culture",
+      "🔬 Science & Nature",
     ],
   },
 ];
@@ -44,16 +58,19 @@ export default function AgeGroupSelection() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-100 to-sunshine-50 px-4 py-10">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="font-bold text-4xl sm:text-5xl text-center text-sunshine-700 mb-2">
-          Who is learning today? 🎉
-        </h1>
-        <p className="font-nunito text-center text-muted-foreground text-lg mb-10">
-          Choose your age group to get started!
-        </p>
+    <div className="min-h-screen bg-gradient-to-b from-sky-100 via-lavender-50 to-sunshine-50 px-4 py-10">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-10">
+          <div className="text-6xl mb-4">🎯</div>
+          <h1 className="font-bold text-4xl sm:text-5xl text-sky-700 mb-3">
+            Who is learning today?
+          </h1>
+          <p className="text-lg text-gray-600 font-semibold">
+            Pick your age group to begin your learning adventure!
+          </p>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           {ageGroups.map((group, i) => (
             <button
               key={group.id}
@@ -62,34 +79,39 @@ export default function AgeGroupSelection() {
               onClick={() =>
                 navigate({ to: "/subjects", search: { ageGroup: group.id } })
               }
-              className={`card-enter-${i + 1} ${group.color} border-4 ${group.border} rounded-4xl overflow-hidden shadow-fun-xl hover:scale-105 active:scale-95 transition-all duration-200 flex flex-col text-left`}
+              className={`bg-gradient-to-br ${group.bgGradient} border-4 ${group.border} rounded-3xl overflow-hidden shadow-fun-xl hover:scale-105 active:scale-95 transition-all duration-200 flex flex-col text-left`}
             >
-              <img
-                src={group.image}
-                alt={group.label}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-5 text-center">
-                <div className="text-4xl mb-2">{group.emoji}</div>
-                <h2 className="font-bold text-white text-2xl drop-shadow-sm mb-1">
-                  {group.label}
-                </h2>
-                <p className="font-nunito text-white font-bold text-base mb-3">
-                  {group.age}
-                </p>
-                <p className="font-nunito text-white/90 text-sm mb-3 leading-snug">
+              {/* Card Header */}
+              <div className="p-6 pb-4 flex flex-col items-center gap-3">
+                <span className="text-8xl drop-shadow-lg">{group.emoji}</span>
+                <div className="text-center">
+                  <h2 className="font-bold text-white text-3xl drop-shadow-sm mb-1">
+                    {group.label}
+                  </h2>
+                  <p className="font-bold text-white/90 text-lg bg-black/20 rounded-xl px-3 py-1">
+                    {group.age}
+                  </p>
+                </div>
+                <p className="text-white/90 font-semibold text-base text-center leading-snug">
                   {group.description}
                 </p>
-                <ul className="space-y-1">
-                  {group.topics.map((topic) => (
-                    <li
-                      key={topic}
-                      className="bg-white/20 rounded-xl px-3 py-1.5 font-nunito text-white text-sm font-semibold text-left"
-                    >
-                      {topic}
-                    </li>
-                  ))}
-                </ul>
+              </div>
+
+              {/* Topics List */}
+              <div className="px-4 pb-6 space-y-2">
+                {group.topics.map((topic) => (
+                  <div
+                    key={topic}
+                    className="bg-white/25 backdrop-blur-sm rounded-xl px-3 py-2 text-white text-sm font-bold border border-white/40"
+                  >
+                    {topic}
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA bar */}
+              <div className="mx-4 mb-4 bg-white/30 hover:bg-white/50 rounded-2xl py-3 text-center text-white font-bold text-lg border-2 border-white/50 transition-all">
+                Start Learning! 🚀
               </div>
             </button>
           ))}

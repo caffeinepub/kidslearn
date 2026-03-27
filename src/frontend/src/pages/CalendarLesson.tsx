@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight, Volume2 } from "lucide-react";
 import type React from "react";
 import { useCallback, useRef, useState } from "react";
+import { speakWord } from "../utils/speech";
 
 type Language = "english" | "telugu" | "hindi" | "tamil";
 
@@ -174,15 +175,6 @@ const MONTHS: MonthData[] = [
   },
 ];
 
-function speak(text: string, lang: string) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = lang;
-  utterance.rate = 0.75;
-  window.speechSynthesis.speak(utterance);
-}
-
 const CalendarLesson: React.FC = () => {
   const [selectedLang, setSelectedLang] = useState<Language>("english");
   const [idx, setIdx] = useState(0);
@@ -193,7 +185,10 @@ const CalendarLesson: React.FC = () => {
   const goPrev = useCallback(() => {
     setIdx((i) => {
       const next = (i - 1 + total) % total;
-      speak(MONTHS[next][selectedLang], LANG_VOICE[selectedLang]);
+      speakWord(
+        MONTHS[next][selectedLang],
+        LANG_VOICE[selectedLang] as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+      );
       return next;
     });
   }, [total, selectedLang]);
@@ -201,7 +196,10 @@ const CalendarLesson: React.FC = () => {
   const goNext = useCallback(() => {
     setIdx((i) => {
       const next = (i + 1) % total;
-      speak(MONTHS[next][selectedLang], LANG_VOICE[selectedLang]);
+      speakWord(
+        MONTHS[next][selectedLang],
+        LANG_VOICE[selectedLang] as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+      );
       return next;
     });
   }, [total, selectedLang]);
@@ -308,7 +306,12 @@ const CalendarLesson: React.FC = () => {
         <button
           type="button"
           data-ocid="calendar.speak.button"
-          onClick={() => speak(month[selectedLang], LANG_VOICE[selectedLang])}
+          onClick={() =>
+            speakWord(
+              month[selectedLang],
+              LANG_VOICE[selectedLang] as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+            )
+          }
           className="kid-btn bg-white/30 hover:bg-white/50 text-white border-4 border-white/60 px-5 py-2.5 flex items-center gap-2 text-lg font-heading backdrop-blur-sm"
           aria-label="Speak month name"
         >

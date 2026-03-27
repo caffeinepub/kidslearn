@@ -7,15 +7,17 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SplashScreen from "./components/SplashScreen";
 import Footer from "./components/layout/Footer";
 import Header from "./components/layout/Header";
+import { preloadVoices } from "./utils/speech";
 
 import AgeGroupSelection from "./pages/AgeGroupSelection";
 import AlphabetLesson from "./pages/AlphabetLesson";
 import CalendarLesson from "./pages/CalendarLesson";
 import CountriesCapitals from "./pages/CountriesCapitals";
+import DaysLesson from "./pages/DaysLesson";
 import Donation from "./pages/Donation";
 import Feedback from "./pages/Feedback";
 import Flashcards from "./pages/Flashcards";
@@ -28,6 +30,7 @@ import MiniGame from "./pages/MiniGame";
 import Numbers100Lesson from "./pages/Numbers100Lesson";
 import NumbersLesson from "./pages/NumbersLesson";
 import PictureLesson from "./pages/PictureLesson";
+import PictureMatchGame from "./pages/PictureMatchGame";
 import PoemsLesson from "./pages/PoemsLesson";
 import PostLoginProfile from "./pages/PostLoginProfile";
 import Profile from "./pages/Profile";
@@ -176,6 +179,11 @@ const calendarRoute = createRoute({
   path: "/calendar",
   component: CalendarLesson,
 });
+const daysRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/days",
+  component: DaysLesson,
+});
 const feedbackRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/feedback",
@@ -185,6 +193,11 @@ const countriesRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/countries",
   component: CountriesCapitals,
+});
+const pictureMatchRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/picture-match",
+  component: PictureMatchGame,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -211,8 +224,10 @@ const routeTree = rootRoute.addChildren([
   miniGameRoute,
   profileRoute,
   calendarRoute,
+  daysRoute,
   feedbackRoute,
   countriesRoute,
+  pictureMatchRoute,
 ]);
 
 const router = createRouter({ routeTree });
@@ -225,6 +240,10 @@ declare module "@tanstack/react-router" {
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    preloadVoices();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

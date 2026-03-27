@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight, Volume2 } from "lucide-react";
 import React, { useState } from "react";
 import { getPoems } from "../data/languageData";
+import { speakWord } from "../utils/speech";
 
 type Language = "english" | "telugu" | "hindi" | "tamil";
 
@@ -35,15 +36,6 @@ const LANGUAGE_CONFIG: Record<
     cardBg: "bg-lavender-100 border-lavender-400",
   },
 };
-
-function speak(text: string, lang: string) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = lang;
-  utterance.rate = 0.75;
-  window.speechSynthesis.speak(utterance);
-}
 
 export default function PoemsLesson() {
   const [language, setLanguage] = useState<Language>("english");
@@ -105,7 +97,12 @@ export default function PoemsLesson() {
                     type="button"
                     className={`kid-btn p-2 rounded-xl border-2 border-white ${config.btnClass} shrink-0`}
                     aria-label="Speak line"
-                    onClick={() => speak(line, config.voice)}
+                    onClick={() =>
+                      speakWord(
+                        line,
+                        config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+                      )
+                    }
                   >
                     <Volume2 size={18} />
                   </button>
@@ -118,7 +115,12 @@ export default function PoemsLesson() {
             <div className="mt-6 flex justify-center">
               <button
                 type="button"
-                onClick={() => speak(lines.join(". "), config.voice)}
+                onClick={() =>
+                  speakWord(
+                    lines.join(". "),
+                    config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+                  )
+                }
                 className={`kid-btn px-6 py-3 text-lg border-4 ${config.btnClass} flex items-center gap-2`}
               >
                 <Volume2 size={22} /> Read Full Poem Aloud

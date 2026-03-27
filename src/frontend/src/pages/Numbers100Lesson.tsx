@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, Volume2 } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getNumbers100 } from "../data/languageData";
+import { speakWord } from "../utils/speech";
 
 type Language = "english" | "telugu" | "hindi" | "tamil";
 
@@ -648,20 +649,6 @@ const LANG_VOICES: Record<Language, string> = {
   tamil: "ta-IN",
 };
 
-function speak(text: string, lang: string) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = lang;
-  utterance.rate = 0.75;
-  window.speechSynthesis.speak(utterance);
-}
-
-/** Speak only the word — no numeric prefix to avoid double sound */
-function speakWord(word: string, lang: string) {
-  speak(word, lang);
-}
-
 export default function Numbers100Lesson() {
   const [language, setLanguage] = useState<Language>("english");
   const [idx, setIdx] = useState(0);
@@ -673,7 +660,10 @@ export default function Numbers100Lesson() {
     setIdx((i) => {
       const next = (i - 1 + total) % total;
       const nextNum = ALL_NUMBERS_DATA[next];
-      speakWord(nextNum[language], LANG_VOICES[language]);
+      speakWord(
+        nextNum[language],
+        LANG_VOICES[language] as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+      );
       return next;
     });
   }, [total, language]);
@@ -682,7 +672,10 @@ export default function Numbers100Lesson() {
     setIdx((i) => {
       const next = (i + 1) % total;
       const nextNum = ALL_NUMBERS_DATA[next];
-      speakWord(nextNum[language], LANG_VOICES[language]);
+      speakWord(
+        nextNum[language],
+        LANG_VOICES[language] as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+      );
       return next;
     });
   }, [total, language]);
@@ -714,7 +707,10 @@ export default function Numbers100Lesson() {
   // Auto-speak on initial load only
   // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
   useEffect(() => {
-    speakWord(wordForLang, LANG_VOICES[language]);
+    speakWord(
+      wordForLang,
+      LANG_VOICES[language] as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+    );
   }, []);
 
   return (
@@ -786,7 +782,12 @@ export default function Numbers100Lesson() {
         <button
           type="button"
           data-ocid="numbers100.speak.button"
-          onClick={() => speakWord(wordForLang, LANG_VOICES[language])}
+          onClick={() =>
+            speakWord(
+              wordForLang,
+              LANG_VOICES[language] as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+            )
+          }
           className="kid-btn bg-white/30 hover:bg-white/50 text-white border-4 border-white/60 px-6 py-3 flex items-center gap-2 text-xl font-heading backdrop-blur-sm mt-2"
           aria-label="Speak"
         >

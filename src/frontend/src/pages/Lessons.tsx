@@ -14,6 +14,7 @@ import {
   useGetLessons,
   useGetSessionProgress,
 } from "../hooks/useQueries";
+import { speakWord } from "../utils/speech";
 
 const FALLBACK_LESSONS: Record<
   string,
@@ -29,419 +30,432 @@ const FALLBACK_LESSONS: Record<
     {
       id: 1n,
       title: "Counting to 5",
-      body: "Let's count apples! 1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ — One, Two, Three, Four, Five!",
-      image: "",
+      body: "1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣\nOne, Two, Three, Four, Five!\n\nఒకటి రెండు మూడు నాలుగు అయిదు (Telugu)\nएक दो तीन चार पाँच (Hindi)\nஒன்று இரண்டு மூன்று நான்கு ஐந்து (Tamil)",
+      image: "/assets/generated/lesson-math.dim_400x400.png",
       emoji: "🍎",
     },
     {
       id: 2n,
       title: "Counting to 10",
-      body: "Count the stars! 1 to 10. ఒకటి రెండు మూడు / एक दो तीन / ஒன்று இரண்டு மூன்று",
-      image: "",
-      emoji: "🌟",
+      body: "Count the stars! ⭐\n1 2 3 4 5 6 7 8 9 10\n\nఒకటి నుండి పది (Telugu)\nएक से दस (Hindi)\nஒன்று முதல் பத்து (Tamil)",
+      image: "/assets/generated/lesson-math.dim_400x400.png",
+      emoji: "⭐",
     },
     {
       id: 3n,
       title: "Simple Addition",
-      body: "2 + 3 = 5. Adding means putting together! Two apples plus three apples = Five apples 🍎🍎➕🍎🍎🍎",
-      image: "",
+      body: "2 + 3 = 5\n🍎🍎 + 🍎🍎🍎 = 🍎🍎🍎🍎🍎\n\nTwo apples PLUS three = Five!\nరెండు + మూడు = అయిదు (Telugu)\nدو + تین = पाँच (Hindi)",
+      image: "/assets/generated/lesson-math.dim_400x400.png",
       emoji: "➕",
     },
     {
       id: 4n,
       title: "Simple Subtraction",
-      body: "5 - 2 = 3. Subtracting means taking away! Five bananas minus two bananas = Three bananas 🍌",
-      image: "",
+      body: "5 − 2 = 3\n🍌🍌🍌🍌🍌 − 🍌🍌 = 🍌🍌🍌\n\nFive MINUS two = Three!\nఅయిదు − రెండు = మూడు (Telugu)\nपाँच − दो = तीन (Hindi)",
+      image: "/assets/generated/lesson-math.dim_400x400.png",
       emoji: "➖",
     },
     {
       id: 5n,
-      title: "Shapes: Circle",
-      body: "A circle is perfectly round! The sun ☀️, a ball 🏀, and a coin 🪙 are circles!",
-      image: "",
-      emoji: "⭕",
+      title: "Shapes: Circle & Square",
+      body: "○ Circle — Sun ☀️, Ball 🏀, Clock ⏰\n□ Square — Dice 🎲, Tile, Window\n\nవృత్తం = Circle | చతురస్రం = Square (Telugu)\nवृत्त = Circle | वर्ग = Square (Hindi)",
+      image: "/assets/generated/lesson-math.dim_400x400.png",
+      emoji: "○",
     },
     {
       id: 6n,
-      title: "Shapes: Square",
-      body: "A square has 4 equal sides! A dice 🎲, a window, and a book are square-shaped.",
-      image: "",
-      emoji: "🟥",
-    },
-    {
-      id: 7n,
-      title: "Multiplication Intro",
-      body: "3 × 2 = 6. Three groups of two! 🍪🍪 🍪🍪 🍪🍪 = Six cookies!",
-      image: "",
+      title: "Multiplication Tables",
+      body: "2 × 3 = 6\n3 × 4 = 12\n5 × 5 = 25\n\n🍪🍪 | 🍪🍪 | 🍪🍪 = 6 cookies!\nమూడు × నాలుగు = పన్నెండు (Telugu)\nतीन × चार = बारह (Hindi)",
+      image: "/assets/generated/lesson-math.dim_400x400.png",
       emoji: "✖️",
     },
     {
+      id: 7n,
+      title: "Division (Sharing)",
+      body: "8 ÷ 2 = 4\n🥭🥭🥭🥭🥭🥭🥭🥭 ÷ 2 friends = 4 each!\n\n10 ÷ 5 = 2\nఆరు ÷ రెండు = మూడు (Telugu)\nआठ ÷ दो = चार (Hindi)",
+      image: "/assets/generated/lesson-math.dim_400x400.png",
+      emoji: "÷",
+    },
+    {
       id: 8n,
-      title: "Division Intro",
-      body: "8 ÷ 2 = 4. Share equally! Eight mangoes shared between two friends = Four each 🥭",
-      image: "",
-      emoji: "➗",
+      title: "Telling Time",
+      body: "⏰ Short hand = Hours\n🕒 Long hand = Minutes\n\n12 = Noon or Midnight\n3 o'clock = both make an L!\n\nఆరు గంటలు = 6 o'clock (Telugu)\nछह बजे (Hindi)",
+      image: "/assets/generated/lesson-math.dim_400x400.png",
+      emoji: "⏰",
     },
   ],
   alphabet: [
     {
-      id: 9n,
-      title: "A for Apple",
-      body: "A is for Apple 🍎 / అ - అమ్మ / अ - अनार / அ - அன்னாசி",
-      image: "",
+      id: 11n,
+      title: "a is for apple 🍎",
+      body: "English: a - apple 🍎\nతెలుగు: అ - అమ్మ 🤰\nहिंदी: अ - अनार 🍊\nதமிழ்: அ - அம்மா 👩",
+      image: "/assets/generated/lesson-alphabet.dim_400x400.png",
       emoji: "🍎",
     },
     {
-      id: 10n,
-      title: "B for Ball",
-      body: "B is for Ball 🏀 / బ - బంతి / ब - बॉल / ப - பந்து",
-      image: "",
+      id: 12n,
+      title: "b is for ball 🏀",
+      body: "English: b - ball 🏀\nతెలుగు: బ - బంతి 🏀\nहिंदी: ब - बनाना 🍌\nதமிழ்: ப - பந்து 🏀",
+      image: "/assets/generated/lesson-alphabet.dim_400x400.png",
       emoji: "🏀",
     },
     {
-      id: 11n,
-      title: "C for Cat",
-      body: "C is for Cat 🐱 / క - కుక్క / क - कुत्ता / க - கோழி",
-      image: "",
+      id: 13n,
+      title: "c is for cat 🐱",
+      body: "English: c - cat 🐱\nతెలుగు: క - కాకి 🐦\nहिंदी: क - कमल 🌸\nதமிழ்: க - கை ✋",
+      image: "/assets/generated/lesson-alphabet.dim_400x400.png",
       emoji: "🐱",
     },
     {
-      id: 12n,
-      title: "D for Dog",
-      body: "D is for Dog 🐶 / డ - డబ్బు / द - दरवाजा / ட - டக்கு",
-      image: "",
+      id: 14n,
+      title: "d is for dog 🐶",
+      body: "English: d - dog 🐶\nతెలుగు: డ - డబ్బు 💰\nहिंदी: द - दरवाजा 🚪\nதமிழ்: ட - டம்ளர் 🥁",
+      image: "/assets/generated/lesson-alphabet.dim_400x400.png",
       emoji: "🐶",
     },
     {
-      id: 13n,
-      title: "E for Elephant",
-      body: "E is for Elephant 🐘 / ఏ - ఏనుగు / ए - एलिफेंट / ஏ - யானை",
-      image: "",
+      id: 15n,
+      title: "e is for elephant 🐘",
+      body: "English: e - elephant 🐘\nతెలుగు: ఏ - ఏనుగు 🐘\nहिंदी: ए - एलाइची\nதமிழ்: ஏ - ஏணி 🔦",
+      image: "/assets/generated/lesson-alphabet.dim_400x400.png",
       emoji: "🐘",
     },
     {
-      id: 14n,
-      title: "F for Fish",
-      body: "F is for Fish 🐟 / ఫ - పువ్వు / फ - फूल / ப - மீன்",
-      image: "",
-      emoji: "🐟",
-    },
-    {
-      id: 15n,
-      title: "G for Grapes",
-      body: "G is for Grapes 🍇 / గ - గుర్రం / ग - घोड़ा / க - திராட்சை",
-      image: "",
+      id: 16n,
+      title: "f • g • h",
+      body: "f - fish 🐟 | g - grapes 🍇 | h - house 🏠\n\nతెలుగు: ఫ - ఫలం | గ - గుర్రం 🐎 | హ - హంస\nहिंदी: फ - फूल 🌸 | ग - गाय 🐄 | घ - घर 🏠\nதமிழ்: ப - பால் | க - குதிரை | வ - வீடு",
+      image: "/assets/generated/lesson-alphabet.dim_400x400.png",
       emoji: "🍇",
     },
     {
-      id: 16n,
-      title: "H for House",
-      body: "H is for House 🏠 / హ - హంస / ह - हाथी / ஹ - வீடு",
-      image: "",
-      emoji: "🏠",
+      id: 17n,
+      title: "i • j • k • l",
+      body: "i - ice cream 🍨 | j - jump 🤸 | k - kite 🪁 | l - lion 🦁\n\nతెలుగు: ఇ - ఇల్లు | జ - జిరాఫా 🦒\nहिंदी: इ - इमली | ज - जहाज ⛵\nதமிழ்: இ - இலை 🍃 | ச - சேவல் 🐓",
+      image: "/assets/generated/lesson-alphabet.dim_400x400.png",
+      emoji: "🦁",
+    },
+    {
+      id: 18n,
+      title: "m • n • o • p",
+      body: "m - mango 🥭 | n - nest 🪹 | o - orange 🍊 | p - parrot 🦜\n\nతెలుగు: మ - మావిడి 🥭 | న - నదీ 🌊\nहिंदी: म - मंगो | न - नदी 🌊\nதமிழ்: ம - மாம்பழம் | ந - நட்சத்திரம் ⭐",
+      image: "/assets/generated/lesson-alphabet.dim_400x400.png",
+      emoji: "🥭",
+    },
+    {
+      id: 19n,
+      title: "q • r • s • t",
+      body: "q - queen 👑 | r - rainbow 🌈 | s - sun ☀️ | t - tiger 🐯\n\nతెలుగు: ర - రాత్రి 🌙 | స - సూర్యుడు ☀️\nहिंदी: र - राजा 👑 | स - सूरज ☀️\nதமிழ்: ர - ராஜா 👑 | ச - சூரியன் ☀️",
+      image: "/assets/generated/lesson-alphabet.dim_400x400.png",
+      emoji: "🐯",
+    },
+    {
+      id: 20n,
+      title: "u • v • w • x • y • z",
+      body: "u - umbrella ☂️ | v - violin 🎻 | w - whale 🐋\nx - xylophone 🎹 | y - yak 🐂 | z - zebra 🦓\n\nతెలుగు: వ - వర్షం 🌧️ | జ - జిరాఫా 🦒\nहिंदी: व - वर्षा | ज - ज़ेब्रा 🦓",
+      image: "/assets/generated/lesson-alphabet.dim_400x400.png",
+      emoji: "🦓",
     },
   ],
   science: [
     {
-      id: 17n,
-      title: "Plants Need Sun",
-      body: "Plants grow with sunlight ☀️, water 💧, and air! They make their own food.",
-      image: "",
-      emoji: "🌱",
-    },
-    {
-      id: 18n,
-      title: "Animals",
-      body: "Animals are living creatures! Fish live in water 🐟, birds fly in sky 🐦, lions live on land 🦁",
-      image: "",
-      emoji: "🐘",
-    },
-    {
-      id: 19n,
-      title: "Body Parts",
-      body: "Our body has many parts! Head 👤, eyes 👀, nose 👃, mouth 👄, hands 🙌, legs 🦵",
-      image: "",
-      emoji: "🫀",
-    },
-    {
-      id: 20n,
-      title: "Weather",
-      body: "Weather changes every day! Sunny ☀️, Rainy 🌧️, Cloudy ⛅, Windy 💨, Snowy ❄️",
-      image: "",
-      emoji: "⛅",
-    },
-    {
       id: 21n,
-      title: "Water Cycle",
-      body: "Water evaporates ☁️, forms clouds, then falls as rain 🌧️ — the water cycle!",
-      image: "",
-      emoji: "💧",
+      title: "Plants Need Sun & Water",
+      body: "Plants are living things! 🌱\n☀️ Sunlight to make food\n💧 Water to grow\n💨 Air to breathe\n\nచెట్టుకి నీళ్ళు, వెలుతురు, గాలి కావాలి (Telugu)\nपेड़ को पानी, रोशनी, हवा चाहिए (Hindi)",
+      image: "/assets/generated/lesson-science.dim_400x400.png",
+      emoji: "🌳",
     },
     {
       id: 22n,
-      title: "Earth & Space",
-      body: "Earth is our home planet 🌍. The Sun gives us light ☀️. The Moon shines at night 🌙",
-      image: "",
-      emoji: "🌍",
+      title: "Wild & Domestic Animals",
+      body: "Wild 🌳: 🦁 Lion | 🐘 Elephant | 🐯 Tiger | 🦒 Giraffe\nDomestic 🏠: 🐄 Cow | 🐕 Dog | 🐈 Cat | 🐔 Hen\n\nఅడవి జంతువులు vs ఇంటి జంతువులు (Telugu)\nजंगली vs घरेलू जानवर (Hindi)",
+      image: "/assets/generated/lesson-science.dim_400x400.png",
+      emoji: "🦁",
     },
     {
       id: 23n,
-      title: "Fruits & Vegetables",
-      body: "Fruits have seeds inside 🍎🍊🍇. Vegetables are roots, leaves or stems 🥕🥦🧅",
-      image: "",
-      emoji: "🥦",
+      title: "Human Body Parts",
+      body: "👤 Head — తల / सिर / தலை\n👁️ Eyes — కళ్ళు / आंखें / கண்கள்\n👃 Nose — ముక్కు / नाक / மூக்கு\n👄 Mouth — నోరు / मुंह / வாய்\n🤲 Hands — చేతులు / हाथ / கைகள்\n🦵 Legs — కాళ్ళు / पैर / கால்கள்",
+      image: "/assets/generated/lesson-science.dim_400x400.png",
+      emoji: "🫀",
     },
     {
       id: 24n,
-      title: "Insects",
-      body: "Insects have 6 legs! Butterfly 🦋, Bee 🐝, Ant 🐜, Ladybug 🐞 are all insects!",
-      image: "",
+      title: "Weather & Seasons",
+      body: "☀️ Sunny | 🌧️ Rainy | ⛅ Cloudy | ❄️ Snowy\n\n4 Seasons:\n🌸 Spring | ☀️ Summer | 🍂 Autumn | ❄️ Winter\n\nరుతువులు (Telugu) | ऋतुएं (Hindi) | பருவங்கள் (Tamil)",
+      image: "/assets/generated/lesson-science.dim_400x400.png",
+      emoji: "⛅",
+    },
+    {
+      id: 25n,
+      title: "Water Cycle",
+      body: "1️⃣ Sun heats water → Evaporation ☀️\n2️⃣ Water rises to sky → Clouds ☁️\n3️⃣ Clouds get heavy → Rain 🌧️\n4️⃣ Rain fills rivers → Back to sea 🌊\n\nనీటి ప్రసరణం (Telugu) | जल चक्र (Hindi)",
+      image: "/assets/generated/lesson-science.dim_400x400.png",
+      emoji: "💧",
+    },
+    {
+      id: 26n,
+      title: "Sun, Moon & Stars",
+      body: "☀️ Sun — gives heat and light\n🌕 Moon — reflects sunlight at night\n⭐ Stars — far away suns!\n\n🌍 Earth = 365 days around the Sun = 1 year!\nపృథ్వి / पृथ्वी / பூமி — our home planet!",
+      image: "/assets/generated/lesson-science.dim_400x400.png",
+      emoji: "☀️",
+    },
+    {
+      id: 27n,
+      title: "Fruits & Vegetables",
+      body: "Fruits (have seeds):\n🍎 Apple | 🍌 Banana | 🥭 Mango | 🍊 Orange\n\nVegetables (roots/leaves):\n🥕 Carrot | 🥦 Broccoli | 🧅 Onion | 🍅 Tomato\n\nపండ్లు (fruits) | కూరలు (vegetables) (Telugu)",
+      image: "/assets/generated/lesson-science.dim_400x400.png",
+      emoji: "🍎",
+    },
+    {
+      id: 28n,
+      title: "Insects & Bugs",
+      body: "Insects = 6 legs + 3 body parts!\n🦋 Butterfly | 🐝 Bee | 🐜 Ant | 🐞 Ladybug\n\nBees make honey 🍯\nButterflies start as caterpillars! 🐛→🦋\n\nకీటకాలు (Telugu) | கீடங்கள் (Tamil)",
+      image: "/assets/generated/lesson-science.dim_400x400.png",
       emoji: "🦋",
     },
   ],
   telugu: [
     {
-      id: 25n,
-      title: "Telugu Vowels అచ్చులు",
-      body: "అ ఆ ఇ ఈ ఉ ఊ — Telugu vowels! అ for అమ్మ (mother), ఆ for ఆవు (cow)",
-      image: "",
-      emoji: "📝",
-    },
-    {
-      id: 26n,
-      title: "Telugu Consonants హల్లులు",
-      body: "క ఖ గ ఘ — Telugu consonants! క for కాకి (crow), గ for గుర్రం (horse)",
-      image: "",
-      emoji: "✍️",
-    },
-    {
-      id: 27n,
-      title: "Animals in Telugu",
-      body: "పశువులు: ఆవు (cow) 🐄, గుర్రం (horse) 🐴, ఏనుగు (elephant) 🐘, పులి (tiger) 🐯",
-      image: "",
-      emoji: "🐄",
-    },
-    {
-      id: 28n,
-      title: "Colors in Telugu",
-      body: "రంగులు: ఎరుపు (red) 🔴, పచ్చ (green) 🟢, పసుపు (yellow) 🟡, నీలం (blue) 🔵",
-      image: "",
-      emoji: "🎨",
-    },
-    {
-      id: 29n,
-      title: "Numbers in Telugu",
-      body: "సంఖ్యలు: ఒకటి (1), రెండు (2), మూడు (3), నాలుగు (4), అయిదు (5)",
-      image: "",
-      emoji: "🔢",
-    },
-    {
-      id: 30n,
-      title: "Body Parts Telugu",
-      body: "శరీర భాగాలు: తల (head), కళ్ళు (eyes), చేయి (hand), కాలు (leg), ముక్కు (nose)",
-      image: "",
-      emoji: "🫀",
-    },
-    {
       id: 31n,
-      title: "Fruits Telugu",
-      body: "పళ్ళు: మామిడి (mango) 🥭, అరటి (banana) 🍌, ద్రాక్ష (grapes) 🍇, నారింజ (orange) 🍊",
-      image: "",
-      emoji: "🥭",
+      title: "అ - అమ్మ 🤰",
+      body: "అచ్చులు (Telugu Vowels):\n\nఅ - అమ్మ (Mother) 🤰\nఆ - ఆవు (Cow) 🐄\nఇ - ఇల్లు (House) 🏠\nఈ - ఈగ (Fly)\nఉ - ఉడుత (Squirrel) 🐿️\nఊ - ఉషధం (Medicine) 💊",
+      image: "/assets/generated/lesson-telugu.dim_400x400.png",
+      emoji: "✏️",
     },
     {
       id: 32n,
-      title: "Greetings Telugu",
-      body: "నమస్కారం (Namaste) 🙏, ధన్యవాదాలు (Thank you), శుభోదయం (Good morning)",
-      image: "",
+      title: "క - కాకి 🐦",
+      body: "హల్లులు (Telugu Consonants):\n\nక - కాకి (Crow) 🐦\nఖ - ఖడ్గం (Sword) ⚔️\nగ - గుర్రం (Horse) 🐎\nఘ - ఘంట (Bell) 🔔\nచ - చేప (Fish) 🐟\nజ - జడ (Braid) 🌀",
+      image: "/assets/generated/lesson-telugu.dim_400x400.png",
+      emoji: "🐦",
+    },
+    {
+      id: 33n,
+      title: "జంతువులు (Animals)",
+      body: "జంతువులు (Animals in Telugu):\n\nఆవు = Cow 🐄\nగుర్రం = Horse 🐎\nఏనుగు = Elephant 🐘\nపులి = Tiger 🐯\nసింహం = Lion 🦁\nచేప = Fish 🐟",
+      image: "/assets/generated/lesson-telugu.dim_400x400.png",
+      emoji: "🐘",
+    },
+    {
+      id: 34n,
+      title: "రంగులు (Colors)",
+      body: "రంగులు (Colors in Telugu):\n\nఎరుపు = Red 🔴\nపచ్చ = Green 🟢\nపసుపు = Yellow 🟡\nనీలం = Blue 🔵\nతెలుపు = White ⚪\nనలుపు = Black ⚫",
+      image: "/assets/generated/lesson-telugu.dim_400x400.png",
+      emoji: "🎨",
+    },
+    {
+      id: 35n,
+      title: "సంఖ్యలు (Numbers 1-10)",
+      body: "1 = ఒకటి\n2 = రెండు\n3 = మూడు\n4 = నాలుగు\n5 = అయిదు\n6 = ఆరు\n7 = ఏడు\n8 = ఎనిమిది\n9 = తొమ్మిది\n10 = పది",
+      image: "/assets/generated/lesson-telugu.dim_400x400.png",
+      emoji: "🔢",
+    },
+    {
+      id: 36n,
+      title: "శరీర భాగాలు (Body Parts)",
+      body: "తల = Head 👤\nకళ్ళు = Eyes 👁️\nముక్కు = Nose 👃\nనోరు = Mouth 👄\nచెవి = Ear 👂\nచేతులు = Hands 🤲\nకాళ్ళు = Legs 🦵",
+      image: "/assets/generated/lesson-telugu.dim_400x400.png",
+      emoji: "🫀",
+    },
+    {
+      id: 37n,
+      title: "పళ్ళు (Fruits)",
+      body: "మావిడి = Mango 🥭\nఅరటి = Banana 🍌\nద్రాక్ష = Grapes 🍇\nనిమ్మ = Lemon 🍋\nనారింజ = Orange 🍊\nసేబు = Apple 🍎",
+      image: "/assets/generated/lesson-telugu.dim_400x400.png",
+      emoji: "🥭",
+    },
+    {
+      id: 38n,
+      title: "మర్యాదలు (Greetings)",
+      body: "నమస్కారం = Hello 🙏\nధన్యవాదాలు = Thank you\nశుభోదయం = Good morning 🌞\nశుభసాయంత్రం = Good evening 🌇\nశుభరాత్రి = Good night 🌙",
+      image: "/assets/generated/lesson-telugu.dim_400x400.png",
       emoji: "🙏",
     },
   ],
   hindi: [
     {
-      id: 33n,
-      title: "Hindi Vowels स्वर",
-      body: "अ आ इ ई उ ऊ — Hindi vowels! अ for अनार (pomegranate), आ for आम (mango)",
-      image: "",
-      emoji: "📝",
-    },
-    {
-      id: 34n,
-      title: "Hindi Consonants व्यंजन",
-      body: "क ख ग घ — Hindi consonants! क for केला (banana), ग for गाय (cow)",
-      image: "",
-      emoji: "✍️",
-    },
-    {
-      id: 35n,
-      title: "Animals in Hindi",
-      body: "जानवर: गाय (cow) 🐄, घोड़ा (horse) 🐴, हाथी (elephant) 🐘, शेर (lion) 🦁",
-      image: "",
-      emoji: "🐄",
-    },
-    {
-      id: 36n,
-      title: "Colors in Hindi",
-      body: "रंग: लाल (red) 🔴, हरा (green) 🟢, पीला (yellow) 🟡, नीला (blue) 🔵",
-      image: "",
-      emoji: "🎨",
-    },
-    {
-      id: 37n,
-      title: "Numbers in Hindi",
-      body: "संख्या: एक (1), दो (2), तीन (3), चार (4), पाँच (5), छह (6)",
-      image: "",
-      emoji: "🔢",
-    },
-    {
-      id: 38n,
-      title: "Body Parts Hindi",
-      body: "शरीर के अंग: सिर (head), आँखें (eyes), हाथ (hand), पैर (leg), नाक (nose)",
-      image: "",
-      emoji: "🫀",
-    },
-    {
       id: 39n,
-      title: "Fruits Hindi",
-      body: "फल: आम (mango) 🥭, केला (banana) 🍌, अंगूर (grapes) 🍇, संतरा (orange) 🍊",
-      image: "",
-      emoji: "🥭",
+      title: "अ - अनार",
+      body: "हिंदी स्वर (Hindi Vowels):\n\nअ - अनार (Pomegranate) 🍊\nआ - आम (Mango) 🥭\nइ - इमली (Tamarind) 🌳\nई - ईख (Sugarcane) 🌾\nउ - उल्लू (Owl) 🦉\nऊ - ऊँट (Camel) 🐪",
+      image: "/assets/generated/lesson-hindi.dim_400x400.png",
+      emoji: "✏️",
     },
     {
       id: 40n,
-      title: "Greetings Hindi",
-      body: "नमस्ते (Namaste) 🙏, धन्यवाद (Thank you), शुभ प्रभात (Good morning)",
-      image: "",
+      title: "क - कमल 🌸",
+      body: "हिंदी व्यंजन (Hindi Consonants):\n\nक - कमल (Lotus) 🌸\nख - खरगोश (Rabbit) 🐰\nग - गाय (Cow) 🐄\nघ - घर (House) 🏠\nच - चाँद (Moon) 🌙\nछ - छतरी (Umbrella) ☂️",
+      image: "/assets/generated/lesson-hindi.dim_400x400.png",
+      emoji: "🌸",
+    },
+    {
+      id: 41n,
+      title: "जानवर (Animals)",
+      body: "गाय = Cow 🐄\nघोड़ा = Horse 🐎\nहाथी = Elephant 🐘\nशेर = Lion 🦁\nबाघ = Tiger 🐯\nमछली = Fish 🐟\nतोता = Parrot 🦜",
+      image: "/assets/generated/lesson-hindi.dim_400x400.png",
+      emoji: "🐘",
+    },
+    {
+      id: 42n,
+      title: "रंग (Colors)",
+      body: "लाल = Red 🔴\nहरा = Green 🟢\nपीला = Yellow 🟡\nनीला = Blue 🔵\nसफेद = White ⚪\nकाला = Black ⚫\nगुलाबी = Pink 🩷",
+      image: "/assets/generated/lesson-hindi.dim_400x400.png",
+      emoji: "🎨",
+    },
+    {
+      id: 43n,
+      title: "संख्या (Numbers 1-10)",
+      body: "1 = एक\n2 = दो\n3 = तीन\n4 = चार\n5 = पाँच\n6 = छह\n7 = सात\n8 = आठ\n9 = नौ\n10 = दस",
+      image: "/assets/generated/lesson-hindi.dim_400x400.png",
+      emoji: "🔢",
+    },
+    {
+      id: 44n,
+      title: "शरीर के अंग (Body Parts)",
+      body: "सिर = Head 👤\nआँखें = Eyes 👁️\nनाक = Nose 👃\nमुंह = Mouth 👄\nकान = Ear 👂\nहाथ = Hands 🤲\nपैर = Legs 🦵",
+      image: "/assets/generated/lesson-hindi.dim_400x400.png",
+      emoji: "🫀",
+    },
+    {
+      id: 45n,
+      title: "फल (Fruits)",
+      body: "आम = Mango 🥭\nकेला = Banana 🍌\nअंगूर = Grapes 🍇\nनींबू = Lemon 🍋\nसंतरा = Orange 🍊\nसेब = Apple 🍎",
+      image: "/assets/generated/lesson-hindi.dim_400x400.png",
+      emoji: "🥭",
+    },
+    {
+      id: 46n,
+      title: "अभिवादन (Greetings)",
+      body: "नमस्ते = Hello 🙏\nधन्यवाद = Thank you\nशुभ प्रभात = Good morning 🌞\nशुभ संध्या = Good evening 🌇\nशुभ रात्रि = Good night 🌙",
+      image: "/assets/generated/lesson-hindi.dim_400x400.png",
       emoji: "🙏",
     },
   ],
   english: [
     {
-      id: 41n,
-      title: "Greetings",
-      body: "Hello! Good morning! How are you? I am fine, thank you! Nice to meet you!",
-      image: "",
+      id: 47n,
+      title: "Greetings & Feelings",
+      body: "Hello! 👋 Good morning! 🌞\nHow are you? I am fine, thank you! 😊\n\n😊 Happy | 😢 Sad | 😠 Angry\n😱 Scared | 🤯 Surprised | 😄 Excited",
+      image: "/assets/generated/lesson-english.dim_400x400.png",
       emoji: "👋",
     },
     {
-      id: 42n,
-      title: "Colors",
-      body: "Red 🔴, Blue 🔵, Green 🟢, Yellow 🟡, Orange 🟠, Purple 🟣, Pink 🌸",
-      image: "",
+      id: 48n,
+      title: "Colors of the Rainbow",
+      body: "🌈 Rainbow has 7 colors!\nR - Red 🔴\nO - Orange 🟠\nY - Yellow 🟡\nG - Green 🟢\nB - Blue 🔵\nI - Indigo | V - Violet\n\nRemember: ROY G BIV!",
+      image: "/assets/generated/lesson-english.dim_400x400.png",
       emoji: "🌈",
     },
     {
-      id: 43n,
-      title: "Animals",
-      body: "Cat 🐱, Dog 🐶, Elephant 🐘, Lion 🦁, Bird 🐦, Fish 🐟, Rabbit 🐰",
-      image: "",
+      id: 49n,
+      title: "Wild Animals",
+      body: "🦁 Lion — King of the jungle\n🐘 Elephant — largest land animal\n🐯 Tiger — fastest big cat\n🦒 Giraffe — tallest animal\n🐻 Bear — loves honey 🍯\n🐊 Crocodile — lives in rivers",
+      image: "/assets/generated/lesson-english.dim_400x400.png",
       emoji: "🦁",
     },
     {
-      id: 44n,
-      title: "Fruits",
-      body: "Apple 🍎, Banana 🍌, Mango 🥭, Orange 🍊, Grapes 🍇, Strawberry 🍓",
-      image: "",
+      id: 50n,
+      title: "Fruits We Love",
+      body: "🍎 Apple — keeps the doctor away!\n🍌 Banana — monkeys love it!\n🥭 Mango — king of fruits!\n🍊 Orange — full of Vitamin C!\n🍇 Grapes — come in bunches!\n🍓 Strawberry — red and sweet!",
+      image: "/assets/generated/lesson-english.dim_400x400.png",
       emoji: "🍎",
     },
     {
-      id: 45n,
-      title: "Vegetables",
-      body: "Carrot 🥕, Tomato 🍅, Potato 🥔, Broccoli 🥦, Onion 🧅, Corn 🌽",
-      image: "",
+      id: 51n,
+      title: "Vegetables & Health",
+      body: "🥕 Carrot — good for your eyes 👀\n🥦 Broccoli — like little trees!\n🍅 Tomato — red and juicy\n🧅 Onion — makes us cry! 😭\n🌽 Corn — yellow and sweet\n🥔 Potato — chips are made from this!",
+      image: "/assets/generated/lesson-english.dim_400x400.png",
       emoji: "🥦",
     },
     {
-      id: 46n,
-      title: "Numbers",
-      body: "One 1️⃣, Two 2️⃣, Three 3️⃣, Four 4️⃣, Five 5️⃣, Six 6️⃣, Seven 7️⃣, Eight 8️⃣",
-      image: "",
+      id: 52n,
+      title: "Numbers 1 to 20",
+      body: "1️⃣ One | 2️⃣ Two | 3️⃣ Three | 4️⃣ Four | 5️⃣ Five\n6️⃣ Six | 7️⃣ Seven | 8️⃣ Eight | 9️⃣ Nine | 🔟 Ten\n\n11 Eleven | 12 Twelve | 13 Thirteen | 14 Fourteen | 15 Fifteen\n16–20: Sixteen, Seventeen, Eighteen, Nineteen, Twenty!",
+      image: "/assets/generated/lesson-english.dim_400x400.png",
       emoji: "🔢",
     },
     {
-      id: 47n,
-      title: "Action Words",
-      body: "Run 🏃, Jump 🦘, Eat 🍽️, Sleep 😴, Play 🎮, Read 📚, Write ✍️, Sing 🎵",
-      image: "",
+      id: 53n,
+      title: "Action Words (Verbs)",
+      body: "🏃 Run | 🦘 Jump | 🍽️ Eat | 💤 Sleep\n🎮 Play | 📚 Read | ✍️ Write | 🎵 Sing\n💃 Dance | 😂 Laugh | 🏄 Swim\n🧐 Think | 🗣️ Talk | 👁️ Look",
+      image: "/assets/generated/lesson-english.dim_400x400.png",
       emoji: "🏃",
     },
     {
-      id: 48n,
-      title: "Family",
-      body: "Mother 👩, Father 👨, Sister 👧, Brother 👦, Grandmother 👵, Grandfather 👴",
-      image: "",
+      id: 54n,
+      title: "Family Members",
+      body: "👩 Mother (Amma / Maa / Amma)\n👨 Father (Nanna / Papa / Appa)\n👧 Sister (Akka / Didi / Akka)\n👦 Brother (Anna / Bhai / Anna)\n👵 Grandmother (Paati / Dadi / Paati)\n👴 Grandfather (Thatha / Dada / Thatha)",
+      image: "/assets/generated/lesson-english.dim_400x400.png",
       emoji: "👨‍👩‍👧‍👦",
     },
   ],
   tamil: [
     {
-      id: 49n,
-      title: "Tamil Vowels உயிரெழுத்துகள்",
-      body: "அ ஆ இ ஈ உ ஊ — Tamil vowels! அ for அம்மா (mother), ஆ for ஆடு (goat)",
-      image: "",
-      emoji: "📝",
+      id: 57n,
+      title: "அ - அம்மா 👩",
+      body: "தமிழ் உயிரெழுத்துகள் (Vowels):\n\nஅ - அம்மா (Mother) 👩\nஆ - ஆடு (Goat) 🐐\nஇ - இலை (Leaf) 🍃\nஈ - ஈசல்\nஉ - உணவு (Food) 🍚\nஊ - ஊசி (Needle) 🧵",
+      image: "/assets/generated/lesson-tamil.dim_400x400.png",
+      emoji: "✏️",
     },
     {
-      id: 50n,
-      title: "Tamil Consonants மெய்யெழுத்துகள்",
-      body: "க ச ட த ப ம — Tamil consonants! க for கோழி (hen), ம for மரம் (tree)",
-      image: "",
-      emoji: "✍️",
+      id: 58n,
+      title: "க - கொழி 🐓",
+      body: "தமிழ் மெய்யெழுத்துகள் (Consonants):\n\nக - கொழி (Hen) 🐓\nச - சேவல் (Rooster) 🐓\nட - டம்ளர் 🥁\nத - தாய் (Mother) 👩\nப - பறவை (Bird) 🐦\nம - மரம் (Tree) 🌳",
+      image: "/assets/generated/lesson-tamil.dim_400x400.png",
+      emoji: "🐓",
     },
     {
-      id: 51n,
-      title: "Animals in Tamil",
-      body: "விலங்குகள்: பசு (cow) 🐄, குதிரை (horse) 🐴, யானை (elephant) 🐘, சிங்கம் (lion) 🦁",
-      image: "",
-      emoji: "🐄",
+      id: 59n,
+      title: "விலங்குகள் (Animals)",
+      body: "பசு = Cow 🐄\nகுதிரை = Horse 🐎\nயானை = Elephant 🐘\nசிங்கம் = Lion 🦁\nபுலி = Tiger 🐯\nமீன் = Fish 🐟\nகிளி = Parrot 🦜",
+      image: "/assets/generated/lesson-tamil.dim_400x400.png",
+      emoji: "🐘",
     },
     {
-      id: 52n,
-      title: "Colors in Tamil",
-      body: "வண்ணங்கள்: சிவப்பு (red) 🔴, பச்சை (green) 🟢, மஞ்சள் (yellow) 🟡, நீலம் (blue) 🔵",
-      image: "",
+      id: 60n,
+      title: "வண்ணங்கள் (Colors)",
+      body: "சிவப்பு = Red 🔴\nபச்சை = Green 🟢\nமஞ்சள் = Yellow 🟡\nநீலம் = Blue 🔵\nவெள்ளை = White ⚪\nகறுப்பு = Black ⚫",
+      image: "/assets/generated/lesson-tamil.dim_400x400.png",
       emoji: "🎨",
     },
     {
-      id: 53n,
-      title: "Numbers in Tamil",
-      body: "எண்கள்: ஒன்று (1), இரண்டு (2), மூன்று (3), நான்கு (4), ஐந்து (5)",
-      image: "",
+      id: 61n,
+      title: "எண்கள் (Numbers 1-10)",
+      body: "1 = ஒன்று\n2 = இரண்டு\n3 = மூன்று\n4 = நான்கு\n5 = ஐந்து\n6 = ஆறு\n7 = ஏழு\n8 = எட்டு\n9 = ஒம்பது\n10 = பத்து",
+      image: "/assets/generated/lesson-tamil.dim_400x400.png",
       emoji: "🔢",
     },
     {
-      id: 54n,
-      title: "Body Parts Tamil",
-      body: "உடல் உறுப்புகள்: தலை (head), கண்கள் (eyes), கை (hand), கால் (leg), மூக்கு (nose)",
-      image: "",
+      id: 62n,
+      title: "உடல் உறுப்புகள் (Body Parts)",
+      body: "தலை = Head 👤\nகண்கள் = Eyes 👁️\nமூக்கு = Nose 👃\nவாய் = Mouth 👄\nகாது = Ear 👂\nகைகள் = Hands 🤲\nகால்கள் = Legs 🦵",
+      image: "/assets/generated/lesson-tamil.dim_400x400.png",
       emoji: "🫀",
     },
     {
-      id: 55n,
-      title: "Fruits Tamil",
-      body: "பழங்கள்: மாம்பழம் (mango) 🥭, வாழைப்பழம் (banana) 🍌, திராட்சை (grapes) 🍇",
-      image: "",
+      id: 63n,
+      title: "பழங்கள் (Fruits)",
+      body: "மாம்பழம் = Mango 🥭\nவாழைப்பழம் = Banana 🍌\nதிராட்சை = Grapes 🍇\nஎலுமிச்சம்பழம் = Lemon 🍋\nஆரஞ்சு = Orange 🍊\nஆப்பிள் = Apple 🍎",
+      image: "/assets/generated/lesson-tamil.dim_400x400.png",
       emoji: "🥭",
     },
     {
-      id: 56n,
-      title: "Greetings Tamil",
-      body: "வணக்கம் (Vanakkam) 🙏, நன்றி (Thank you), காலை வணக்கம் (Good morning)",
-      image: "",
+      id: 64n,
+      title: "வணக்கம் (Greetings)",
+      body: "வணக்கம் = Hello 🙏\nநன்றி = Thank you\nகாலை வணக்கம் = Good morning 🌞\nமாலை வணக்கம் = Good evening 🌇\nஇரவு வணக்கம் = Good night 🌙",
+      image: "/assets/generated/lesson-tamil.dim_400x400.png",
       emoji: "🙏",
     },
   ],
 };
 
-// Subject-specific gradient backgrounds for the illustration area
 const SUBJECT_GRADIENTS: Record<string, string> = {
-  math: "from-sunshine-300 to-tangerine-300",
-  alphabet: "from-sky-300 to-lavender-300",
-  science: "from-grass-300 to-mint-300",
-  telugu: "from-tangerine-300 to-cherry-300",
-  hindi: "from-cherry-200 to-lavender-300",
-  english: "from-sky-200 to-grass-200",
-  tamil: "from-mint-300 to-sky-300",
+  math: "from-sunshine-300 to-tangerine-400",
+  alphabet: "from-sky-300 to-lavender-400",
+  science: "from-grass-300 to-mint-400",
+  telugu: "from-tangerine-300 to-cherry-400",
+  hindi: "from-cherry-200 to-lavender-400",
+  english: "from-sky-200 to-grass-300",
+  tamil: "from-mint-300 to-sky-400",
 };
 
 export default function Lessons() {
@@ -454,9 +468,6 @@ export default function Lessons() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const synthRef = useRef<SpeechSynthesis | null>(
-    typeof window !== "undefined" ? window.speechSynthesis : null,
-  );
 
   const { data: backendLessons, isLoading } = useGetLessons();
   const { data: sessionProgress } = useGetSessionProgress();
@@ -474,21 +485,18 @@ export default function Lessons() {
     : false;
 
   const handleSpeak = () => {
-    if (!synthRef.current || !currentLesson) return;
+    if (!currentLesson) return;
     if (isSpeaking) {
-      synthRef.current.cancel();
+      window.speechSynthesis?.cancel();
       setIsSpeaking(false);
       return;
     }
-    const utterance = new SpeechSynthesisUtterance(
-      `${currentLesson.title}. ${currentLesson.body}`,
-    );
-    utterance.rate = 0.9;
-    utterance.pitch = 1.1;
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-    synthRef.current.speak(utterance);
     setIsSpeaking(true);
+    speakWord(`${currentLesson.title}. ${currentLesson.body}`, "en-US").then(
+      () => {
+        setIsSpeaking(false);
+      },
+    );
   };
 
   const handleComplete = async () => {
@@ -496,23 +504,22 @@ export default function Lessons() {
     try {
       await completeLessonMutation.mutateAsync(BigInt(currentLesson.id));
     } catch {
-      // Ignore if already completed
+      // ignore
     }
   };
 
   const handlePrev = () => {
-    synthRef.current?.cancel();
+    window.speechSynthesis?.cancel();
     setIsSpeaking(false);
     setCurrentIndex((i) => Math.max(0, i - 1));
   };
 
   const handleNext = () => {
-    synthRef.current?.cancel();
+    window.speechSynthesis?.cancel();
     setIsSpeaking(false);
     setCurrentIndex((i) => Math.min(lessons.length - 1, i + 1));
   };
 
-  const subjectLabel = subject.charAt(0).toUpperCase() + subject.slice(1);
   const subjectEmoji =
     subject === "math"
       ? "🔢"
@@ -525,7 +532,7 @@ export default function Lessons() {
             : subject === "hindi"
               ? "🪔"
               : subject === "tamil"
-                ? "🌺"
+                ? "🌸"
                 : "📖";
 
   const gradientClass = SUBJECT_GRADIENTS[subject] || SUBJECT_GRADIENTS.math;
@@ -550,22 +557,17 @@ export default function Lessons() {
     );
   }
 
+  const lessonImage = (currentLesson as { image?: string }).image || "";
   const lessonEmoji =
     (currentLesson as { emoji?: string }).emoji || subjectEmoji;
 
   return (
-    <div className="animate-fade-slide-in max-w-2xl mx-auto px-4 py-8">
-      <div className="text-center mb-6">
-        <h1 className="font-bold text-4xl md:text-5xl text-foreground">
-          {subjectEmoji} {subjectLabel} Lessons
-        </h1>
-        <p className="font-nunito text-xl text-muted-foreground font-semibold">
-          Lesson {currentIndex + 1} of {lessons.length}
-        </p>
-      </div>
-
-      {/* Progress dots */}
-      <div className="flex justify-center gap-2 mb-6 flex-wrap">
+    <div
+      className="flex flex-col w-full min-h-screen bg-gray-50"
+      data-ocid="lesson.page"
+    >
+      {/* Progress dots strip */}
+      <div className="flex justify-center gap-2 py-3 bg-white/80 backdrop-blur-sm border-b border-gray-100 flex-wrap px-4">
         {lessons.map((lesson, i) => {
           const done = completedIds.includes(String(lesson.id));
           return (
@@ -574,77 +576,94 @@ export default function Lessons() {
               type="button"
               data-ocid={`lesson.item.${i + 1}`}
               onClick={() => {
-                synthRef.current?.cancel();
+                window.speechSynthesis?.cancel();
                 setIsSpeaking(false);
                 setCurrentIndex(i);
               }}
-              className={`w-5 h-5 rounded-full transition-all ${
+              className={`w-4 h-4 rounded-full transition-all ${
                 i === currentIndex
-                  ? "bg-tangerine-500 scale-125"
+                  ? "bg-tangerine-500 scale-125 ring-2 ring-tangerine-300"
                   : done
                     ? "bg-grass-500"
-                    : "bg-muted"
+                    : "bg-gray-300"
               }`}
             />
           );
         })}
+        <span className="text-sm font-bold text-gray-500 ml-2 self-center">
+          {currentIndex + 1}/{lessons.length}
+        </span>
       </div>
 
-      {/* Lesson Card */}
-      <div className="bg-card rounded-3xl border-4 border-sunshine-400 shadow-card overflow-hidden mb-6">
-        {/* Full-width illustration area */}
-        <div
-          className={`bg-gradient-to-br ${gradientClass} h-64 md:h-72 flex flex-col items-center justify-center gap-4 relative`}
-        >
-          {currentLesson.image ? (
-            <img
-              src={currentLesson.image}
-              alt={currentLesson.title}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <>
-              <span
-                className="select-none drop-shadow-lg leading-none"
-                style={{ fontSize: "10rem" }}
-              >
-                {lessonEmoji}
-              </span>
-              <span className="font-bold text-3xl text-white drop-shadow-md text-center px-4">
-                {currentLesson.title}
-              </span>
-            </>
-          )}
-        </div>
-
-        <div className="p-6">
-          <div className="flex items-start justify-between gap-3 mb-4">
-            <h2 className="font-bold text-3xl text-foreground flex-1">
-              {currentLesson.title}
-            </h2>
-            {isCompleted && (
-              <CheckCircle className="text-grass-500 shrink-0 mt-1" size={32} />
-            )}
+      {/* FULL-SCREEN image area */}
+      <div
+        className={`relative bg-gradient-to-br ${gradientClass} flex-shrink-0`}
+        style={{ height: "55vw", maxHeight: "420px", minHeight: "240px" }}
+      >
+        {lessonImage ? (
+          <img
+            src={lessonImage}
+            alt={currentLesson.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <span
+              className="select-none drop-shadow-2xl"
+              style={{ fontSize: "clamp(5rem, 18vw, 10rem)" }}
+            >
+              {lessonEmoji}
+            </span>
           </div>
-          <p className="font-nunito text-foreground leading-relaxed text-2xl">
-            {currentLesson.body}
-          </p>
+        )}
+        {/* Lesson counter badge */}
+        <div className="absolute top-3 right-3 bg-black/40 text-white text-sm font-bold rounded-full px-3 py-1 backdrop-blur-sm">
+          {subjectEmoji} {subject.charAt(0).toUpperCase() + subject.slice(1)}
         </div>
+        {isCompleted && (
+          <div className="absolute top-3 left-3 bg-grass-500 text-white text-sm font-bold rounded-full px-3 py-1 flex items-center gap-1">
+            <CheckCircle size={14} /> Done!
+          </div>
+        )}
+      </div>
+
+      {/* Title */}
+      <div className="bg-white px-5 pt-4 pb-2">
+        <h2 className="font-bold text-2xl md:text-3xl text-gray-800 leading-tight">
+          {currentLesson.title}
+        </h2>
+      </div>
+
+      {/* Body text */}
+      <div className="flex-1 bg-white px-5 pb-4 overflow-y-auto">
+        <p className="text-gray-700 leading-relaxed text-xl font-bold whitespace-pre-line">
+          {currentLesson.body}
+        </p>
       </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-3 mb-4">
+      <div className="sticky bottom-0 bg-white border-t border-gray-100 px-4 py-3 flex gap-3">
+        <button
+          type="button"
+          data-ocid="lesson.pagination_prev"
+          onClick={handlePrev}
+          disabled={currentIndex === 0}
+          className="flex items-center justify-center gap-1 px-4 py-3 rounded-2xl bg-gray-100 font-bold text-base hover:bg-gray-200 disabled:opacity-40 transition-all active:scale-95 min-w-[64px]"
+        >
+          <ChevronLeft size={20} /> Prev
+        </button>
+
         <button
           type="button"
           data-ocid="lesson.toggle"
           onClick={handleSpeak}
-          className={`touch-target flex items-center justify-center gap-2 px-5 py-3 rounded-2xl font-nunito font-bold text-lg shadow-fun hover:scale-105 active:scale-95 transition-all ${
+          className={`flex items-center justify-center gap-1 px-4 py-3 rounded-2xl font-bold text-base transition-all active:scale-95 ${
             isSpeaking
               ? "bg-cherry-500 text-white"
               : "bg-tangerine-400 text-white hover:bg-tangerine-300"
           }`}
         >
-          {isSpeaking ? <VolumeX size={22} /> : <Volume2 size={22} />}
+          {isSpeaking ? <VolumeX size={18} /> : <Volume2 size={18} />}
           {isSpeaking ? "Stop" : "Listen"}
         </button>
 
@@ -654,41 +673,21 @@ export default function Lessons() {
             data-ocid="lesson.primary_button"
             onClick={handleComplete}
             disabled={completeLessonMutation.isPending}
-            className="touch-target flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-grass-500 text-white font-nunito font-bold text-lg shadow-fun hover:scale-105 active:scale-95 transition-all disabled:opacity-60"
+            className="flex-1 flex items-center justify-center gap-1 py-3 rounded-2xl bg-grass-500 text-white font-bold text-base transition-all active:scale-95 disabled:opacity-60"
           >
-            <CheckCircle size={22} />
-            {completeLessonMutation.isPending ? "Saving..." : "Mark Complete"}
+            <CheckCircle size={18} />
+            {completeLessonMutation.isPending ? "Saving..." : "Complete"}
           </button>
         )}
-        {isCompleted && (
-          <div
-            data-ocid="lesson.success_state"
-            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-grass-100 border-4 border-grass-400 text-grass-700 font-nunito font-bold text-lg"
-          >
-            <CheckCircle size={22} /> Completed!
-          </div>
-        )}
-      </div>
 
-      {/* Navigation */}
-      <div className="flex gap-3">
-        <button
-          type="button"
-          data-ocid="lesson.pagination_prev"
-          onClick={handlePrev}
-          disabled={currentIndex === 0}
-          className="touch-target flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-muted font-nunito font-bold text-lg hover:bg-muted/80 disabled:opacity-40 transition-all shadow-fun hover:scale-105 active:scale-95"
-        >
-          <ChevronLeft size={22} /> Prev
-        </button>
         <button
           type="button"
           data-ocid="lesson.pagination_next"
           onClick={handleNext}
           disabled={currentIndex === lessons.length - 1}
-          className="touch-target flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-sunshine-400 text-foreground font-nunito font-bold text-lg hover:bg-sunshine-300 disabled:opacity-40 transition-all shadow-fun hover:scale-105 active:scale-95"
+          className="flex items-center justify-center gap-1 px-4 py-3 rounded-2xl bg-sunshine-400 text-gray-800 font-bold text-base hover:bg-sunshine-300 disabled:opacity-40 transition-all active:scale-95 min-w-[64px]"
         >
-          Next <ChevronRight size={22} />
+          Next <ChevronRight size={20} />
         </button>
       </div>
     </div>

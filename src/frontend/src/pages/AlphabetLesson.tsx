@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, Volume2 } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getAlphabetCards } from "../data/languageData";
+import { speakLetterAndWord } from "../utils/speech";
 
 type Language = "english" | "telugu" | "hindi" | "tamil";
 
@@ -84,28 +85,6 @@ const ENGLISH_IMAGE_MAP: Record<string, string> = {
  * Speak a letter and its word with a clear pause in between.
  * We split into two utterances so the browser inserts a natural gap.
  */
-function speakWithGap(letter: string, word: string, lang: string) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-
-  const u1 = new SpeechSynthesisUtterance(letter);
-  u1.lang = lang;
-  u1.rate = 0.7;
-
-  const u2 = new SpeechSynthesisUtterance(word);
-  u2.lang = lang;
-  u2.rate = 0.7;
-
-  // Small silence utterance acts as a pause
-  const pause = new SpeechSynthesisUtterance(" ");
-  pause.lang = lang;
-  pause.rate = 0.1;
-  pause.volume = 0;
-
-  window.speechSynthesis.speak(u1);
-  window.speechSynthesis.speak(pause);
-  window.speechSynthesis.speak(u2);
-}
 
 export default function AlphabetLesson() {
   const [language, setLanguage] = useState<Language>("english");
@@ -121,7 +100,11 @@ export default function AlphabetLesson() {
     setIdx((i) => {
       const next = (i - 1 + total) % total;
       const nextCard = cards[next];
-      speakWithGap(nextCard.letter, nextCard.word, config.voice);
+      speakLetterAndWord(
+        nextCard.letter,
+        nextCard.word,
+        config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+      );
       return next;
     });
   }, [total, cards, config.voice]);
@@ -130,7 +113,11 @@ export default function AlphabetLesson() {
     setIdx((i) => {
       const next = (i + 1) % total;
       const nextCard = cards[next];
-      speakWithGap(nextCard.letter, nextCard.word, config.voice);
+      speakLetterAndWord(
+        nextCard.letter,
+        nextCard.word,
+        config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+      );
       return next;
     });
   }, [total, cards, config.voice]);
@@ -158,7 +145,11 @@ export default function AlphabetLesson() {
   // Auto-speak on initial load only
   // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
   useEffect(() => {
-    speakWithGap(card.letter, card.word, config.voice);
+    speakLetterAndWord(
+      card.letter,
+      card.word,
+      config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+    );
   }, []);
 
   const handleLangChange = (lang: Language) => {
@@ -239,7 +230,13 @@ export default function AlphabetLesson() {
         <button
           type="button"
           data-ocid="alphabet.speak.button"
-          onClick={() => speakWithGap(card.letter, card.word, config.voice)}
+          onClick={() =>
+            speakLetterAndWord(
+              card.letter,
+              card.word,
+              config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+            )
+          }
           className="kid-btn bg-white/30 hover:bg-white/50 text-white border-4 border-white/60 px-6 py-3 flex items-center gap-2 text-xl font-nunito font-bold backdrop-blur-sm"
           aria-label="Speak"
         >

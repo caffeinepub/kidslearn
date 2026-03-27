@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, Volume2 } from "lucide-react";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getNumbers } from "../data/languageData";
+import { speakWord } from "../utils/speech";
 
 type Language = "english" | "telugu" | "hindi" | "tamil";
 
@@ -50,16 +51,6 @@ const CARD_BG_COLORS = [
 ];
 
 /** Speak only the word (one sound only) */
-function speakWithGap(_numeral: string, word: string, lang: string) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-
-  const u = new SpeechSynthesisUtterance(word);
-  u.lang = lang;
-  u.rate = 0.7;
-
-  window.speechSynthesis.speak(u);
-}
 
 export default function NumbersLesson() {
   const [language, setLanguage] = useState<Language>("english");
@@ -74,7 +65,10 @@ export default function NumbersLesson() {
   const goPrev = useCallback(() => {
     setIdx((i) => {
       const next = (i - 1 + total) % total;
-      speakWithGap(numbers[next].numeral, numbers[next].word, config.voice);
+      speakWord(
+        numbers[next].word,
+        config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+      );
       return next;
     });
   }, [total, numbers, config.voice]);
@@ -82,7 +76,10 @@ export default function NumbersLesson() {
   const goNext = useCallback(() => {
     setIdx((i) => {
       const next = (i + 1) % total;
-      speakWithGap(numbers[next].numeral, numbers[next].word, config.voice);
+      speakWord(
+        numbers[next].word,
+        config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+      );
       return next;
     });
   }, [total, numbers, config.voice]);
@@ -112,7 +109,7 @@ export default function NumbersLesson() {
   // Auto-speak on initial load only
   // biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
   useEffect(() => {
-    speakWithGap(num.numeral, num.word, config.voice);
+    speakWord(num.word, config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN");
   }, []);
 
   return (
@@ -173,7 +170,12 @@ export default function NumbersLesson() {
         <button
           type="button"
           data-ocid="numbers.speak.button"
-          onClick={() => speakWithGap(num.numeral, num.word, config.voice)}
+          onClick={() =>
+            speakWord(
+              num.word,
+              config.voice as "en-US" | "te-IN" | "hi-IN" | "ta-IN",
+            )
+          }
           className="kid-btn bg-white/30 hover:bg-white/50 text-white border-4 border-white/60 px-6 py-3 flex items-center gap-2 text-xl font-nunito font-bold backdrop-blur-sm"
           aria-label="Speak"
         >

@@ -17,6 +17,15 @@ import {
 
 const GAMES = [
   {
+    name: "Picture Match",
+    emoji: "🎮",
+    description: "Match pictures to words!",
+    route: "/picture-match",
+    bgClass: "bg-sunshine-100",
+    borderClass: "border-sunshine-400",
+    textClass: "text-sunshine-700",
+  },
+  {
     name: "Matching Game",
     emoji: "🃏",
     description: "Match emoji cards to words!",
@@ -114,7 +123,7 @@ const LEARNING_MODULES = [
   },
   {
     name: "Picture Learning",
-    emoji: "🖼️",
+    emoji: "🖴️",
     route: "/picture-learning",
     bgClass: "bg-coral-100",
     borderClass: "border-coral-400",
@@ -238,7 +247,7 @@ const KidsDashboard: React.FC = () => {
           </span>
           <span className="absolute bottom-3 left-1/4 text-3xl">🎉</span>
           <span className="absolute bottom-4 right-1/3 text-4xl animate-float">
-            🦋
+            🦸
           </span>
         </div>
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 relative z-10">
@@ -422,7 +431,7 @@ const KidsDashboard: React.FC = () => {
           <h2 className="font-heading text-3xl text-cherry-700 mb-4 flex items-center gap-2">
             🎮 Games
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
             {GAMES.map((game) => (
               <GameCard key={game.route} {...game} />
             ))}
@@ -470,10 +479,10 @@ const KidsDashboard: React.FC = () => {
             </button>
             <button
               type="button"
-              onClick={() => navigate({ to: "/picture-learning" })}
-              className="kid-btn bg-white/20 text-white border-4 border-white/50 hover:bg-white/30 px-6 py-3 text-base"
+              onClick={() => navigate({ to: "/picture-match" })}
+              className="kid-btn bg-sunshine-400 text-white border-4 border-sunshine-600 hover:bg-sunshine-500 px-6 py-3 text-base"
             >
-              🖼️ Picture Learning
+              🎮 Picture Match
             </button>
           </div>
         </section>
